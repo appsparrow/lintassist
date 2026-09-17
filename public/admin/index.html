@@ -42,7 +42,7 @@
   .msg.ok{background:rgba(77,189,116,0.1);border:1px solid rgba(77,189,116,0.3);color:var(--pass);}
   .msg.err{background:rgba(255,77,77,0.1);border:1px solid rgba(255,77,77,0.3);color:var(--crit);}
   .token-cell{font-family:monospace;font-size:10px;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+  .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
   .stat{background:var(--s);border:1px solid var(--border);border-radius:6px;padding:14px;text-align:center;}
   .stat-n{font-size:1.5rem;font-weight:700;line-height:1;}
   .stat-l{font-size:9px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;}
@@ -93,6 +93,7 @@
   <div class="stat"><div class="stat-n" id="st-active">—</div><div class="stat-l">Active This Month</div></div>
   <div class="stat"><div class="stat-n" id="st-audits">—</div><div class="stat-l">Audits This Month</div></div>
   <div class="stat"><div class="stat-n" id="st-mrr" style="color:var(--accent);">—</div><div class="stat-l">Est. MRR</div></div>
+  <div class="stat"><div class="stat-n" id="st-cost" style="color:var(--crit);">—</div><div class="stat-l">Est. AI Cost (All-Time)</div></div>
 </div>
 
 <!-- Add subscriber -->
@@ -356,12 +357,23 @@ function renderStats(subs) {
   document.getElementById('st-mrr').textContent = '$' + mrr;
 }
 
+// Cost totals are usually fractions of a cent per request, but should
+// read cleanly once they add up — more decimals while small, fewer
+// once the total is large enough that they stop being meaningful.
+function formatCost(n) {
+  if (n === 0) return '$0.00';
+  if (n < 1) return '$' + n.toFixed(4);
+  if (n < 100) return '$' + n.toFixed(2);
+  return '$' + n.toFixed(0);
+}
+
 function renderTable(rows) {
   var tbody = document.getElementById('sub-tbody');
   var totalCost = 0, totalReq = 0;
   rows.forEach(function(r) { totalCost += r.total_cost || 0; totalReq += r.requests || 0; });
-  document.getElementById('cost-total').textContent = '$' + totalCost.toFixed(4);
+  document.getElementById('cost-total').textContent = formatCost(totalCost);
   document.getElementById('cost-requests').textContent = totalReq;
+  document.getElementById('st-cost').textContent = formatCost(totalCost);
 
   if (!rows.length) {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:24px;">No subscribers yet</td></tr>';
@@ -389,7 +401,7 @@ function renderTable(rows) {
       '<td class="token-cell" title="' + s.token + '">' + s.token + '</td>' +
       '<td>' + usedCell + '</td>' +
       '<td>' + (s.requests || 0) + '</td>' +
-      '<td>$' + (s.total_cost || 0).toFixed(4) + '</td>' +
+      '<td>' + formatCost(s.total_cost || 0) + '</td>' +
       '<td style="color:var(--muted);font-size:10px;">' + (s.created_at || '').slice(0, 10) + '</td>' +
       '<td>' + actions + '</td>' +
     '</tr>';
