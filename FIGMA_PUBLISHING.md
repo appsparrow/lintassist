@@ -20,9 +20,9 @@ current docs on 2026-09-13:
    - Name, tagline, full description, category (**Design tools** fits).
    - **Must disclose** in the description if the plugin requires a
      separate third-party account or additional payment — ours does
-     (a free token from `lintassist.pages.dev`, paid tiers coming
+     (a free token from `lintassist.com`, paid tiers coming
      later). A line like *"Requires a free token from
-     lintassist.pages.dev — some tiers may require payment"* covers it.
+     lintassist.com — some tiers may require payment"* covers it.
 3. **Page 2 — Visuals:**
    - Icon: 128×128px.
    - Cover thumbnail: 1920×1080px.
@@ -44,7 +44,7 @@ current docs on 2026-09-13:
 - **`figma-plugin/manifest.json`** — `networkAccess.allowedDomains` was a
   wildcard (`"*"`), which is exactly the kind of thing review flags.
   Narrowed to the plugin's actual domains: the backend worker,
-  `lintassist.pages.dev`, Google Fonts, and `ko-fi.com`.
+  `lintassist.com`, Google Fonts, and `ko-fi.com`.
 
 ## Still open before submitting
 
@@ -56,7 +56,7 @@ can do (it's tied to your Figma account).
 ## Done
 
 - **Privacy policy** — live at `public/privacy.html`
-  (`https://lintassist.pages.dev/privacy.html`), linked from both the
+  (`https://lintassist.com/privacy.html`), linked from both the
   web app footer and the plugin's Settings panel. Covers what's
   collected (email/name on signup, screenshots only for the one
   request, never stored), who it's shared with (OpenRouter/Anthropic
@@ -82,32 +82,32 @@ can do (it's tied to your Figma account).
   > accessibility review.
   >
   > Free to try: 2 audits with no signup, then 5 more every day with
-  > just an email (no password) — get a token at lintassist.pages.dev.
+  > just an email (no password) — get a token at lintassist.com.
   > The same token also works on the web app, for anything you can
   > screenshot, not just Figma frames. Paid monthly plans are coming
   > soon for heavier use.
   >
   > Nothing is stored: your screenshot is sent for that one analysis and
   > never kept — copy or place the report before you navigate away.
-  > Privacy policy: lintassist.pages.dev/privacy.html
+  > Privacy policy: lintassist.com/privacy.html
 
   (Once a real custom domain like lintassist.com is actually registered
   and live, swap it in here and in manifest.json/the plugin's links —
-  until then, use lintassist.pages.dev everywhere; it's the only one
+  until then, use lintassist.com everywhere; it's the only one
   that currently resolves.)
 
   This description already includes the third-party-account/payment
   disclosure the review guidelines require.
-- **Icon (128×128) and cover thumbnail (1920×1080)** — in
-  `figma-plugin/assets/icon-128.png` and
-  `figma-plugin/assets/cover-1920x1080.png`. Both come from images you
-  made yourself (`uxauditplugin.png` — a 28160×28160 source, downsized
-  cleanly to 128px — and `uxauditplugin-screen.png`, which was already
-  exactly 1920×1080). Claude's image-generation tool wasn't available
-  (needs a premium Magnific account) to offer AI-generated
-  alternatives, but your existing assets didn't need them — the icon
-  reads clearly at small size and the cover is a strong showcase slide
-  as-is.
+- **Icon (128×128)** — `figma-plugin/assets/icon-128.png`, downsized
+  cleanly from a 28160×28160 source image you made yourself.
+- **Cover thumbnail (1920×1080)** — `figma-plugin/assets/cover-1920x1080.png`
+  and `figma-plugin/assets/lintassist-cover.png` (same image, two
+  filenames). This is the updated LintAssist-branded showcase slide —
+  logo, tagline ("Better interfaces, faster."), feature icons, and
+  real plugin screenshots. It was originally exported at 1672×941; since
+  that's the same aspect ratio as 1920×1080, it was cleanly upscaled
+  with no cropping or visible distortion to match Figma's exact
+  required dimensions.
 
 ## Data Security Disclosure — recommended answers
 
@@ -152,7 +152,7 @@ you do not host? Select all that apply.**
 images. None of these requests include data read/derived from Figma's
 plugin API"** (Google Fonts, loaded in the UI).
 → Also check **"not captured by the above"** and describe: *"Opens
-ko-fi.com (optional tip link) and lintassist.pages.dev (get a
+ko-fi.com (optional tip link) and lintassist.com (get a
 token/pricing) in the user's browser as external links — no Figma
 frame data or plugin-API data is included in either."*
 → Do NOT check "does not make any network requests" (it does — fonts

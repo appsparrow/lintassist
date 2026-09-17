@@ -15,7 +15,7 @@ feedback. Review, learn, fix it yourself. Nothing is stored — it's a mirror,
 not a database.
 
 It ships as two surfaces reading the same backend: a **web app**
-(`lintassist.pages.dev`) for anything you can screenshot, and a **Figma
+(`lintassist.com`) for anything you can screenshot, and a **Figma
 plugin** for auditing a frame without leaving the canvas.
 
 ## 2. Target Audience

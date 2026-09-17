@@ -2,7 +2,7 @@
 
 Internal ops notes. **Not deployed** — this file lives only in the git repo
 (root, next to `worker-stripe.js`), not inside `public/`, so it never ships
-to `lintassist.pages.dev` or anywhere else.
+to `lintassist.com` or anywhere else.
 
 Deliberately does **not** contain any real token, email, or secret value —
 those shouldn't live in git history even in a private repo. Look them up
@@ -128,7 +128,7 @@ Two ways — pick whichever's convenient. Both need the admin secret
 ### Option A — Admin panel (easiest)
 
 1. Open `/admin/` (locally: `http://localhost:8789/admin/`; live:
-   `https://lintassist.pages.dev/admin/`).
+   `https://lintassist.com/admin/`).
 2. Paste in:
    - Worker URL: `https://ux-audit-worker.domain-sparrow.workers.dev`
    - Your admin secret (§4)
