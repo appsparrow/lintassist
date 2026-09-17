@@ -28,7 +28,10 @@ current docs on 2026-09-13:
    - Cover thumbnail: 1920×1080px.
    - Optional: a playground file, up to 9 carousel images/videos.
 4. **Page 3 — Data Security (optional):** a security disclosure form;
-   Figma notes review can take up to two weeks if submitted.
+   Figma notes review can take up to two weeks if submitted. Answers
+   for LintAssist's actual behavior are in the "Data Security
+   Disclosure" section below — worth submitting since compliant
+   answers get shown on the Community page and build trust.
 5. **Page 4 — Final details:** publish destination (Community vs. your
    org), publisher identity, support contact, review of the
    network-access labels (see below), pricing (leave free for now).
@@ -88,6 +91,11 @@ can do (it's tied to your Figma account).
   > never kept — copy or place the report before you navigate away.
   > Privacy policy: lintassist.pages.dev/privacy.html
 
+  (Once a real custom domain like lintassist.com is actually registered
+  and live, swap it in here and in manifest.json/the plugin's links —
+  until then, use lintassist.pages.dev everywhere; it's the only one
+  that currently resolves.)
+
   This description already includes the third-party-account/payment
   disclosure the review guidelines require.
 - **Icon (128×128) and cover thumbnail (1920×1080)** — in
@@ -100,6 +108,62 @@ can do (it's tied to your Figma account).
   alternatives, but your existing assets didn't need them — the icon
   reads clearly at small size and the cover is a strong showcase slide
   as-is.
+
+## Data Security Disclosure — recommended answers
+
+Figma's Page 3 form ("Share how your plugin handles data"). Check **"I
+agree to share this information"** — compliant answers get shown on
+the Community listing, which builds trust rather than costing you
+anything. Answers below are based on exactly what LintAssist's code
+actually does, not a generic template.
+
+**1. Do you host a backend service for your plugin/widget?**
+→ **"Yes, and data read/derived from Figma's plugin API is sent to
+this backend."**
+The plugin exports the selected frame as an image (via Figma's
+`exportAsync`, plugin-API-derived) and sends it to our own backend
+(`ux-audit-worker`) for analysis. That's Figma-derived data going to a
+backend we host, which is exactly this option — not the second one
+("but doesn't send...").
+
+**2. Does your plugin/widget make any network requests with services
+you do not host? Select all that apply.**
+→ Check **"makes network requests for static assets eg. fonts,
+images. None of these requests include data read/derived from Figma's
+plugin API"** (Google Fonts, loaded in the UI).
+→ Also check **"not captured by the above"** and describe: *"Opens
+ko-fi.com (optional tip link) and lintassist.pages.dev (get a
+token/pricing) in the user's browser as external links — no Figma
+frame data or plugin-API data is included in either."*
+→ Do NOT check "does not make any network requests" (it does — fonts
+at minimum) or "analytics tools" (no Mixpanel/Sentry/etc. — genuinely
+none).
+
+**3. Does your plugin/widget use any user authentication?**
+→ **"Yes, my plugin/widget has user authentication that is handled via
+a site that I host."**
+There's no login screen or third-party identity provider (no Auth0, no
+"Log in with Google") — but the token/email-based access system
+(`POST /access`, `GET /status`) is a real, self-hosted access-gating
+mechanism, so "no authentication at all" would understate it. This is
+the most honest of the three options, even though it's lightweight
+(a bearer token, not a full identity/login flow).
+
+**4. Do you store any data read/derived from Figma's plugin API?
+Select all that apply.**
+→ **"No, my plugin/widget does not store any data read/derived from
+Figma's plugin API."**
+The frame name and image are used transiently for one request (sent to
+the AI provider, or placed back as a new frame in the *user's own*
+file) and never persisted in our systems. What *is* stored via
+`figma.clientStorage` (the token, the free-use counter, an anonymous
+ID) are values LintAssist itself generates and issues — not data read
+from Figma's API — so this doesn't count against that option.
+
+**5. How do you manage updates to your plugin/widget?**
+→ **"I am a solo developer. I manage and update my plugin/widget
+myself."**
+Matches reality; switch this if that changes.
 
 ## The Ko-fi tip link — is it allowed?
 
