@@ -1,5 +1,5 @@
 {
-  "name": "uxauditplugin",
+  "name": "lintassist",
   "private": true,
   "description": "Static site — source lives in public/, copied to dist/ for Cloudflare Pages (project's configured output directory).",
   "scripts": {

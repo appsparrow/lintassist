@@ -217,7 +217,7 @@ async function callOpenRouter(env, model, messages, maxTokens) {
     headers: {
       'Content-Type':  'application/json',
       'Authorization': 'Bearer ' + env.OPENROUTER_API_KEY,
-      'HTTP-Referer':  'https://designaudit.pages.dev',
+      'HTTP-Referer':  'https://lintassist.pages.dev',
       'X-Title':       'LintAssist',
     },
     body: JSON.stringify({ model, max_tokens: maxTokens, messages }),

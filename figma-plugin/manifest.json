@@ -8,11 +8,11 @@
   "networkAccess": {
     "allowedDomains": [
       "https://ux-audit-worker.domain-sparrow.workers.dev",
-      "https://designaudit.pages.dev",
+      "https://lintassist.pages.dev",
       "https://fonts.googleapis.com",
       "https://fonts.gstatic.com",
       "https://ko-fi.com"
     ],
-    "reasoning": "Sends the exported Figma frame image to our backend for AI-based UX analysis, links out to designaudit.pages.dev for pricing/support and ko-fi.com for optional tips, and loads the UI's web font."
+    "reasoning": "Sends the exported Figma frame image to our backend for AI-based UX analysis, links out to lintassist.pages.dev for pricing/support and ko-fi.com for optional tips, and loads the UI's web font."
   }
 }

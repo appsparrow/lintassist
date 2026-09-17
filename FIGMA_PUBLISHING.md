@@ -20,9 +20,9 @@ current docs on 2026-09-13:
    - Name, tagline, full description, category (**Design tools** fits).
    - **Must disclose** in the description if the plugin requires a
      separate third-party account or additional payment — ours does
-     (a free token from `designaudit.pages.dev`, paid tiers coming
+     (a free token from `lintassist.pages.dev`, paid tiers coming
      later). A line like *"Requires a free token from
-     designaudit.pages.dev — some tiers may require payment"* covers it.
+     lintassist.pages.dev — some tiers may require payment"* covers it.
 3. **Page 2 — Visuals:**
    - Icon: 128×128px.
    - Cover thumbnail: 1920×1080px.
@@ -41,7 +41,7 @@ current docs on 2026-09-13:
 - **`figma-plugin/manifest.json`** — `networkAccess.allowedDomains` was a
   wildcard (`"*"`), which is exactly the kind of thing review flags.
   Narrowed to the plugin's actual domains: the backend worker,
-  `designaudit.pages.dev`, Google Fonts, and `ko-fi.com`.
+  `lintassist.pages.dev`, Google Fonts, and `ko-fi.com`.
 
 ## Still open before submitting
 
@@ -53,7 +53,7 @@ can do (it's tied to your Figma account).
 ## Done
 
 - **Privacy policy** — live at `public/privacy.html`
-  (`https://designaudit.pages.dev/privacy.html`), linked from both the
+  (`https://lintassist.pages.dev/privacy.html`), linked from both the
   web app footer and the plugin's Settings panel. Covers what's
   collected (email/name on signup, screenshots only for the one
   request, never stored), who it's shared with (OpenRouter/Anthropic
@@ -79,14 +79,14 @@ can do (it's tied to your Figma account).
   > accessibility review.
   >
   > Free to try: 2 audits with no signup, then 5 more every day with
-  > just an email (no password) — get a token at designaudit.pages.dev.
+  > just an email (no password) — get a token at lintassist.pages.dev.
   > The same token also works on the web app, for anything you can
   > screenshot, not just Figma frames. Paid monthly plans are coming
   > soon for heavier use.
   >
   > Nothing is stored: your screenshot is sent for that one analysis and
   > never kept — copy or place the report before you navigate away.
-  > Privacy policy: designaudit.pages.dev/privacy.html
+  > Privacy policy: lintassist.pages.dev/privacy.html
 
   This description already includes the third-party-account/payment
   disclosure the review guidelines require.

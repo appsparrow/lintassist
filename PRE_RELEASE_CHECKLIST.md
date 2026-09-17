@@ -16,7 +16,7 @@ This checklist ensures all test data and placeholders are replaced with producti
     'price_LIVE_TOPUP_ID': 'topup',
   };
   ```
-- [ ] Create new Live Payment Links for the products and update your marketing site (`index.html` on `designaudit.pages.dev`).
+- [ ] Create new Live Payment Links for the products and update your marketing site (`index.html` on `lintassist.pages.dev`).
 - [ ] Re-create the Stripe Webhook pointing to your worker (`https://ux-audit-worker.YOUR-SUBDOMAIN.workers.dev/webhook/stripe`) and copy the Live Signing Secret (`whsec_...`).
 
 ## 2. Cloudflare Worker Deployment

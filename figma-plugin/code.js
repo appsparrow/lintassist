@@ -173,7 +173,7 @@ figma.ui.onmessage = async (msg) => {
       });
 
       const reportFrame = figma.createFrame();
-      reportFrame.name = '📊 Audit — ' + name;
+      reportFrame.name = '🔍 LintAssist — ' + name;
       reportFrame.fills = solid(BG);
       reportFrame.cornerRadius = 14;
 
@@ -238,7 +238,7 @@ figma.ui.onmessage = async (msg) => {
       figma.currentPage.selection = [reportFrame];
       figma.viewport.scrollAndZoomIntoView([reportFrame]);
       figma.ui.postMessage({ type: 'paste-complete' });
-      figma.notify('📊 Report placed!');
+      figma.notify('🔍 Report placed!');
     } catch (e) {
       figma.ui.postMessage({ type: 'paste-error', message: e.message || 'Could not place report' });
       figma.notify('Report placement failed');

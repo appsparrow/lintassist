@@ -125,4 +125,4 @@ vs. "just ship the constant." None of it is obvious in advance. Most of
 it gets figured out exactly like this did — in the middle of building
 it.
 
-*Try it: [designaudit.pages.dev](https://designaudit.pages.dev)*
+*Try it: [lintassist.pages.dev](https://lintassist.pages.dev)*
