@@ -126,6 +126,26 @@ The plugin exports the selected frame as an image (via Figma's
 backend we host, which is exactly this option — not the second one
 ("but doesn't send...").
 
+This reveals two follow-up fields:
+
+- **"Do you have a publicly documented process for managing security
+  vulnerabilities...?"** →
+  > As an independent, solo-developer project, security issues can be
+  > reported via GitHub's private vulnerability reporting at
+  > github.com/appsparrow/lintassist/security, or by opening a GitHub
+  > issue at github.com/appsparrow/lintassist/issues. See SECURITY.md
+  > in the repository for the full policy. Reports are acknowledged
+  > and addressed promptly.
+
+  (Both the repo and this feature are live — the repo was made public
+  and GitHub's private vulnerability reporting was enabled specifically
+  so this answer is backed by something real, not just a sentence.)
+
+- **"Are you accredited to any relevant security standards...?"** →
+  > Not accredited to any formal security standards (SOC 2, PCI DSS,
+  > HITRUST, ISO 27001, SSAE 18) — this is an independent,
+  > solo-developer project.
+
 **2. Does your plugin/widget make any network requests with services
 you do not host? Select all that apply.**
 → Check **"makes network requests for static assets eg. fonts,
