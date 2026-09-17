@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Build Log — Siva Tayi × LintAssist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f7f4ee;
+  --ink: #1c1a16;
+  --faded: #8a8678;
+  --rule: #d6d0c4;
+  --accent: #c8441a;
+  --accent2: #2a6b4a;
+  --yellow: #f0d060;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  border-bottom: 3px solid var(--ink);
+  padding: 28px 60px 20px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.masthead-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+.masthead-title em {
+  color: var(--accent);
+  font-style: italic;
+}
+.masthead-meta {
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--faded);
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+  text-transform: uppercase;
+}
+.masthead-meta strong { color: var(--ink); font-size: 11px; }
+
+/* ── RIBBON ── */
+.ribbon {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 60px;
+  display: flex;
+  gap: 40px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  overflow: hidden;
+}
+.ribbon span { white-space: nowrap; }
+.ribbon span::after { content: ' ·  '; margin-right: 20px; }
+
+/* ── LAYOUT ── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+/* ── HERO SECTION ── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+  min-height: 340px;
+}
+.hero-left {
+  padding: 48px 40px 40px 0;
+  border-right: 1px solid var(--rule);
+}
+.hero-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-kicker::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+.hero-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.hero-headline em { font-style: italic; color: var(--accent); }
+.hero-lede {
+  font-size: 15px;
+  color: var(--faded);
+  line-height: 1.75;
+  max-width: 440px;
+}
+.hero-lede strong { color: var(--ink); }
+
+.hero-right {
+  padding: 48px 0 40px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.stat-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.stat-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.stat-item:first-child { border-top: 1px solid var(--rule); }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+  flex-shrink: 0;
+  min-width: 80px;
+}
+.stat-desc {
+  font-size: 12px;
+  color: var(--faded);
+  line-height: 1.4;
+}
+.stat-desc strong { color: var(--ink); display: block; font-size: 13px; margin-bottom: 2px; }
+
+/* ── SECTION LABEL ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 0 24px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 0;
+}
+.section-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--rule);
+  line-height: 1;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.section-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--faded);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative;
+  padding: 40px 0;
+}
+.tl-entry {
+  display: grid;
+  grid-template-columns: 120px 1px 1fr;
+  gap: 0 32px;
+  margin-bottom: 0;
+  position: relative;
+}
+.tl-time {
+  text-align: right;
+  padding: 0 0 40px 0;
+}
+.tl-time-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faded);
+  display: block;
+  margin-bottom: 4px;
+}
+.tl-time-phase {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.tl-line {
+  width: 1px;
+  background: var(--rule);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tl-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--paper);
+  outline: 1px solid var(--ink);
+  margin-top: 6px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+.tl-dot.accent { background: var(--accent); outline-color: var(--accent); }
+.tl-dot.green { background: var(--accent2); outline-color: var(--accent2); }
+.tl-content {
+  padding: 0 0 48px 0;
+}
+.tl-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+.tl-tag.idea { background: #fff3cd; color: #7a5c00; }
+.tl-tag.build { background: #dbeafe; color: #1e3a5f; }
+.tl-tag.break { background: #fee2e2; color: #7f1d1d; }
+.tl-tag.ship { background: #d1fae5; color: #064e3b; }
+.tl-tag.pivot { background: #ede9fe; color: #3b1f8c; }
+.tl-tag.live { background: var(--ink); color: var(--paper); }
+
+.tl-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.tl-body {
+  font-size: 13px;
+  color: var(--faded);
+  line-height: 1.7;
+  max-width: 560px;
+}
+.tl-body strong { color: var(--ink); }
+.tl-callout {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  margin-top: 14px;
+  display: inline-block;
+  line-height: 1.5;
+}
+.tl-callout .co-label { color: var(--yellow); display: block; margin-bottom: 2px; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; }
+.tl-tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.tech-pill {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 3px 9px;
+  border: 1px solid var(--rule);
+  border-radius: 100px;
+  color: var(--faded);
+}
+
+/* ── PULLQUOTE ── */
+.pullquote-band {
+  background: var(--ink);
+  margin: 0 -40px;
+  padding: 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.pullquote-band::before {
+  content: '\201C';
+  font-family: 'Playfair Display', serif;
+  font-size: 20rem;
+  color: rgba(255,255,255,0.04);
+  position: absolute;
+  top: -60px;
+  left: 40px;
+  line-height: 1;
+  pointer-events: none;
+}
+.pullquote {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--paper);
+  line-height: 1.45;
+  max-width: 700px;
+}
+.pullquote em { color: var(--yellow); font-style: normal; }
+.pullquote-attr {
+  margin-top: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(247,244,238,0.45);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── STACK MAP ── */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+.stack-cell {
+  padding: 20px 22px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.stack-cell:nth-child(3n) { border-right: none; }
+.stack-cell:nth-last-child(-n+3) { border-bottom: none; }
+.stack-layer {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faded);
+  margin-bottom: 6px;
+}
+.stack-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.stack-detail {
+  font-size: 11px;
+  color: var(--faded);
+  line-height: 1.4;
+}
+
+/* ── LESSONS BOX ── */
+.lessons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+.lesson {
+  background: var(--paper);
+  padding: 22px 24px;
+}
+.lesson-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--rule);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.lesson-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.lesson-body {
+  font-size: 11px;
+  color: var(--faded);
+  line-height: 1.6;
+}
+
+/* ── WHERE IT STANDS ── */
+.status-banner {
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 28px 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  margin: 24px 0 40px;
+}
+.status-left h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.status-left p { font-size: 13px; color: var(--faded); line-height: 1.65; }
+.status-left p strong { color: var(--ink); }
+.status-right {
+  text-align: center;
+  flex-shrink: 0;
+}
+.live-badge {
+  background: var(--accent2);
+  color: white;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.live-badge::before { content: '● '; }
+.status-url {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--faded);
+  display: block;
+}
+
+/* ── WHAT'S NEXT ── */
+.next-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+.next-card {
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 18px;
+  position: relative;
+}
+.next-card::before {
+  content: attr(data-n);
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--rule);
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  line-height: 1;
+}
+.next-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.next-card p { font-size: 11px; color: var(--faded); line-height: 1.55; }
+
+/* ── FOOTER ── */
+.colophon {
+  border-top: 3px solid var(--ink);
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.colophon-left {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.colophon-left span { color: var(--faded); font-weight: 400; font-size: 0.9rem; font-family: 'DM Sans'; }
+.colophon-right {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--faded);
+  letter-spacing: 0.08em;
+  text-align: right;
+  line-height: 1.8;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.tl-entry { animation: fadeUp 0.5s ease both; }
+.tl-entry:nth-child(1) { animation-delay: 0.1s; }
+.tl-entry:nth-child(2) { animation-delay: 0.2s; }
+.tl-entry:nth-child(3) { animation-delay: 0.3s; }
+.tl-entry:nth-child(4) { animation-delay: 0.4s; }
+.tl-entry:nth-child(5) { animation-delay: 0.5s; }
+.tl-entry:nth-child(6) { animation-delay: 0.6s; }
+.tl-entry:nth-child(7) { animation-delay: 0.7s; }
+.tl-entry:nth-child(8) { animation-delay: 0.8s; }
+
+@media (max-width: 700px) {
+  .masthead { padding: 20px 24px 16px; flex-direction: column; align-items: flex-start; }
+  .ribbon { padding: 8px 24px; }
+  .container { padding: 0 24px; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { border-right: none; border-bottom: 1px solid var(--rule); padding: 32px 0 28px; }
+  .hero-right { padding: 28px 0 32px; }
+  .tl-entry { grid-template-columns: 80px 1px 1fr; gap: 0 16px; }
+  .pullquote-band { margin: 0 -24px; padding: 36px 32px; }
+  .stack-grid { grid-template-columns: 1fr 1fr; }
+  .lessons-grid { grid-template-columns: 1fr; }
+  .next-grid { grid-template-columns: 1fr; }
+  .status-banner { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-title">The <em>Build</em><br>Log</div>
+  <div class="masthead-meta">
+    <strong>Siva Tayi × LintAssist</strong><br>
+    From idea to live SaaS<br>
+    March 5, 2026<br>
+    One conversation · One day
+  </div>
+</div>
+
+<!-- RIBBON -->
+<div class="ribbon">
+  <span>Vibe Coding</span>
+  <span>Figma Plugin</span>
+  <span>SaaS Architecture</span>
+  <span>Cloudflare Workers</span>
+  <span>D1 Database</span>
+  <span>Subscription System</span>
+  <span>designaudit.pages.dev</span>
+</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-kicker">Founder Journey</div>
+      <h1 class="hero-headline">
+        One afternoon.<br>
+        A <em>Figma plugin</em>,<br>
+        a SaaS, a business.
+      </h1>
+      <p class="hero-lede">
+        What started as a simple question — <strong>"can I build a UX audit tool?"</strong> — 
+        turned into a fully deployed SaaS product with a Figma plugin, a subscription system, 
+        a live admin dashboard, and real paying-user infrastructure. All in one conversation, 
+        one day, no prior backend experience required.
+      </p>
+    </div>
+    <div class="hero-right">
+      <div class="stat-stack">
+        <div class="stat-item">
+          <div class="stat-num">1</div>
+          <div class="stat-desc"><strong>Day to full SaaS</strong>From first CORS error to live subscription system</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">8</div>
+          <div class="stat-desc"><strong>Major pivots</strong>Each problem turned into a better product decision</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">0</div>
+          <div class="stat-desc"><strong>Backend experience needed</strong>Pure vibe coding, problem by problem</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-desc"><strong>Live deployments</strong>Cloudflare Worker · D1 Database · Pages</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACT I -->
+  <div class="section-header">
+    <div class="section-number">I</div>
+    <div>
+      <div class="section-title">The Spark & The First Wall</div>
+      <div class="section-sub">It started working. Then it didn't.</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Start</span>
+        <div class="tl-time-phase">The Idea</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot accent"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag idea">Idea</span>
+        <div class="tl-title">What if designers could audit any screen with AI?</div>
+        <div class="tl-body">
+          The insight was simple and sharp: <strong>designers audit screens every day</strong> — 
+          checking heuristics, scanning for accessibility failures, spotting hierarchy problems. 
+          It's tedious, inconsistent, and slow. Claude can do this in seconds. 
+          The question was whether it could be packaged into something a real designer 
+          would actually use in their workflow.
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">Claude Vision API</span>
+          <span class="tech-pill">UX Heuristics</span>
+          <span class="tech-pill">Figma Plugin</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Hour 1</span>
+        <div class="tl-time-phase">First Build</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag build">Build</span>
+        <div class="tl-title">Web app + Figma plugin, both working locally</div>
+        <div class="tl-body">
+          Built a web app that accepts screenshots and runs them through Claude with a structured 
+          UX audit prompt — scoring across Nielsen heuristics, Gestalt, typography, accessibility, 
+          and more. Simultaneously built a Figma plugin that could export any selected frame 
+          directly to the same analysis pipeline. <strong>It worked beautifully on local.</strong>
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">HTML/CSS/JS</span>
+          <span class="tech-pill">Figma Plugin API</span>
+          <span class="tech-pill">Claude claude-sonnet-4-20250514</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Hit 1</span>
+        <div class="tl-time-phase">CORS Wall</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot accent"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag break">Problem</span>
+        <div class="tl-title">Figma's sandbox blocks direct API calls — <em>Origin: null</em></div>
+        <div class="tl-body">
+          The Figma plugin sandbox sets <code>Origin: null</code> on all requests. 
+          Anthropic's API rejects this. The plugin couldn't call Claude at all. 
+          This is a known, unfixable browser security constraint.
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">The fix</span>
+          Cloudflare Worker as a CORS proxy. Worker receives the request,
+          strips the null origin, forwards to Anthropic with the API key.
+          Deployed in 10 minutes. Problem permanently solved.
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">Cloudflare Workers</span>
+          <span class="tech-pill">CORS Proxy</span>
+          <span class="tech-pill">addEventListener syntax</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PULLQUOTE 1 -->
+  <div class="pullquote-band">
+    <div class="pullquote">
+      "Awesome!! works great! now I need two things — a standalone version that works 
+      from my local machine, and <em>ways to monetise this</em>."
+    </div>
+    <div class="pullquote-attr">— Siva, the moment the plugin first worked</div>
+  </div>
+
+  <!-- ACT II -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">II</div>
+    <div>
+      <div class="section-title">The Monetisation Question</div>
+      <div class="section-sub">How do you charge for something this useful?</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Decision</span>
+        <div class="tl-time-phase">Pricing Model</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag pivot">Pivot</span>
+        <div class="tl-title">Sell it three ways simultaneously</div>
+        <div class="tl-body">
+          The pricing strategy crystallised quickly. Each audit costs ~$0.016 in Claude API costs. 
+          That creates enormous margin headroom. Three distribution models emerged:
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">Pricing Tiers Decided</span>
+          Free · 5 lifetime audits (lead gen)<br>
+          Starter · $7/mo · 30 audits<br>
+          Pro · $15/mo · 100 audits<br>
+          Agency · $49/mo · 500 audits<br>
+          One-time Developer License · $99–$149 (BYOK)
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">Lemon Squeezy</span>
+          <span class="tech-pill">Gumroad</span>
+          <span class="tech-pill">~$0.016 cost per audit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Critical</span>
+        <div class="tl-time-phase">API Key Problem</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot accent"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag break">Problem</span>
+        <div class="tl-title">"Users shouldn't see the Anthropic API key"</div>
+        <div class="tl-body">
+          The original architecture had users supply their own API key. 
+          For a consumer subscription product, this is a non-starter — 
+          you can't charge $15/month and also make people get their own API key. 
+          <strong>The key had to be completely hidden.</strong> 
+          This required a full backend redesign: the Worker becomes the gatekeeper, 
+          tokens replace API keys, and every request is authorised server-side.
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">Architecture shift</span>
+          User gets a token. Token goes to Worker.
+          Worker validates token → calls Anthropic with server-side key.
+          User never sees sk-ant-...
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ACT III -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">III</div>
+    <div>
+      <div class="section-title">Building the Backend</div>
+      <div class="section-sub">From "edit a file to add users" to a real database</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">v1</span>
+        <div class="tl-time-phase">Bad Idea First</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag break">Identified Problem</span>
+        <div class="tl-title">"Adding subscribers by editing code is terrible"</div>
+        <div class="tl-body">
+          The first SaaS worker stored subscribers directly in the JavaScript file — 
+          a hardcoded object. Adding a paying customer meant editing the code and redeploying. 
+          One typo breaks the entire API for all users. 
+          <strong>Siva spotted this immediately: "I should maintain subscribers somewhere else."</strong>
+          Supabase was considered. Then: "Or even better, D1 from Cloudflare since we're 
+          already there and it has a generous free limit."
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">v2</span>
+        <div class="tl-time-phase">D1 Database</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot green"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag ship">Shipped</span>
+        <div class="tl-title">Cloudflare D1 — SQL right next to the Worker</div>
+        <div class="tl-body">
+          Migrated subscribers and usage tracking to <strong>Cloudflare D1</strong> — 
+          a SQLite database that lives in the same edge network as the Worker. 
+          Zero latency, free up to 5GB, proper SQL. The Worker went from "a JS file 
+          with a hardcoded object" to a real API with two tables, monthly usage resets, 
+          and atomic credit increments.
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">Cloudflare D1 (SQLite)</span>
+          <span class="tech-pill">subscribers table</span>
+          <span class="tech-pill">usage table</span>
+          <span class="tech-pill">wrangler deploy</span>
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">Schema</span>
+          subscribers (token, email, plan, extra_credits, active)<br>
+          usage (token, month_key, count)
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Debug</span>
+        <div class="tl-time-phase">Two Errors</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot accent"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag break">Problems</span>
+        <div class="tl-title">CORS null origin + "no such table: subscribers"</div>
+        <div class="tl-body">
+          Two runtime bugs hit in quick succession. 
+          The <strong>CORS error</strong> was because opening admin.html from the filesystem 
+          gives <code>Origin: null</code> — the same sandbox problem as Figma. Fix: serve via 
+          <code>python3 -m http.server 8080</code> or deploy to Pages.
+          The <strong>D1 error</strong> was because <code>--remote</code> was missing from the 
+          schema command — tables were created in a local SQLite file, not the actual Cloudflare database.
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">The correct command</span>
+          wrangler d1 execute ux-audit-db --remote --file=schema.sql
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Deploy</span>
+        <div class="tl-time-phase">Pages Live</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot green"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag ship">Shipped</span>
+        <div class="tl-title">designaudit.pages.dev — live, instant deploy</div>
+        <div class="tl-body">
+          Deployed the web app and admin dashboard to <strong>Cloudflare Pages</strong>. 
+          Drag the <code>public/</code> folder in, done. 
+          The admin dashboard at <code>/admin/</code> now serves from a real 
+          <code>https://</code> origin — solving the null-origin CORS problem for good.
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">designaudit.pages.dev</span>
+          <span class="tech-pill">Cloudflare Pages</span>
+          <span class="tech-pill">_redirects · _headers</span>
+          <span class="tech-pill">Zero build step</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PULLQUOTE 2 -->
+  <div class="pullquote-band">
+    <div class="pullquote">
+      "I think we need to separate the pricing and make it more subtle. 
+      Let users use <em>twice</em> and then say — like it? get credits or subscribe."
+    </div>
+    <div class="pullquote-attr">— Siva, on the paywall strategy</div>
+  </div>
+
+  <!-- ACT IV -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">IV</div>
+    <div>
+      <div class="section-title">Product Thinking</div>
+      <div class="section-sub">The subtle paywall. One token, everywhere.</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">UX</span>
+        <div class="tl-time-phase">Soft Paywall</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag pivot">Product Decision</span>
+        <div class="tl-title">Show them the value first, then ask for money</div>
+        <div class="tl-body">
+          Removed the big pricing section from the main page. 
+          Replaced it with <strong>two anonymous free audits</strong> — shown as two dots in a strip. 
+          No account, no friction, no credit card. 
+          After the second audit completes and the report is visible, 
+          the paywall slides in below. <em>They see the value first, then the ask.</em> 
+          Three plan cards: Starter $7 · Pro $15 (featured) · Credits $3.
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">The moment</span>
+          Audit completes → report renders → 1.4 second delay →
+          paywall slides in below → "Like what you see? Keep the momentum going."
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Key</span>
+        <div class="tl-time-phase">Token System</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot green"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag ship">Shipped</span>
+        <div class="tl-title">One token. Web app + Figma plugin. Same backend.</div>
+        <div class="tl-body">
+          The token system means a user subscribes once and gets access everywhere. 
+          They paste the same <code>tok_abc123</code> into the web app 
+          and into the Figma plugin's settings panel. 
+          Both call the same Worker endpoint. The same D1 database tracks usage across both. 
+          <strong>No separate auth systems, no duplication of limits.</strong>
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">shared x-ux-token header</span>
+          <span class="tech-pill">free_ anonymous tokens</span>
+          <span class="tech-pill">unified D1 usage tracking</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-entry">
+      <div class="tl-time">
+        <span class="tl-time-label">Bug</span>
+        <div class="tl-time-phase">Plugin Frozen</div>
+      </div>
+      <div class="tl-line"><div class="tl-dot accent"></div></div>
+      <div class="tl-content">
+        <span class="tl-tag break">Problem</span>
+        <div class="tl-title">Plugin loaded, looked perfect — nothing clickable</div>
+        <div class="tl-body">
+          Siva imported the plugin into Figma. It rendered. The UI looked great. 
+          But nothing worked — not the token button, not frame selection, not the chips. 
+          Complete freeze. The root cause: <strong><code>localStorage</code> throws a 
+          security error in Figma's sandboxed iframe</strong>. The error fired before 
+          any event listeners attached. The whole JS crashed silently.
+        </div>
+        <div class="tl-callout">
+          <span class="co-label">The fix</span>
+          Replace all localStorage with figma.clientStorage.<br>
+          Storage now lives in code.js (the sandbox), not the iframe.<br>
+          code.js sends token + freeUsed to ui.html via postMessage on init.
+        </div>
+        <div class="tl-tech-pills">
+          <span class="tech-pill">figma.clientStorage</span>
+          <span class="tech-pill">postMessage init pattern</span>
+          <span class="tech-pill">Zero localStorage in ui.html</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STACK MAP -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">—</div>
+    <div>
+      <div class="section-title">The Stack</div>
+      <div class="section-sub">What's running, where, and why</div>
+    </div>
+  </div>
+
+  <div class="stack-grid">
+    <div class="stack-cell">
+      <div class="stack-layer">Frontend</div>
+      <div class="stack-name">Cloudflare Pages</div>
+      <div class="stack-detail">designaudit.pages.dev — static HTML, zero build step, drag and drop deploy</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Plugin</div>
+      <div class="stack-name">Figma Plugin API</div>
+      <div class="stack-detail">manifest.json + code.js (sandbox) + ui.html (iframe). Selection export at 600px width</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">API Gateway</div>
+      <div class="stack-name">Cloudflare Workers</div>
+      <div class="stack-detail">Routes /analyze, /status, /admin/*, /webhook/lemonsqueezy. ES module syntax, wrangler deploy</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Database</div>
+      <div class="stack-name">Cloudflare D1</div>
+      <div class="stack-detail">SQLite at the edge. subscribers + usage tables. Free up to 5GB. Bound via wrangler.toml</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">AI</div>
+      <div class="stack-name">Claude claude-sonnet-4-20250514</div>
+      <div class="stack-detail">Vision model. ~$0.016/audit. JSON-mode output with score, executive summary, 8–14 findings</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Payments</div>
+      <div class="stack-name">Lemon Squeezy</div>
+      <div class="stack-detail">Webhook → Worker auto-creates subscriber on payment. Downgrades on cancellation</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Admin</div>
+      <div class="stack-name">Admin Dashboard</div>
+      <div class="stack-detail">designaudit.pages.dev/admin — add subscribers, view usage, add credits. No code changes ever</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Auth</div>
+      <div class="stack-name">Token System</div>
+      <div class="stack-detail">tok_ for subscribers, free_ for anonymous. Same token works on web + Figma plugin</div>
+    </div>
+    <div class="stack-cell">
+      <div class="stack-layer">Secrets</div>
+      <div class="stack-name">Wrangler Secrets</div>
+      <div class="stack-detail">ANTHROPIC_API_KEY stored in Cloudflare vault. Never in any file. Set once via CLI</div>
+    </div>
+  </div>
+
+  <!-- LESSONS -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">—</div>
+    <div>
+      <div class="section-title">What This Build Taught</div>
+      <div class="section-sub">The real lessons from vibe coding a SaaS</div>
+    </div>
+  </div>
+
+  <div class="lessons-grid">
+    <div class="lesson">
+      <div class="lesson-num">01</div>
+      <div class="lesson-title">Every error is a product decision</div>
+      <div class="lesson-body">The CORS error led to Cloudflare Workers. Workers led to D1. D1 led to a proper admin system. The bugs weren't detours — they were the route.</div>
+    </div>
+    <div class="lesson">
+      <div class="lesson-num">02</div>
+      <div class="lesson-title">Stay in one cloud</div>
+      <div class="lesson-body">Worker + D1 + Pages all on Cloudflare means zero cross-cloud latency, one billing account, one deployment system. Simplicity compounds.</div>
+    </div>
+    <div class="lesson">
+      <div class="lesson-num">03</div>
+      <div class="lesson-title">The soft paywall beats the hard wall</div>
+      <div class="lesson-body">Show the report first. Then the ask. "Like it? Keep the momentum going." converts better than a gate. Users who've seen value are already sold.</div>
+    </div>
+    <div class="lesson">
+      <div class="lesson-num">04</div>
+      <div class="lesson-title">One token, all surfaces</div>
+      <div class="lesson-body">The decision to make the same token work on web and Figma plugin made the product feel unified. One subscription, everywhere. That's a product principle, not just an implementation detail.</div>
+    </div>
+    <div class="lesson">
+      <div class="lesson-num">05</div>
+      <div class="lesson-title">Sandbox environments lie</div>
+      <div class="lesson-body">Figma's iframe and file:// both set Origin: null. localStorage throws silently. Always test in the actual target environment, not local. --remote flag on D1 commands too.</div>
+    </div>
+    <div class="lesson">
+      <div class="lesson-num">06</div>
+      <div class="lesson-title">Founder instinct &gt; perfect code</div>
+      <div class="lesson-body">Siva caught the "editing code to add subscribers" problem immediately. That's not a technical skill — it's product intuition. The best systems are designed by people who will operate them.</div>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="section-header" style="margin-top:40px;">
+    <div class="section-number">—</div>
+    <div>
+      <div class="section-title">Where It Stands</div>
+      <div class="section-sub">End of day one</div>
+    </div>
+  </div>
+
+  <div class="status-banner">
+    <div class="status-left">
+      <h3>Production-ready SaaS infrastructure, fully deployed.</h3>
+      <p>
+        The Worker is live. D1 is seeded. Pages is deployed. 
+        The Figma plugin runs in Figma with <strong>figma.clientStorage</strong> persisting tokens across sessions. 
+        The admin dashboard lets Siva add subscribers, view monthly usage, and issue credits 
+        without touching a single line of code. 
+        The Lemon Squeezy webhook auto-creates subscribers on payment. 
+        <strong>The next step is the first paying customer.</strong>
+      </p>
+    </div>
+    <div class="status-right">
+      <span class="live-badge">Live</span>
+      <span class="status-url">designaudit.pages.dev</span>
+    </div>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="section-header">
+    <div class="section-number">→</div>
+    <div>
+      <div class="section-title">What Comes Next</div>
+      <div class="section-sub">The roadmap from here</div>
+    </div>
+  </div>
+
+  <div class="next-grid">
+    <div class="next-card" data-n="1">
+      <h4>Figma Community Launch</h4>
+      <p>Publish the plugin to Figma Community (4M+ designers). Free tier = free_ tokens, no friction. Growth loop: use it free, hit the limit, subscribe.</p>
+    </div>
+    <div class="next-card" data-n="2">
+      <h4>Product Hunt + viral UX roasts</h4>
+      <p>Post brutal AI audits of famous apps on Twitter/LinkedIn. Controversial content = shares = installs. "I audited Apple's App Store and got a 61/100" is a hook.</p>
+    </div>
+    <div class="next-card" data-n="3">
+      <h4>KV migration at scale</h4>
+      <p>D1 handles early growth easily. When subscribers hit 1000+, migrate usage tracking to Cloudflare KV for write-heavy monthly counters.</p>
+    </div>
+  </div>
+
+  <!-- COLOPHON -->
+  <div class="colophon">
+    <div class="colophon-left">
+      LintAssist <span>— built by Siva Tayi with Claude</span>
+    </div>
+    <div class="colophon-right">
+      designaudit.pages.dev<br>
+      March 5, 2026 · One conversation · One day
+    </div>
+  </div>
+
+</div><!-- container -->
+</body>
+</html>

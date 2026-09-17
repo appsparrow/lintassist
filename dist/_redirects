@@ -1,0 +1,5 @@
+# Redirect /admin to /admin/ for clean trailing slash
+/admin  /admin/  301
+
+# SPA fallback - serve index.html for any unmatched route
+/*  /index.html  200

@@ -1,0 +1,9 @@
+name = "ux-audit-worker"
+main = "worker-stripe.js"
+compatibility_date = "2026-03-05"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ux-audit-db"
+database_id = "8b5320c3-60f7-46d0-8c7b-172c718dd694"
+preview_database_id = "8b5320c3-60f7-46d0-8c7b-172c718dd694"

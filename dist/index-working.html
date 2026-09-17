@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<!--
+  Design Audit — Web App
+  Created by Siva Tayi · designaudit.pages.dev
+  2 free audits anonymously, then token-gated
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — AI UX Analyzer</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f5f1;
+      --surface: #ffffff;
+      --s2: #efede7;
+      --border: #e0ddd4;
+      --ink: #18181a;
+      --muted: #8c8a83;
+      --accent: #18181a;
+      --green: #276749;
+      --amber: #a8460e;
+      --blue: #0097ff;
+      --red: #b91c1c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Geist', sans-serif;
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    /* Header */
+    header {
+      padding: 32px 0 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.9rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .brand h1 i {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .brand-sub {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .hdr-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .token-wrap {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .token-wrap input {
+      border: none;
+      outline: none;
+      padding: 7px 11px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--ink);
+      width: 170px;
+      background: transparent;
+    }
+
+    .token-wrap input::placeholder {
+      color: var(--muted);
+    }
+
+    .token-btn {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 7px 13px;
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity .15s;
+      white-space: nowrap;
+    }
+
+    .token-btn:hover {
+      opacity: .82;
+    }
+
+    .token-ok {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--green);
+      display: none;
+      white-space: nowrap;
+    }
+
+    /* Trial dots */
+    .trial-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+    }
+
+    .trial-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background .3s;
+    }
+
+    .dot.used {
+      background: var(--ink);
+    }
+
+    .trial-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .trial-label b {
+      color: var(--ink);
+    }
+
+    .get-access {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--ink);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      cursor: pointer;
+    }
+
+    .get-access:hover {
+      border-color: var(--ink);
+    }
+
+    /* Usage strip (subscribers) */
+    .usage-strip {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+    }
+
+    .plan-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: var(--bg);
+      padding: 2px 7px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .usage-track {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .usage-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--green);
+      transition: width .5s;
+    }
+
+    .usage-fill.warn {
+      background: var(--amber);
+    }
+
+    .usage-fill.full {
+      background: var(--red);
+    }
+
+    .usage-label {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .upgrade-sm {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      border-radius: 3px;
+      white-space: nowrap;
+      transition: all .15s;
+      cursor: pointer;
+    }
+
+    .upgrade-sm:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* Upload */
+    .upload-row {
+      display: grid;
+      grid-template-columns: 1fr 36px 1fr;
+      margin-bottom: 18px;
+    }
+
+    .drop-zone {
+      border: 1px solid var(--border);
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      padding: 26px 16px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--surface);
+      position: relative;
+      transition: all .2s;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.over {
+      border-color: var(--ink);
+      background: var(--s2);
+    }
+
+    .drop-zone input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon {
+      font-size: 1.4rem;
+      margin-bottom: 7px;
+      display: block;
+    }
+
+    .drop-zone h3 {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .drop-zone p {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--s2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .url-zone {
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 8px 8px 0;
+      padding: 26px 16px;
+      background: var(--surface);
+    }
+
+    .url-zone h3 {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 9px;
+    }
+
+    .url-zone input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 7px 10px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--ink);
+      outline: none;
+      background: var(--s2);
+    }
+
+    .url-zone input:focus {
+      border-color: var(--ink);
+    }
+
+    /* Preview */
+    .preview-box {
+      display: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      background: var(--surface);
+    }
+
+    .preview-bar {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .preview-bar span {
+      cursor: pointer;
+      color: var(--red);
+    }
+
+    .preview-img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      display: block;
+      background: #f0f0f0;
+    }
+
+    /* Frameworks */
+    .section-lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      font-size: 10px;
+      font-family: 'Geist Mono', monospace;
+      padding: 4px 11px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      cursor: pointer;
+      color: var(--muted);
+      background: var(--surface);
+      user-select: none;
+      transition: all .12s;
+    }
+
+    .chip.on {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    /* Analyze button */
+    .analyze-btn {
+      width: 100%;
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      border-radius: 7px;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      margin-bottom: 18px;
+      letter-spacing: .01em;
+    }
+
+    .analyze-btn:hover:not(:disabled) {
+      opacity: .85;
+      transform: translateY(-1px);
+    }
+
+    .analyze-btn:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-box {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      color: var(--red);
+      border-radius: 6px;
+      padding: 10px 13px;
+      font-size: 12px;
+      display: none;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* Loading */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 44px 20px;
+    }
+
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-top-color: var(--ink);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 14px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .load-lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .1em;
+      margin-bottom: 10px;
+    }
+
+    .load-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .load-step {
+      font-size: 11px;
+      color: var(--border);
+      font-family: 'Geist Mono', monospace;
+      transition: color .4s;
+    }
+
+    .load-step.show {
+      color: var(--ink);
+    }
+
+    /* ── SOFT PAYWALL ── */
+    .paywall {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      background: var(--surface);
+    }
+
+    .paywall-body {
+      padding: 28px 28px 20px;
+    }
+
+    .paywall-eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .paywall-headline {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .paywall-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .paywall-plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+    }
+
+    .pw-plan {
+      padding: 18px 20px;
+      border-right: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: background .15s;
+      cursor: pointer;
+    }
+
+    .pw-plan:last-child {
+      border-right: none;
+    }
+
+    .pw-plan:hover {
+      background: var(--s2);
+    }
+
+    .pw-plan.best {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .pw-plan.best:hover {
+      background: #28282a;
+    }
+
+    .pw-name {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      opacity: .55;
+      margin-bottom: 7px;
+    }
+
+    .pw-price {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .pw-period {
+      font-size: 10px;
+      opacity: .45;
+    }
+
+    .pw-audits {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      margin-top: 8px;
+      opacity: .6;
+    }
+
+    .pw-cta {
+      margin-top: 11px;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pw-cta::after {
+      content: '→';
+    }
+
+    .paywall-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pw-token-row {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .pw-token-row input {
+      border: none;
+      outline: none;
+      padding: 7px 11px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--ink);
+      width: 190px;
+      background: var(--s2);
+    }
+
+    .pw-token-row button {
+      background: var(--ink);
+      color: var(--bg);
+      border: none;
+      padding: 7px 13px;
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .pw-note {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    /* Report */
+    .report {
+      display: none;
+      margin-bottom: 32px;
+    }
+
+    .report-hdr {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+    }
+
+    .report-hdr h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+    }
+
+    .report-hdr p {
+      font-size: 10px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .score-blk {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .score-big {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.8rem;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .score-big.great {
+      color: var(--green);
+    }
+
+    .score-big.ok {
+      color: var(--amber);
+    }
+
+    .score-big.poor {
+      color: var(--red);
+    }
+
+    .score-lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      margin-top: 2px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-n {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.5rem;
+    }
+
+    .stat-l {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .stat.c .stat-n {
+      color: var(--red);
+    }
+
+    .stat.w .stat-n {
+      color: var(--amber);
+    }
+
+    .stat.m .stat-n {
+      color: var(--blue);
+    }
+
+    .stat.p .stat-n {
+      color: var(--green);
+    }
+
+    .summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .findings {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .finding {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: 7px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .finding:hover {
+      background: var(--s2);
+    }
+
+    .finding.critical {
+      border-left-color: var(--red);
+    }
+
+    .finding.warning {
+      border-left-color: var(--amber);
+    }
+
+    .finding.minor {
+      border-left-color: var(--blue);
+    }
+
+    .finding.pass {
+      border-left-color: var(--green);
+    }
+
+    .fhead {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ftitle {
+      font-size: 12px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .fbadge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 8px;
+      padding: 2px 7px;
+      border-radius: 2px;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .fbadge.critical {
+      background: #fef2f2;
+      color: var(--red);
+    }
+
+    .fbadge.warning {
+      background: #fff7ed;
+      color: var(--amber);
+    }
+
+    .fbadge.minor {
+      background: #eff6ff;
+      color: var(--blue);
+    }
+
+    .fbadge.pass {
+      background: #f0fdf4;
+      color: var(--green);
+    }
+
+    .fcat {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .fbody {
+      display: none;
+      margin-top: 9px;
+      padding-top: 9px;
+      border-top: 1px solid var(--border);
+    }
+
+    .fbody.open {
+      display: block;
+    }
+
+    .fdesc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+
+    .frec {
+      font-size: 11px;
+      color: var(--green);
+      display: flex;
+      gap: 5px;
+      line-height: 1.5;
+    }
+
+    .frec::before {
+      content: '→';
+      flex-shrink: 0;
+    }
+
+    .act-row {
+      display: flex;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-sec {
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-sec:hover {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    footer p {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: .05em;
+    }
+
+    @media(max-width:580px) {
+      .upload-row {
+        grid-template-columns: 1fr;
+      }
+
+      .or-divider {
+        display: none;
+      }
+
+      .url-zone {
+        border: 1px solid var(--border);
+        border-radius: 0 0 8px 8px;
+        border-top: none;
+      }
+
+      .drop-zone {
+        border-right: 1px solid var(--border);
+        border-radius: 8px 8px 0 0;
+      }
+
+      .stat-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .paywall-plans {
+        grid-template-columns: 1fr;
+      }
+
+      .pw-plan {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <header>
+      <div class="brand">
+        <h1>Design <i>Audit</i></h1>
+        <div class="brand-sub">AI UX Analyzer </div>
+        <!-- <div class="brand-sub">AI UX Analyzer · Siva Tayi</div> -->
+
+      </div>
+      <div class="hdr-right">
+        <div class="token-wrap">
+          <input type="password" id="token-input" placeholder="Have a token?" autocomplete="off">
+          <button class="token-btn" id="token-btn">Verify</button>
+        </div>
+        <span class="token-ok" id="token-ok">✓ Active</span>
+      </div>
+    </header>
+
+    <!-- Free trial indicator -->
+    <div class="trial-strip" id="trial-strip">
+      <div class="trial-left">
+        <div class="dots">
+          <div class="dot" id="dot0"></div>
+          <div class="dot" id="dot1"></div>
+        </div>
+        <div class="trial-label" id="trial-label"><b>2 free audits</b> — no account needed</div>
+      </div>
+      <a href="#paywall" class="get-access" id="get-access-link">Get tokens access →</a>
+    </div>
+
+    <!-- Subscriber usage strip -->
+    <div class="usage-strip" id="usage-strip">
+      <span class="plan-tag" id="plan-tag">FREE</span>
+      <div class="usage-track">
+        <div class="usage-fill" id="usage-fill"></div>
+      </div>
+      <span class="usage-label" id="usage-label"></span>
+      <a href="#paywall" class="upgrade-sm" id="upgrade-link">Upgrade</a>
+    </div>
+
+    <!-- Upload -->
+    <div class="upload-row">
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept="image/*">
+        <span class="drop-icon">↑</span>
+        <h3>Upload Screenshot</h3>
+        <p>PNG · JPG · WebP<br>drag & drop</p>
+      </div>
+      <div class="or-divider">or</div>
+      <div class="url-zone">
+        <h3>Paste URL</h3>
+        <input type="url" id="url-input" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="preview-box" id="preview-box">
+      <div class="preview-bar"><span id="preview-lbl">PREVIEW</span><span id="clear-btn">✕ Remove</span></div>
+      <img class="preview-img" id="preview-img" src="" alt="">
+    </div>
+
+    <div class="section-lbl">Evaluate Against</div>
+    <div class="chips">
+      <div class="chip on" data-val="heuristics">Nielsen Heuristics</div>
+      <div class="chip on" data-val="visual_hierarchy">Visual Hierarchy</div>
+      <div class="chip on" data-val="gestalt">Gestalt</div>
+      <div class="chip on" data-val="typography">Typography</div>
+      <div class="chip on" data-val="color_contrast">Color & Contrast</div>
+      <div class="chip on" data-val="accessibility">Accessibility</div>
+      <div class="chip on" data-val="cta">CTA & Conversion</div>
+      <div class="chip on" data-val="mobile">Mobile Readiness</div>
+    </div>
+
+    <button class="analyze-btn" id="analyze-btn" disabled>Analyze Screen</button>
+    <div class="error-box" id="error-box"></div>
+
+    <!-- Pricing -->
+    <div class="paywall" id="paywall">
+      <div class="paywall-body">
+        <div class="paywall-eyebrow" id="pricing-eyebrow">Pricing & Tokens</div>
+        <div class="paywall-headline">Choose a plan, get your token,<br><i>and use it on web and in Figma.</i></div>
+        <div class="paywall-sub">Subscribe to a monthly tier or buy credits, then paste your token below for instant
+          access.</div>
+      </div>
+      <div class="paywall-plans">
+        <a href="https://your-lemonsqueezy.com/starter" class="pw-plan" target="_blank">
+          <div class="pw-name">Starter</div>
+          <div class="pw-price">$7<span class="pw-period">/mo</span></div>
+          <div class="pw-audits">30 audits · month</div>
+          <div class="pw-cta">Subscribe</div>
+        </a>
+        <a href="https://your-lemonsqueezy.com/pro" class="pw-plan best" target="_blank">
+          <div class="pw-name">Pro · Best value</div>
+          <div class="pw-price">$15<span class="pw-period">/mo</span></div>
+          <div class="pw-audits">100 audits · month</div>
+          <div class="pw-cta">Subscribe</div>
+        </a>
+        <a href="https://your-lemonsqueezy.com/credits" class="pw-plan" target="_blank">
+          <div class="pw-name">Credits</div>
+          <div class="pw-price">$3</div>
+          <div class="pw-audits">+50 audits this month</div>
+          <div class="pw-cta">Buy now</div>
+        </a>
+      </div>
+      <div class="paywall-footer">
+        <div class="pw-token-row">
+          <input type="password" id="pw-token" placeholder="Already have a token?">
+          <button onclick="applyPwToken()">Apply</button>
+        </div>
+        <span class="pw-note">Token = instant access · no signup</span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="load-lbl">Analyzing your design…</div>
+      <div class="load-steps">
+        <div class="load-step" id="ls1">Processing image</div>
+        <div class="load-step" id="ls2">Evaluating heuristics</div>
+        <div class="load-step" id="ls3">Checking accessibility</div>
+        <div class="load-step" id="ls4">Writing recommendations</div>
+      </div>
+    </div>
+
+    <!-- Report -->
+    <div class="report" id="report">
+      <div class="report-hdr">
+        <div>
+          <h2>Audit Report</h2>
+          <p id="rts"></p>
+        </div>
+        <div class="score-blk">
+          <div class="score-big" id="score-num">—</div>
+          <div class="score-lbl">UX SCORE / 100</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat c">
+          <div class="stat-n" id="cnt-c">0</div>
+          <div class="stat-l">Critical</div>
+        </div>
+        <div class="stat w">
+          <div class="stat-n" id="cnt-w">0</div>
+          <div class="stat-l">Warnings</div>
+        </div>
+        <div class="stat m">
+          <div class="stat-n" id="cnt-m">0</div>
+          <div class="stat-l">Minor</div>
+        </div>
+        <div class="stat p">
+          <div class="stat-n" id="cnt-p">0</div>
+          <div class="stat-l">Passed</div>
+        </div>
+      </div>
+      <div class="summary-box" id="r-summary"></div>
+      <div class="section-lbl">Findings</div>
+      <div class="findings" id="findings"></div>
+      <div class="act-row">
+        <button class="btn-sec" id="copy-btn">Copy Report</button>
+        <button class="btn-sec" id="new-btn">New Audit</button>
+      </div>
+    </div>
+
+    <footer>
+      <p>Design Audit · designaudit.pages.dev · by Siva Tayi · Powered by Claude AI</p>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ── EDIT THIS ONE LINE ───────────────────────────────────────
+      var WORKER = 'https://ux-audit-worker.domain-sparrow.workers.dev';
+      // ────────────────────────────────────────────────────────────
+      var FREE_LIMIT = 2;
+
+      var token = localStorage.getItem('da_token') || '';
+      var freeUsed = parseInt(localStorage.getItem('da_free_used') || '0', 10);
+      var statusData = null;
+      var b64 = null, mime = 'image/png';
+
+      function openPricing(event) {
+        if (event) event.preventDefault();
+        var paywall = document.getElementById('paywall');
+        if (!paywall) return;
+        paywall.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      document.getElementById('get-access-link').addEventListener('click', openPricing);
+      document.getElementById('upgrade-link').addEventListener('click', openPricing);
+
+      // init
+      if (token) { document.getElementById('token-input').value = token; verifyToken(token); }
+      else updateTrialUI();
+      updateBtn();
+
+      // ── Token verify ─────────────────────────────────────────────
+      document.getElementById('token-btn').addEventListener('click', function () {
+        var t = document.getElementById('token-input').value.trim();
+        if (!t) return;
+        token = t; localStorage.setItem('da_token', t);
+        verifyToken(t);
+      });
+      document.getElementById('token-input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('token-btn').click();
+      });
+      window.applyPwToken = function () {
+        var t = document.getElementById('pw-token').value.trim(); if (!t) return;
+        token = t; document.getElementById('token-input').value = t;
+        localStorage.setItem('da_token', t);
+        verifyToken(t);
+      };
+
+      async function verifyToken(t) {
+        try {
+          var r = await fetch(WORKER + '/status', { headers: { 'x-ux-token': t } });
+          var d = await r.json();
+          if (!r.ok) throw new Error(d.error || 'Invalid');
+          statusData = d;
+          document.getElementById('token-ok').style.display = 'block';
+          document.getElementById('trial-strip').style.display = 'none';
+          showUsageStrip(d);
+          updateBtn();
+        } catch (e) {
+          statusData = null; token = '';
+          localStorage.removeItem('da_token');
+          document.getElementById('token-ok').style.display = 'none';
+          showErr('Token invalid: ' + e.message);
+          updateTrialUI(); updateBtn();
+        }
+      }
+
+      // ── Trial UI ─────────────────────────────────────────────────
+      function updateTrialUI() {
+        var left = Math.max(0, FREE_LIMIT - freeUsed);
+        document.getElementById('dot0').className = 'dot' + (freeUsed > 0 ? ' used' : '');
+        document.getElementById('dot1').className = 'dot' + (freeUsed > 1 ? ' used' : '');
+        document.getElementById('trial-label').innerHTML = left > 0
+          ? '<b>' + left + ' free audit' + (left !== 1 ? 's' : '') + ' remaining</b> — no account needed'
+          : '<b>Free audits used</b> — subscribe to continue';
+      }
+
+      function showUsageStrip(d) {
+        document.getElementById('usage-strip').style.display = 'flex';
+        document.getElementById('plan-tag').textContent = (d.plan_name || 'Free').toUpperCase();
+        var pct = d.limit_this_month > 0 ? d.used_this_month / d.limit_this_month : 0;
+        var fill = document.getElementById('usage-fill');
+        fill.style.width = Math.min(100, Math.round(pct * 100)) + '%';
+        fill.className = 'usage-fill' + (pct >= 1 ? ' full' : pct >= 0.8 ? ' warn' : '');
+        document.getElementById('usage-label').textContent = d.remaining + ' / ' + d.limit_this_month + ' left';
+      }
+
+      function updateBtn() {
+        var hasImg = !!b64;
+        var canUse = statusData ? statusData.remaining > 0 : freeUsed < FREE_LIMIT;
+        document.getElementById('analyze-btn').disabled = !(hasImg && canUse);
+      }
+
+      // ── Image upload ─────────────────────────────────────────────
+      var fi = document.getElementById('file-input');
+      fi.addEventListener('change', function (e) {
+        var f = e.target.files[0]; if (!f) return;
+        var rd = new FileReader();
+        rd.onload = function (ev) { b64 = ev.target.result.split(',')[1]; mime = f.type || 'image/png'; setPreview(ev.target.result, f.name); };
+        rd.readAsDataURL(f);
+      });
+      var dz = document.getElementById('drop-zone');
+      dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.classList.add('over'); });
+      dz.addEventListener('dragleave', function () { dz.classList.remove('over'); });
+      dz.addEventListener('drop', function (e) {
+        e.preventDefault(); dz.classList.remove('over');
+        var f = e.dataTransfer.files[0];
+        if (f && f.type.startsWith('image/')) { var dt = new DataTransfer(); dt.items.add(f); fi.files = dt.files; fi.dispatchEvent(new Event('change')); }
+      });
+      document.getElementById('url-input').addEventListener('change', function () {
+        var url = this.value.trim(); if (!url) return;
+        fetch(url).then(function (r) { return r.blob(); }).then(function (blob) {
+          var rd = new FileReader();
+          rd.onload = function (ev) { b64 = ev.target.result.split(',')[1]; mime = blob.type || 'image/png'; setPreview(ev.target.result, 'URL Image'); };
+          rd.readAsDataURL(blob);
+        }).catch(function () { showErr('Could not load from URL — upload the file directly.'); });
+      });
+      function setPreview(src, lbl) {
+        document.getElementById('preview-img').src = src;
+        document.getElementById('preview-lbl').textContent = lbl.toUpperCase().slice(0, 30);
+        document.getElementById('preview-box').style.display = 'block';
+        updateBtn();
+      }
+      document.getElementById('clear-btn').addEventListener('click', function () {
+        b64 = null;
+        document.getElementById('preview-box').style.display = 'none';
+        document.getElementById('preview-img').src = '';
+        fi.value = ''; document.getElementById('url-input').value = '';
+        updateBtn();
+      });
+      document.querySelectorAll('.chip').forEach(function (c) { c.addEventListener('click', function () { c.classList.toggle('on'); }); });
+
+      // ── Analyze ──────────────────────────────────────────────────
+      document.getElementById('analyze-btn').addEventListener('click', function () {
+        if (!b64) { showErr('Upload a screenshot first.'); return; }
+        if (!getFW().length) { showErr('Select at least one framework.'); return; }
+        hideErr();
+        document.getElementById('report').style.display = 'none';
+        showLoad(); document.getElementById('analyze-btn').disabled = true;
+        runAnalysis();
+      });
+
+      function getFW() { return Array.from(document.querySelectorAll('.chip.on')).map(function (c) { return c.dataset.val; }); }
+
+      async function runAnalysis() {
+        var labels = { heuristics: "Nielsen's 10 Usability Heuristics", visual_hierarchy: 'Visual Hierarchy & Layout', gestalt: 'Gestalt Principles', typography: 'Typography', color_contrast: 'Color & Contrast (WCAG)', accessibility: 'Accessibility', cta: 'CTA & Conversion', mobile: 'Mobile Readiness' };
+        var fw = getFW().map(function (f) { return '- ' + (labels[f] || f); }).join('\n');
+        var sys = 'You are a senior UX designer. Analyze this UI screenshot and return ONLY valid JSON:\n{"score":<0-100>,"executive_summary":"<2-3 sentences>","findings":[{"title":"<title>","severity":"critical|warning|minor|pass","category":"<framework>","description":"<observation>","recommendation":"<fix>"}]}\nEvaluate against:\n' + fw + '\nInclude 8-14 findings.';
+
+        // use real token or anonymous free_ token
+        var useToken = (token && statusData) ? token : 'free_' + getAnonId();
+
+        try {
+          var res = await fetch(WORKER + '/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-ux-token': useToken },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514', max_tokens: 4000, system: sys, messages: [{
+                role: 'user', content: [
+                  { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
+                  { type: 'text', text: 'Analyze this screen and return the UX audit JSON.' }
+                ]
+              }]
+            })
+          });
+          var data = await res.json();
+
+          if (!res.ok) {
+            if (res.status === 429) {
+              hideLoad();
+              if (token && statusData) { statusData.remaining = 0; showUsageStrip(statusData); }
+              else { freeUsed = FREE_LIMIT; localStorage.setItem('da_free_used', freeUsed); updateTrialUI(); }
+              showPaywall(); updateBtn(); return;
+            }
+            throw new Error(data.error || 'Request failed');
+          }
+
+          // increment counters
+          if (!token || !statusData) {
+            freeUsed = Math.min(FREE_LIMIT, freeUsed + 1);
+            localStorage.setItem('da_free_used', freeUsed);
+            updateTrialUI();
+          } else {
+            statusData.used_this_month++; statusData.remaining = Math.max(0, statusData.remaining - 1);
+            showUsageStrip(statusData);
+          }
+
+          var raw = (data.content || []).map(function (b) { return b.text || ''; }).join('');
+          var clean = raw.replace(/```json|```/g, '').trim();
+          var parsed;
+          try { parsed = JSON.parse(clean); }
+          catch (e) { parsed = JSON.parse(clean.replace(/,\s*\{[^}]*$/, '').replace(/,\s*$/, '') + ']}') }
+
+          hideLoad(); renderReport(parsed);
+
+          // gentle paywall nudge after last free audit
+          if (!token && freeUsed >= FREE_LIMIT) {
+            setTimeout(showPaywall, 1400);
+          }
+
+        } catch (e) {
+          hideLoad(); showErr('Analysis failed: ' + e.message);
+          document.getElementById('analyze-btn').disabled = false;
+        }
+      }
+
+      function getAnonId() {
+        var id = localStorage.getItem('da_anon');
+        if (!id) { id = Math.random().toString(36).slice(2, 12); localStorage.setItem('da_anon', id); }
+        return id;
+      }
+      function showPaywall() {
+        document.getElementById('paywall').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // ── Render ───────────────────────────────────────────────────
+      function renderReport(data) {
+        var el = document.getElementById('report'); el.style.display = 'block';
+        document.getElementById('analyze-btn').disabled = false;
+        document.getElementById('rts').textContent = new Date().toLocaleString();
+        var sc = data.score || 0;
+        var sn = document.getElementById('score-num');
+        sn.textContent = sc; sn.className = 'score-big ' + (sc >= 75 ? 'great' : sc >= 50 ? 'ok' : 'poor');
+        document.getElementById('r-summary').textContent = data.executive_summary || '';
+        var findings = data.findings || [];
+        var cnt = { critical: 0, warning: 0, minor: 0, pass: 0 };
+        findings.forEach(function (f) { if (cnt[f.severity] !== undefined) cnt[f.severity]++; });
+        ['c', 'w', 'm', 'p'].forEach(function (k, i) { document.getElementById('cnt-' + k).textContent = cnt[['critical', 'warning', 'minor', 'pass'][i]]; });
+        var order = ['critical', 'warning', 'minor', 'pass'];
+        var sorted = findings.slice().sort(function (a, b) { return order.indexOf(a.severity) - order.indexOf(b.severity); });
+        var list = document.getElementById('findings'); list.innerHTML = '';
+        sorted.forEach(function (f) {
+          var d = document.createElement('div'); d.className = 'finding ' + f.severity;
+          d.innerHTML = '<div class="fhead"><div class="ftitle">' + x(f.title) + '</div><span class="fbadge ' + f.severity + '">' + f.severity + '</span></div>' +
+            '<div class="fcat">' + x(f.category) + '</div>' +
+            '<div class="fbody"><div class="fdesc">' + x(f.description) + '</div>' +
+            (f.severity !== 'pass' ? '<div class="frec">' + x(f.recommendation) + '</div>' : '') +
+            '</div>';
+          d.addEventListener('click', function () { d.querySelector('.fbody').classList.toggle('open'); });
+          list.appendChild(d);
+        });
+        document.querySelectorAll('.finding.critical .fbody').forEach(function (b) { b.classList.add('open'); });
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      function x(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      // ── Copy ─────────────────────────────────────────────────────
+      document.getElementById('copy-btn').addEventListener('click', function () {
+        var sc = document.getElementById('score-num').textContent;
+        var sm = document.getElementById('r-summary').textContent;
+        var t = 'DESIGN AUDIT · ' + new Date().toLocaleDateString() + '\nUX Score: ' + sc + '/100\n\n' + sm + '\n\nFindings:\n';
+        document.querySelectorAll('.finding').forEach(function (f) {
+          t += '\n• ' + ((f.querySelector('.ftitle') || {}).textContent || '') + ' [' + ((f.querySelector('.fcat') || {}).textContent || '') + ']\n  ' + ((f.querySelector('.fdesc') || {}).textContent || '') + (((f.querySelector('.frec') || {}).textContent || '') ? '\n  → ' + ((f.querySelector('.frec') || {}).textContent || '') : '') + '\n';
+        });
+        var ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        var btn = document.getElementById('copy-btn'); btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy Report'; }, 2000);
+      });
+      document.getElementById('new-btn').addEventListener('click', function () {
+        document.getElementById('report').style.display = 'none';
+        b64 = null; document.getElementById('preview-box').style.display = 'none';
+        document.getElementById('preview-img').src = ''; fi.value = ''; document.getElementById('url-input').value = '';
+        updateBtn(); window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // ── Utils ────────────────────────────────────────────────────
+      function showErr(m) { var e = document.getElementById('error-box'); e.textContent = m; e.style.display = 'block'; }
+      function hideErr() { document.getElementById('error-box').style.display = 'none'; }
+      function showLoad() {
+        document.getElementById('loading').style.display = 'block';
+        ['ls1', 'ls2', 'ls3', 'ls4'].forEach(function (id) { document.getElementById(id).classList.remove('show'); });
+        var i = 0; var iv = setInterval(function () { var ids = ['ls1', 'ls2', 'ls3', 'ls4']; if (i < ids.length) document.getElementById(ids[i++]).classList.add('show'); else clearInterval(iv); }, 1200);
+      }
+      function hideLoad() { document.getElementById('loading').style.display = 'none'; }
+
+    })();
+  </script>
+</body>
+
+</html>
