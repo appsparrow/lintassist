@@ -198,7 +198,7 @@ it is **gone**, not just hidden.
 To get a working admin secret, set a **new** one:
 
 ```bash
-cd /path/to/uxauditplugin
+cd /path/to/lintassist
 wrangler secret put ADMIN_SECRET
 ```
 

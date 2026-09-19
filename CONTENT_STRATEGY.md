@@ -1,5 +1,11 @@
 # LintAssist Content Strategy
 
+> **Status**: ideation drafts for launch content, not yet posted. Treat
+> product-fact mentions (e.g. "Claude 3.5", "2 audits free") as loose —
+> the live product's actual free tier is 2 anonymous + 5/day via email
+> signup on a multi-provider AI pipeline (Qwen → DeepSeek → Claude), per
+> `PRD.md`. Update copy to match before publishing.
+
 ## 🐦 20 Tweets: Design Strategy & AI Enablement
 
 These tweets focus on the *why* and *how* of the product. They validate the designer's role, highlight how the plugin removes grunt work (WCAG, heuristic checks), and emphasize that AI is a tool to be validated by human expertise.

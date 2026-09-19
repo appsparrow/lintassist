@@ -1,41 +1,77 @@
-# Use Cases - LintAssist Plugin
+# Use Cases — LintAssist
 
-## Use Case 1: First-Time User Trial
-**Actor**: A designer installing and using the plugin for the first time.
-**Flow**:
-1. Designer opens the "LintAssist" plugin in Figma via the Plugins menu.
-2. Designer selects a frame on their canvas and clicks "Analyze Frame".
-3. The plugin detects no user token is saved and uses the anonymous free tier token.
-4. The backend securely limits the usage to 2 total free audits.
-5. The frame is exported and analyzed by Anthropic's Claude AI.
-6. The plugin seamlessly pastes an aggregated UI scorecard onto the Figma canvas.
-7. The plugin UI updates to show a notification: "1 audit remaining".
+Reflects the product as it actually runs today (see `PRD.md` for full
+architecture). Paid plans exist in code but are hidden pending a live
+Stripe integration — see `PRE_RELEASE_CHECKLIST.md`.
 
-## Use Case 2: Subscription Purchase & Activation
-**Actor**: A designer who has exhausted their 2 free audits.
-**Flow**:
-1. Designer attempts a 3rd audit but is met with a paywall screen explaining their usage limit.
-2. User clicks the "$8/mo Starter" link, opening the Stripe Checkout portal in their browser.
-3. User completes payment securely. Stripe triggers a webhook payload (`checkout.session.completed`) to the Cloudflare Worker.
-4. The worker automatically provisions a new subscriber token, tracking their 20 audits/month allotted capacity in the D1 SQL database.
-5. User copies their newly generated token (e.g. from receipt or email) and enters it immediately into the Plugin's "Token" settings panel.
-6. The plugin verifies the token status (`/status` endpoint). The UI hides the paywall, shows the Starter plan's usage strip, and re-enables the "Analyze" button.
+## Use Case 1: First-Time User Trial (Figma)
 
-## Use Case 3: Generating a Comprehensive Sub-Page Audit
-**Actor**: A senior designer reviewing a specific product screen created by a junior designer.
-**Flow**:
-1. User selects the new "User Profile Dashboard" frame in Figma.
-2. User reviews the 8 evaluation frameworks toggles (Nielsen, Accessibility, UI Hierarchy, Typography, etc.), ensuring they map perfectly to their goals.
-3. User clicks "Analyze Frame".
-4. The plugin sequentially presents non-blocking loading states inside the Iframe UI (Exporting -> Evaluating heuristics -> Checking accessibility -> Writing recommendations).
-5. Claude generates structured JSON. The plugin translates this to a well-formatted graphical UI frame and places it beautifully on the canvas adjacent to the dashboard screen.
-6. User reviews the "Critical" tier findings, such as an insufficient color contrast ratio warning, and acts immediately to correct them.
+**Actor**: A designer trying the plugin for the first time.
 
-## Use Case 4: Top-Up Credits mid-month
-**Actor**: A busy agency designer hitting their maximum limits halfway through the month.
-**Flow**:
-1. The designer exhausts their entire 50-audit pipeline on the Pro plan while batch-reviewing hundreds of e-commerce app screens.
-2. The plugin proactively displays a $5 Top-up (add 10 credits) UI banner option.
-3. User clicks the link containing `?client_reference_id=TOKEN`.
-4. User completes the $5 payment via Stripe. Stripe Webhook automatically maps and executes an `UPDATE` SQL operation appending +10 credits explicitly to their token in D1.
-5. User effortlessly returns to Figma. The plugin correctly reads their updated `/status` limits, incrementing their "Credits remaining" by 10.
+1. Designer opens "LintAssist" in Figma's Plugins menu, selects a frame,
+   clicks Analyze.
+2. No token is saved yet, so the plugin uses a synthetic anonymous
+   `free_<id>` counter (client-side, capped at 2 audits — no signup, no
+   server-side row).
+3. The frame is exported and sent to the backend, which tries Qwen3-VL
+   first, then DeepSeek, then falls back to Claude Sonnet 5 if both
+   fail — transparent to the plugin either way.
+4. The report is placed as a new frame on the canvas (🔍 LintAssist —
+   `<frame name>`), and the UI shows "1 audit remaining."
+
+## Use Case 2: Free Email Signup After the Anonymous Trial
+
+**Actor**: A designer who's used both anonymous audits.
+
+1. On the 3rd attempt, the plugin/web app shows a paywall explaining
+   the anonymous trial is used up, with a small form (first name, last
+   name, email — no password).
+2. Submitting calls `POST /access`; the backend runs the abuse guards
+   (disposable-email blocklist, Gmail alias normalization, per-IP and
+   global daily signup caps) and, if they pass, returns a real token
+   good for **5 audits/day**, resetting daily.
+3. The same call is idempotent by email — entering the same email again
+   later (e.g. on another device) returns the same token instead of a
+   fresh grant, so it doubles as a passwordless login.
+4. The token is stored (`figma.clientStorage` in the plugin, browser
+   storage on the web), the paywall hides, and the usage strip reflects
+   the new 5/day limit.
+
+## Use Case 3: A Senior Designer Reviewing a Junior's Work
+
+**Actor**: A senior designer auditing a specific screen before a review.
+
+1. Selects the frame, optionally toggles which of the 8 frameworks to
+   run (Nielsen's Heuristics, Visual Hierarchy, Gestalt, Typography,
+   Color & Contrast/WCAG, Accessibility, CTA & Conversion, Mobile
+   Readiness).
+2. Clicks Analyze; the UI shows lightweight progress states while the
+   backend calls out to whichever model answers.
+3. Gets back a 0–100 score plus 8–14 ranked findings
+   (critical/warning/minor/pass), each with a concrete recommendation —
+   placed on canvas next to the frame, or copyable as text.
+4. Uses the critical findings (e.g. a WCAG contrast failure) as a
+   starting point, not a verdict — exactly the framing in the plugin's
+   own tagline: *"a quick AI second opinion... not the final word."*
+
+## Use Case 4: Same Token, Web App Instead of Figma
+
+**Actor**: Someone reviewing a live site or a non-Figma mockup.
+
+1. Has a token already (from either surface — they share the same
+   backend) or starts a fresh anonymous trial on `lintassist.com`.
+2. Drags in or uploads any screenshot — not limited to Figma frames.
+3. Gets the identical report shape and scoring as the plugin.
+4. Nothing is stored server-side either way — the app explicitly tells
+   the user to save or copy the report before navigating away.
+
+## Use Case 5 (not live yet): Paid Plan Purchase
+
+**Actor**: Someone who wants more than 5 audits/day.
+
+Once Stripe is wired up (see `PRE_RELEASE_CHECKLIST.md`), the intended
+flow is: click a paid plan → Stripe Checkout → webhook auto-provisions a
+subscriber token → paste it into the app/plugin's token field → `/status`
+verifies it and unlocks the higher monthly limit. Coded and ready in
+`worker-stripe.js`, but not reachable from the product today — the
+pricing cards are hidden and the Payment Link buttons are placeholders.

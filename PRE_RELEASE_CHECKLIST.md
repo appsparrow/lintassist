@@ -1,50 +1,63 @@
-# Pre-Release Checklist - LintAssist Plugin
+# Pre-Release Checklist — LintAssist
 
-This checklist ensures all test data and placeholders are replaced with production credentials and settings before launching the plugin.
+What's actually left before the product is fully "live" (not just
+deployed). The web app, Figma plugin, admin panel, AI pipeline, and
+free/email-signup access model are already live in production at
+`lintassist.com` — this checklist covers what's still pending, mainly
+turning on real payments. See `HISTORY.md` for how the product got here
+and `PRD.md` for the current architecture in full.
 
-## 1. Stripe Setup (Live Mode)
-- [ ] Toggle **Live mode** on in the Stripe Dashboard.
-- [ ] Recreate all 3 Payment Products in Live mode:
-  - Starter ($8/mo)
-  - Pro ($16/mo)
-  - Top-up ($5 one-time)
-- [ ] Copy the new **Live Price IDs** (`price_...`) and update `worker-stripe.js`:
-  ```javascript
-  const STRIPE_PRICE_MAP = {
-    'price_LIVE_STARTER_ID': 'starter',
-    'price_LIVE_PRO_ID': 'pro',
-    'price_LIVE_TOPUP_ID': 'topup',
-  };
-  ```
-- [ ] Create new Live Payment Links for the products and update your marketing site (`index.html` on `lintassist.com`).
-- [ ] Re-create the Stripe Webhook pointing to your worker (`https://ux-audit-worker.YOUR-SUBDOMAIN.workers.dev/webhook/stripe`) and copy the Live Signing Secret (`whsec_...`).
+## 1. Stripe (not live yet — everything below is still a placeholder)
 
-## 2. Cloudflare Worker Deployment
-- [ ] Ensure the D1 Database has the correct schema applied (specifically the `stripe_subscription_id` column):
-  ```bash
-  wrangler d1 execute ux-audit-db --remote --command "ALTER TABLE subscribers ADD COLUMN stripe_subscription_id TEXT;"
-  ```
-- [ ] Set all production secrets in Cloudflare Workers using Wrangler:
-  ```bash
-  wrangler secret put ANTHROPIC_API_KEY
-  wrangler secret put ADMIN_SECRET
-  wrangler secret put STRIPE_WEBHOOK_SECRET  # Must be the Live Mode secret
-  ```
-- [ ] Deploy the final worker code to production:
-  ```bash
-  wrangler deploy worker-stripe.js
-  ```
+Full step-by-step is in `stripe-setup.md`; this is just the go-live
+sequence.
 
-## 3. Plugin Code Updates
-- [ ] Verify `ui.html` points to the correct production worker URL:
-  ```javascript
-  var WORKER = 'https://ux-audit-worker.domain-sparrow.workers.dev';
-  ```
-- [ ] Ensure the Claude model specified in `ui.html` (`claude-sonnet-4-20250514` or equivalent) is the correct version you intend to use. (Note: Anthropic's current model is typically `claude-3-5-sonnet-20241022`, double check `ui.html` line 464).
-- [ ] Remove any leftover testing `console.log` statements in `code.js` and `ui.html`.
+- [ ] Create the 3 products in Stripe **Live mode** (test-mode products
+      don't carry over): Starter ($8/mo), Pro ($16/mo), Top-up ($5
+      one-time, 10 credits).
+- [ ] Copy the Live Price IDs into `STRIPE_PRICE_MAP` in
+      `worker-stripe.js` (currently placeholder IDs).
+- [ ] Create Live Payment Links for each product and swap them into
+      `public/index.html` and `figma-plugin/ui.html` (currently
+      `https://buy.stripe.com/STARTER_LINK` etc. — see `TOKENS.md` §2).
+- [ ] Re-create the Stripe webhook pointing at
+      `https://ux-audit-worker.domain-sparrow.workers.dev/webhook/stripe`,
+      select `checkout.session.completed` and
+      `customer.subscription.deleted`, copy the **Live** signing secret.
+- [ ] `wrangler secret put STRIPE_WEBHOOK_SECRET` with that live secret.
+- [ ] Un-hide the paid-plan pricing cards in `public/index.html` — drop
+      the `style="display:none;"` on the wrapper `div` right after the
+      "Hidden for now, not removed" comment (currently ~line 1423–1425);
+      same pattern in `figma-plugin/ui.html` if it hides them too.
+- [ ] Test the full flow with a real low-value charge or Stripe's test
+      clock in live mode before announcing it.
 
-## 4. Figma Publishing
-- [ ] Select the plugin from the local development menu in Figma.
-- [ ] Click **"Publish new release"**.
-- [ ] Fill out the required Figma Community metadata (Plugin Name, Description, Icon, Cover Art).
-- [ ] Submit for review.
+## 2. Ongoing / not urgent, but worth doing before heavy traffic
+
+- [ ] Decide a backup strategy for the D1 database (`ux-audit-db`) —
+      currently relies on Cloudflare's own durability only.
+- [ ] Add basic uptime/error alerting for the Worker (currently none —
+      failures are only visible via `wrangler tail` or the admin panel).
+- [ ] Consider lightweight funnel tracking (anonymous trial → email
+      signup → repeat use) — nothing beyond the admin panel's raw counts
+      exists today.
+- [ ] Review `MODEL_PRICING` in `worker-stripe.js` periodically — it's a
+      hardcoded snapshot of OpenRouter/Anthropic pricing, not live.
+
+## 3. Already done (kept here so it's not re-checked by mistake)
+
+- [x] AI pipeline: OpenRouter (Qwen → DeepSeek) with Claude fallback,
+      cost-tracked per request.
+- [x] Free access model: 2 anonymous + 5/day via email signup, with
+      abuse guards (disposable-email blocklist, Gmail alias
+      normalization, per-IP/global daily caps, kill switch — all
+      admin-configurable).
+- [x] Admin panel: subscribers, usage/cost per user, request log,
+      signup controls.
+- [x] `lintassist.com` / `www.lintassist.com` live as Cloudflare Pages
+      custom domains.
+- [x] Privacy policy live at `/privacy.html`.
+- [x] `SECURITY.md` + GitHub private vulnerability reporting enabled.
+- [x] Figma Community submission: description, assets, Data Security
+      disclosure answers all prepared (`FIGMA_PUBLISHING.md`) and
+      submitted — status "In review" as of 2026-09-16.

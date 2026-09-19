@@ -3,6 +3,11 @@
 **Platforms**: Twitter (X) & Instagram (Reels/Stories)
 **Core Theme**: "Vibe Coding a SaaS in 1 Day" & "Brutal AI Design Roasts"
 
+> **Status**: campaign ideation, not yet executed — the product is
+> already live (`lintassist.com`, Figma plugin in review), so "Phase 1:
+> Pre-Release" below should be read as a content framing choice, not a
+> literal launch state. See `HISTORY.md` for what's actually shipped.
+
 ---
 
 ## 🏗️ Phase 1: Pre-Release (Building Hype)
