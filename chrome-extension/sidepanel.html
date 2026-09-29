@@ -3,19 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LintAssist</title>
+  <title>AI Design Analyzer | LintAssist</title>
   <link rel="stylesheet" href="sidepanel.css">
   <link rel="stylesheet" href="progress.css">
   <link rel="stylesheet" href="steps.css">
   <link rel="stylesheet" href="usage.css">
   <link rel="stylesheet" href="analyze.css">
+  <style>
+    .channel-note { color: #6e6e73; font-size: 11px; text-align: center; margin: 12px 16px 0; }
+  </style>
 </head>
 <body>
   <header class="header">
     <img src="icon-128.png" alt="" width="34" height="34">
-    <div><h1>LintAssist</h1><p>AI design feedback</p></div>
+    <div><h1>LintAssist</h1><p>AI Design Analyzer</p></div>
     <button id="settings-toggle" class="icon-button" aria-label="Settings">⚙</button>
   </header>
+  <p class="channel-note">A quick second opinion, not the final word.</p>
   <main>
     <section id="settings" class="card settings" hidden>
       <label for="token">Access token</label>
@@ -77,6 +81,11 @@
       <div id="findings"></div>
       <p class="disclaimer">AI-generated feedback can be mistaken. Validate findings with your design and accessibility expertise.</p>
     </section>
+    <footer class="extension-footer">
+      <div>Available in: <a href="https://www.figma.com/community/plugin/1682243093526540677" target="_blank" rel="noopener">Figma</a> · <a href="https://app.lintassist.com/" target="_blank" rel="noopener">Web</a></div>
+      <div><a href="https://app.lintassist.com/releases.html" target="_blank" rel="noopener">What's new</a> · <a href="https://app.lintassist.com/privacy.html" target="_blank" rel="noopener">Privacy</a></div>
+      <div>LintAssist v1.0.1 · Siva Tayi</div>
+    </footer>
   </main>
   <script src="sidepanel.js"></script>
 </body>

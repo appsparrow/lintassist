@@ -182,6 +182,14 @@
       gap: 10px;
     }
 
+    .header-note {
+      flex-basis: 100%;
+      margin-top: -8px;
+      color: var(--muted-2);
+      font-size: 12px;
+      text-align: center;
+    }
+
     .token-wrap {
       display: none;
       border: 1px solid var(--border);
@@ -2044,6 +2052,8 @@
       </div>
     </header>
 
+    <div class="header-note">A quick second opinion, not the final word.</div>
+
     <div class="error-box" id="error-box"></div>
 
     <!-- Free trial indicator -->
@@ -2320,7 +2330,7 @@
       <div class="platform-note" aria-label="LintAssist platforms">
         <a class="platform-note-item" href="/" aria-label="LintAssist web app"><img src="/logo.png" alt=""><span>Web app</span></a>
         <a class="platform-note-item" href="https://www.figma.com/community/plugin/1682243093526540677" target="_blank" rel="noopener"><img src="/Logo-Figma.png" alt=""><span>Figma Plugin</span></a>
-        <div class="platform-note-item"><img src="/Logo-Google_Chrome_Web_Store.svg.webp" alt=""><span>Chrome Extension</span><small>Coming soon</small></div>
+        <a class="platform-note-item" href="https://chromewebstore.google.com/detail/bjieohhclineheleekjbmhfojcnijcbd?utm_source=item-share-cb" target="_blank" rel="noopener"><img src="/Logo-Google_Chrome_Web_Store.svg.webp" alt=""><span>Chrome Extension</span><small>Open in Chrome</small></a>
         <div class="platform-note-copy">Same token works across platforms</div>
       </div>
       <p> <span id="engine-tag" title="Model engine used for the last audit"></span></p>
