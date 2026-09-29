@@ -28,6 +28,8 @@
       --blue: #0071e3;
       --red: #dc2626;
       --red-bg: #fef2f2;
+      --kofi: #c62f28;
+      --kofi-hover: #a8221c;
       --r-sm: 8px;
       --r-md: 12px;
       --r-lg: 16px;
@@ -62,6 +64,7 @@
       justify-content: space-between;
       flex-shrink: 0;
       background: var(--surface);
+      gap: 10px;
     }
 
     .brand {
@@ -94,16 +97,33 @@
     }
 
     .settings-btn {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      padding: 5px 11px;
+      padding: 4px 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 100px;
       color: var(--muted);
-      cursor: pointer;
-      transition: all .15s;
+      cursor: default;
       flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    .token-link {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 7px 12px;
+      white-space: nowrap;
+    }
+
+    .token-link:hover {
+      background: var(--bg-soft);
+      border-color: var(--muted-2);
     }
 
     .settings-btn:hover {
@@ -274,6 +294,50 @@
       box-shadow: var(--shadow-sm);
     }
 
+    .tier-rail {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      margin: -2px 0 10px;
+    }
+
+    .tier-rail-label {
+      color: var(--muted-2);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .tier-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tier-pill {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: 100px;
+      color: var(--muted-2);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: 3px 7px;
+      transition: all .15s;
+    }
+
+    .tier-pill.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .tier-pill[data-tier="supporter"].active {
+      background: #9b3f32;
+      border-color: #9b3f32;
+    }
+
     .plan-tag {
       font-size: 9px;
       font-weight: 700;
@@ -392,30 +456,50 @@
       color: #fff;
     }
 
+    .plan-tag.active {
+      background: #176b49;
+      box-shadow: 0 2px 8px rgba(23, 107, 73, .2);
+    }
+
     .analyze-btn {
-      width: 100%;
-      background: var(--accent);
+      display: block;
+      width: fit-content;
+      min-width: 145px;
+      margin: 0 auto 14px;
+      background:
+        radial-gradient(circle at 18% 0%, #493c68 0, #241e38 38%, #11101b 100%) padding-box,
+        conic-gradient(from 120deg, #ff78c8, #9b7bff, #5de7ff, #ffe28a, #ff78c8) border-box;
       color: #fff;
-      border: none;
+      border: 1px solid transparent;
       border-radius: 100px;
-      padding: 11px;
+      padding: 10px 17px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
-      transition: all .15s;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow-sm);
+      transition: transform .15s, box-shadow .15s;
+      background-size: auto, 220% 220%;
+      animation: ai-border-shift 5s ease infinite;
+      box-shadow: 0 4px 14px rgba(139, 92, 246, .18);
     }
 
     .analyze-btn:hover:not(:disabled) {
-      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(139, 92, 246, .3);
     }
 
     .analyze-btn:disabled {
       background: var(--bg-soft);
+      border-color: var(--border-soft);
       color: var(--muted-2);
       cursor: not-allowed;
       box-shadow: none;
+      animation: none;
+      transform: none;
+    }
+
+    @keyframes ai-border-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .error-box {
@@ -511,7 +595,7 @@
 
     .pw-plans {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1px;
       background: var(--border-soft);
       border-top: 1px solid var(--border-soft);
@@ -525,6 +609,59 @@
       display: block;
       transition: background .15s;
       cursor: pointer;
+      position: relative;
+    }
+
+    .pw-plan.current {
+      box-shadow: inset 0 0 0 2px var(--green);
+    }
+
+    .pw-plan-current {
+      display: none;
+      color: var(--green);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      position: absolute;
+      right: 8px;
+      text-transform: uppercase;
+      top: 8px;
+    }
+
+    .pw-plan.current .pw-plan-current { display: block; }
+
+    .usage-link {
+      color: #a33d31;
+      font-size: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .access-support-carousel {
+      border-top: 1px solid rgba(23, 107, 73, .15);
+      margin-top: 8px;
+      padding-top: 7px;
+    }
+
+    .access-support-slide { display: none; }
+    .access-support-slide.active { display: block; }
+    .access-support-slide strong { color: var(--ink); font-size: 10px; }
+    .access-support-slide span { color: var(--muted); display: block; font-size: 9px; line-height: 1.35; margin-top: 2px; }
+    .access-support-dots { display: flex; gap: 4px; margin-top: 5px; }
+    .access-support-dot { width: 4px; height: 4px; border: 0; padding: 0; border-radius: 50%; background: #b9d9c8; cursor: pointer; }
+    .access-support-dot.active { background: var(--green); }
+
+    .ko-fi-highlight {
+      background: #fff;
+      border-radius: 6px;
+      color: #a33d31;
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      margin-top: 6px;
+      padding: 4px 6px;
+      text-decoration: none;
     }
 
     .pw-plan:hover {
@@ -619,6 +756,104 @@
 
     .report {
       display: none;
+    }
+
+    /* Shown only to email-registered users (their token, their daily
+       usage) — matches the web app's version. Deliberately loud: Ko-fi's
+       own coral, a shadow, a pill CTA. */
+    .coffee-banner {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, #fff8f5, #fff0eb);
+      border: 1px solid #f2b8a7;
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      margin-bottom: 9px;
+      box-shadow: 0 3px 10px rgba(198, 47, 40, .1);
+    }
+
+    .coffee-banner-emoji {
+      color: var(--kofi);
+      font-size: 21px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .support-carousel {
+      flex: 1;
+      min-width: 145px;
+    }
+
+    .support-slide {
+      display: none;
+    }
+
+    .support-slide.active {
+      display: block;
+    }
+
+    .support-kicker {
+      color: var(--kofi-hover);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    .support-headline {
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .support-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .support-controls {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .support-dot {
+      background: #e9b6aa;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      height: 5px;
+      padding: 0;
+      width: 5px;
+    }
+
+    .support-dot.active {
+      background: var(--kofi);
+      transform: scale(1.25);
+    }
+
+    .coffee-banner-btn {
+      background: var(--kofi);
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 11px;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(255, 94, 91, .4);
+      transition: background .15s;
+      flex-shrink: 0;
+    }
+
+    .coffee-banner-btn:hover {
+      background: var(--kofi-hover);
     }
 
     .score-row {
@@ -893,6 +1128,25 @@
       letter-spacing: .05em;
       color: var(--muted);
     }
+
+    .plugin-footer {
+      border-top: 1px solid var(--border-soft);
+      color: var(--muted-2);
+      font-size: 10px;
+      line-height: 1.5;
+      margin-top: 18px;
+      padding: 12px 2px 2px;
+      text-align: center;
+    }
+
+    .plugin-footer a {
+      color: var(--muted-2);
+      text-decoration: none;
+    }
+
+    .plugin-footer a:hover {
+      color: var(--accent);
+    }
   </style>
 </head>
 
@@ -901,7 +1155,8 @@
     <div class="brand">
       <div class="logo">A quick second opinion, not the final word.</div>
     </div>
-    <button class="settings-btn" id="settings-btn">⚙ Token</button>
+    <span class="settings-btn active" id="settings-btn">✓ Try</span>
+    <button class="token-link" id="token-link">Have a token?</button>
   </div>
 
   <div class="body">
@@ -915,8 +1170,8 @@
         Same token works here and on the web app.
       </div>
       <div class="settings-note" style="margin-top:10px;">
-        <a href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">☕ If this is useful, buy
-          me a coffee</a> — just a tip, nothing tied to it.
+        <a href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">If LintAssist saves you
+          time, support its continued development on Ko-fi.</a>
       </div>
       <div class="settings-note" style="margin-top:6px;">
         <a href="https://lintassist.com/privacy.html" data-external="https://lintassist.com/privacy.html">Privacy
@@ -936,12 +1191,13 @@
     </div>
 
     <div class="usage-strip" id="usage-strip">
-      <span class="plan-tag" id="plan-tag">FREE</span>
-      <div class="usage-track">
-        <div class="usage-fill" id="usage-fill"></div>
+      <span class="plan-tag" id="plan-tag">ACTIVE</span>
+        <div class="usage-track">
+          <div class="usage-fill" id="usage-fill"></div>
+        </div>
+        <span class="usage-lbl" id="usage-lbl"></span>
+        <a class="usage-link" id="usage-link" href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">Like it? Buy me a coffee →</a>
       </div>
-      <span class="usage-lbl" id="usage-lbl"></span>
-    </div>
 
     <div class="sel-bar">
       <div class="sel-dot" id="sel-dot"></div>
@@ -954,13 +1210,13 @@
     <div class="section-lbl">Evaluate Against</div>
     <div class="chips">
       <div class="chip on" data-val="heuristics">Nielsen Heuristics</div>
-      <div class="chip on" data-val="visual_hierarchy">Visual Hierarchy</div>
+      <div class="chip" data-val="visual_hierarchy">Visual Hierarchy</div>
       <div class="chip on" data-val="gestalt">Gestalt</div>
-      <div class="chip on" data-val="typography">Typography</div>
-      <div class="chip on" data-val="color_contrast">Color &amp; Contrast</div>
+      <div class="chip" data-val="typography">Typography</div>
+      <div class="chip" data-val="color_contrast">Color &amp; Contrast</div>
       <div class="chip on" data-val="accessibility">Accessibility</div>
-      <div class="chip on" data-val="cta">CTA &amp; Conversion</div>
-      <div class="chip on" data-val="mobile">Mobile Readiness</div>
+      <div class="chip" data-val="cta">CTA &amp; Conversion</div>
+      <div class="chip" data-val="mobile">Mobile Readiness</div>
     </div>
 
     <button class="analyze-btn" id="analyze-btn" disabled>Analyze Frame</button>
@@ -971,29 +1227,38 @@
         <div class="pw-eyebrow">Free audits used up</div>
         <div class="pw-headline">Like it? Keep going.</div>
         <div class="pw-sub">One token works here and on the web app.</div>
+        <div class="access-support-carousel" aria-live="polite">
+          <div class="access-support-slide active"><strong>Before the review</strong><span>Not sure what to fix first? Start with ranked next steps.</span></div>
+          <div class="access-support-slide"><strong>Before the handoff</strong><span>Get a second pair of eyes on usability and accessibility.</span></div>
+          <div class="access-support-slide"><strong>Keep it going</strong><span>Your support helps keep thoughtful feedback available.</span></div>
+          <div class="access-support-dots"><button class="access-support-dot active" type="button" aria-label="Support message 1"></button><button class="access-support-dot" type="button" aria-label="Support message 2"></button><button class="access-support-dot" type="button" aria-label="Support message 3"></button></div>
+        </div>
       </div>
       <div class="pw-plans">
-        <a href="https://lintassist.com/#pricing" class="pw-plan" data-external="https://lintassist.com/#pricing">
-          <div class="pw-name">Starter</div>
-          <div class="pw-price">$7<span class="pw-mo">/mo</span></div>
-          <div class="pw-audits">30 audits</div>
-          <div class="pw-cta">Subscribe</div>
+        <div class="pw-plan" data-tier="try">
+          <span class="pw-plan-current">Current</span>
+          <div class="pw-name">Try</div>
+          <div class="pw-price">2<span class="pw-mo">free</span></div>
+          <div class="pw-audits">No signup</div>
+          <div class="pw-cta">Start</div>
+        </div>
+        <a href="https://lintassist.com/#pricing" class="pw-plan best" data-tier="free" data-external="https://lintassist.com/#pricing">
+          <span class="pw-plan-current">Current</span>
+          <div class="pw-name">Free</div>
+          <div class="pw-price">5<span class="pw-mo">/day</span></div>
+          <div class="pw-audits">Add your email, no card</div>
+          <div class="pw-cta">Sign up</div>
         </a>
-        <a href="https://lintassist.com/#pricing" class="pw-plan best" data-external="https://lintassist.com/#pricing">
-          <div class="pw-name">Pro</div>
-          <div class="pw-price">$15<span class="pw-mo">/mo</span></div>
-          <div class="pw-audits">100 audits</div>
-          <div class="pw-cta">Subscribe</div>
-        </a>
-        <a href="https://lintassist.com/#pricing" class="pw-plan" data-external="https://lintassist.com/#pricing">
-          <div class="pw-name">Credits</div>
-          <div class="pw-price">$3</div>
-          <div class="pw-audits">+50 audits</div>
-          <div class="pw-cta">Buy</div>
+        <a href="https://ko-fi.com/appsparrow" class="pw-plan" data-tier="supporter" data-external="https://ko-fi.com/appsparrow">
+          <span class="pw-plan-current">Current</span>
+          <div class="pw-name">Support LintAssist</div>
+          <div class="pw-price">+50<span class="pw-mo">bonus</span></div>
+          <div class="pw-audits">A thank-you for your support</div>
+          <div class="pw-cta">Support</div>
         </a>
       </div>
       <div class="pw-footer">
-        <input type="password" id="pw-token" placeholder="Already have a token?">
+        <input type="password" id="pw-token" placeholder="Already have a token? Apply it here">
         <button id="pw-apply-btn">Apply</button>
       </div>
     </div>
@@ -1008,6 +1273,34 @@
     </div>
 
     <div class="report" id="report">
+      <!-- Only shown to email-registered users (their token, their daily
+           usage) — see renderReport() toggling this via display:flex. -->
+      <div class="coffee-banner" id="coffee-banner">
+        <div class="coffee-banner-emoji">☕</div>
+        <div class="support-carousel" aria-live="polite">
+          <div class="support-slide active">
+            <div class="support-kicker">Before the review</div>
+            <div class="support-headline">Not sure what to fix first?</div>
+            <div class="support-copy">LintAssist turns a frame into ranked, practical next steps.</div>
+          </div>
+          <div class="support-slide">
+            <div class="support-kicker">Before the handoff</div>
+            <div class="support-headline">Want a second pair of eyes?</div>
+            <div class="support-copy">Check usability, structure, and accessibility before you share.</div>
+          </div>
+          <div class="support-slide">
+            <div class="support-kicker">A small thank-you</div>
+            <div class="support-headline">If this helped, support LintAssist.</div>
+            <div class="support-copy">A Ko-fi tip helps keep thoughtful design feedback available.</div>
+          </div>
+          <div class="support-controls" aria-label="Support messages">
+            <button class="support-dot active" type="button" aria-label="Show message 1"></button>
+            <button class="support-dot" type="button" aria-label="Show message 2"></button>
+            <button class="support-dot" type="button" aria-label="Show message 3"></button>
+          </div>
+        </div>
+        <a class="coffee-banner-btn" href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">Support on Ko-fi</a>
+      </div>
       <div class="score-row">
         <div>
           <div class="screen-name" id="r-name"></div>
@@ -1045,6 +1338,17 @@
       </div>
       <div style="text-align:center;"><span id="engine-tag" title="Model engine used for the last audit"></span></div>
     </div>
+
+    <footer class="plugin-footer">
+      <div>LintAssist v1.0.1 · Siva Tayi</div>
+      <div>
+        <a href="https://lintassist.com" data-external="https://lintassist.com">Web app</a>
+        <span> · </span>
+        <a href="https://lintassist.com/releases.html" data-external="https://lintassist.com/releases.html">What's new</a>
+        <span> · </span>
+        <a href="https://lintassist.com/privacy.html" data-external="https://lintassist.com/privacy.html">Privacy</a>
+      </div>
+    </footer>
   </div>
 
   <script>
@@ -1063,6 +1367,58 @@
       var statusData = null;
       var selectedFrame = null;
       var lastReport = null;
+
+      function setAccessPlan(tier) {
+        document.querySelectorAll('.pw-plan[data-tier]').forEach(function (card) {
+          card.classList.toggle('current', card.dataset.tier === tier);
+        });
+      }
+
+      function setTierState(tier) {
+        document.querySelectorAll('.tier-pill').forEach(function (pill) {
+          pill.classList.toggle('active', pill.dataset.tier === tier);
+        });
+        var labels = { try: 'Try', free: 'Free', supporter: 'Supporter' };
+        var tierButton = document.getElementById('settings-btn');
+        tierButton.textContent = '✓ ' + labels[tier];
+        tierButton.className = 'settings-btn active';
+        setAccessPlan(tier);
+      }
+
+      function initAccessCarousel() {
+        var root = document.querySelector('.access-support-carousel');
+        if (!root) return;
+        var slides = root.querySelectorAll('.access-support-slide');
+        var dots = root.querySelectorAll('.access-support-dot');
+        var current = 0;
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) { slide.classList.toggle('active', i === current); });
+          dots.forEach(function (dot, i) { dot.classList.toggle('active', i === current); });
+        }
+        var timer = setInterval(function () { show(current + 1); }, 4500);
+        dots.forEach(function (dot, i) { dot.addEventListener('click', function (event) { event.stopPropagation(); clearInterval(timer); show(i); }); });
+      }
+
+      function initSupportCarousel() {
+        var root = document.querySelector('.support-carousel');
+        if (!root) return;
+        var slides = root.querySelectorAll('.support-slide');
+        var dots = root.querySelectorAll('.support-dot');
+        var current = 0;
+        var timer;
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) { slide.classList.toggle('active', i === current); });
+          dots.forEach(function (dot, i) { dot.classList.toggle('active', i === current); });
+        }
+        function start() { timer = setInterval(function () { show(current + 1); }, 5000); }
+        dots.forEach(function (dot, i) { dot.addEventListener('click', function () { clearInterval(timer); show(i); start(); }); });
+        start();
+      }
+
+      initSupportCarousel();
+      initAccessCarousel();
 
       // ── Messages FROM code.js ─────────────────────────────────────
       window.onmessage = function (event) {
@@ -1127,7 +1483,7 @@
       });
 
       // ── Token settings ────────────────────────────────────────────
-      document.getElementById('settings-btn').addEventListener('click', function () {
+      document.getElementById('token-link').addEventListener('click', function () {
         document.getElementById('settings-panel').classList.toggle('open');
       });
 
@@ -1158,10 +1514,8 @@
           var d = await r.json();
           if (!r.ok) throw new Error(errMsg(d.error) || 'Invalid token');
           statusData = d;
+          setTierState(d.extra_credits > 0 ? 'supporter' : 'free');
           hideErr();
-          var btn = document.getElementById('settings-btn');
-          btn.textContent = '✓ ' + d.plan_name;
-          btn.className = 'settings-btn active';
           document.getElementById('settings-panel').classList.remove('open');
           document.getElementById('trial-strip').style.display = 'none';
           document.getElementById('paywall').style.display = 'none';
@@ -1170,8 +1524,7 @@
         } catch (e) {
           statusData = null; token = '';
           parent.postMessage({ pluginMessage: { type: 'save-token', token: '' } }, '*');
-          document.getElementById('settings-btn').textContent = '⚙ Token';
-          document.getElementById('settings-btn').className = 'settings-btn';
+          setTierState('try');
           if (showFeedback) showErr(e.message);
           updateTrialUI();
           updateBtn();
@@ -1180,6 +1533,7 @@
 
       // ── Trial / usage UI ──────────────────────────────────────────
       function updateTrialUI() {
+        setTierState('try');
         var left = Math.max(0, FREE_LIMIT - freeUsed);
         document.getElementById('dot0').className = 'dot' + (freeUsed > 0 ? ' used' : '');
         document.getElementById('dot1').className = 'dot' + (freeUsed > 1 ? ' used' : '');
@@ -1188,17 +1542,23 @@
           : '<b>Free audits used</b> — subscribe to continue';
         document.getElementById('trial-strip').style.display = 'flex';
         document.getElementById('usage-strip').style.display = 'none';
+        document.getElementById('usage-link').style.display = 'none';
       }
 
       function showUsageStrip(d) {
         document.getElementById('usage-strip').style.display = 'flex';
         document.getElementById('trial-strip').style.display = 'none';
-        document.getElementById('plan-tag').textContent = (d.plan_name || 'Free').toUpperCase();
+        var planTag = document.getElementById('plan-tag');
+        planTag.textContent = 'ACTIVE';
+        planTag.classList.add('active');
+        planTag.title = (d.plan_name || 'Free') + ' access active';
         var pct = d.limit_this_month > 0 ? d.used_this_month / d.limit_this_month : 0;
         var fill = document.getElementById('usage-fill');
         fill.style.width = Math.min(100, Math.round(pct * 100)) + '%';
         fill.className = 'usage-fill' + (pct >= 1 ? ' full' : pct >= 0.8 ? ' warn' : '');
         document.getElementById('usage-lbl').textContent = d.remaining + '/' + d.limit_this_month + ' left';
+        var supportLink = document.getElementById('usage-link');
+        supportLink.style.display = d.extra_credits > 0 ? 'none' : 'inline-block';
       }
 
       function updateBtn() {
@@ -1326,6 +1686,9 @@
         lastReport = { data: data, name: name };
         document.getElementById('report').style.display = 'block';
         document.getElementById('analyze-btn').disabled = false;
+        // Registered (token + verified) users are the ones actually running
+        // through their free daily quota — matches the web app's targeting.
+        document.getElementById('coffee-banner').style.display = (token && statusData) ? 'flex' : 'none';
         var sc = data.score || 0;
         var sn = document.getElementById('r-score');
         sn.textContent = sc;

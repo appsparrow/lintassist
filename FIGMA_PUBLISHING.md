@@ -1,9 +1,48 @@
 # Publishing to the Figma Community
 
 Internal reference (git-only, not deployed). Sourced from Figma's own
-current docs on 2026-09-13:
+current docs on 2026-09-13 (first-publish flow) and 2026-09-28 (update
+flow):
 - [Publish plugins to the Figma Community](https://help.figma.com/hc/en-us/articles/360042293394-Publish-plugins-to-the-Figma-Community)
 - [Plugin and widget review guidelines](https://help.figma.com/hc/en-us/articles/360039958914-Plugin-and-widget-review-guidelines)
+- [Manage plugins as a developer](https://help.figma.com/hc/en-us/articles/360042293714-Manage-plugins-as-a-developer) (the update flow below)
+
+## Publishing an update (once the plugin is already live)
+
+This is the flow you'll use every time after the initial publish —
+including for changes already made in this repo (the bolder "Buy Me a
+Coffee" banner on the report, and the corrected pricing tiers in the
+paywall — see `figma-plugin/ui.html`).
+
+1. Open any file in the **Figma desktop app** (required — same as
+   first publish) → Figma logo (top-left) → **Plugins → Manage
+   plugins**.
+2. Find the plugin in the list, click the **`⋯`** menu next to it, and
+   choose **Publish new version**.
+   - If that option isn't there, choose **Locate local version**,
+     point it at this repo's `figma-plugin/manifest.json`, and it'll
+     pick up from there.
+3. Figma reads the current code from your local `figma-plugin/`
+   folder. In the modal you can update the name, description, tags,
+   artwork, and add **release notes** for this version — e.g. *"Bolder
+   'Buy Me a Coffee' prompt on every report for registered users;
+   fixed the pricing panel to match the site's real Free/Ko-fi tiers
+   instead of outdated placeholder pricing."*
+4. Click **Publish**. **No re-review** — once a plugin has been
+   approved once, every subsequent version publishes immediately and
+   goes live for all users right away (no staged rollout; everyone who
+   already has it installed is on the new version as soon as you
+   publish).
+5. Only the plugin listing's page content (description/images/tags)
+   can also be edited on its own at any time from the Community page,
+   without pushing a code update at all — useful if you just want to
+   fix a typo in the listing without touching the plugin itself.
+
+Practically: this has to be done from the same Figma desktop app,
+signed into the account that owns the published plugin, with this
+repo's `figma-plugin/` folder available locally (Figma reads the
+`manifest.json` + code files directly off disk — there's no separate
+upload/build step, same as running it in development).
 
 ## Prerequisites
 

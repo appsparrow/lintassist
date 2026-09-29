@@ -37,6 +37,8 @@
       --blue: #0071e3;
       --red: #dc2626;
       --red-bg: #fef2f2;
+      --kofi: #c62f28;
+      --kofi-hover: #a8221c;
       --r-sm: 8px;
       --r-md: 12px;
       --r-lg: 18px;
@@ -151,13 +153,15 @@
     }
 
     .token-wrap {
-      display: flex;
+      display: none;
       border: 1px solid var(--border);
       border-radius: 10px;
       overflow: hidden;
       background: var(--surface);
       transition: border-color .15s, box-shadow .15s;
     }
+
+    .token-wrap.open { display: flex; }
 
     .token-wrap:focus-within {
       border-color: var(--accent);
@@ -180,9 +184,12 @@
     }
 
     .token-btn {
-      background: var(--ink);
-      color: #fff;
-      border: none;
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--border);
+      border-top: 0;
+      border-right: 0;
+      border-bottom: 0;
       padding: 9px 16px;
       font-size: 13px;
       font-weight: 600;
@@ -192,14 +199,33 @@
     }
 
     .token-btn:hover {
-      background: #000;
+      background: var(--bg-soft);
     }
 
-    .token-ok {
+    .token-toggle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--ink);
+      cursor: pointer;
       font-size: 12px;
       font-weight: 600;
+      padding: 8px 13px;
+      white-space: nowrap;
+    }
+
+    .token-toggle:hover { background: var(--bg-soft); }
+
+    .token-ok {
+      align-items: center;
+      background: #ecfdf3;
+      border: 1px solid #178848;
+      border-radius: 100px;
+      display: inline-flex;
+      font-size: 11px;
+      font-weight: 600;
       color: var(--green);
-      display: none;
+      padding: 4px 8px;
       white-space: nowrap;
     }
 
@@ -275,6 +301,50 @@
       box-shadow: var(--shadow-sm);
     }
 
+    .tier-rail {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+      margin: -4px 0 12px;
+    }
+
+    .tier-rail-label {
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .tier-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .tier-pill {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: 100px;
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: 4px 9px;
+      transition: all .15s;
+    }
+
+    .tier-pill.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: #fff;
+    }
+
+    .tier-pill[data-tier="supporter"].active {
+      background: #9b3f32;
+      border-color: #9b3f32;
+    }
+
     .plan-tag {
       font-size: 10px;
       font-weight: 700;
@@ -285,6 +355,11 @@
       padding: 3px 9px;
       border-radius: 100px;
       white-space: nowrap;
+    }
+
+    .plan-tag.active {
+      background: #176b49;
+      box-shadow: 0 2px 8px rgba(23, 107, 73, .2);
     }
 
     .usage-track {
@@ -464,38 +539,49 @@
 
     /* Analyze button */
     .analyze-btn {
-      width: 100%;
-      background: var(--accent);
+      display: block;
+      width: fit-content;
+      min-width: 168px;
+      margin: 0 auto 20px;
+      background:
+        radial-gradient(circle at 18% 0%, #493c68 0, #241e38 38%, #11101b 100%) padding-box,
+        conic-gradient(from 120deg, #ff78c8, #9b7bff, #5de7ff, #ffe28a, #ff78c8) border-box;
       color: #fff;
-      border: none;
+      border: 1px solid transparent;
       border-radius: 100px;
-      padding: 14px;
+      padding: 12px 22px;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all .15s;
-      margin-bottom: 20px;
+      transition: transform .15s, box-shadow .15s;
       letter-spacing: -0.01em;
-      box-shadow: var(--shadow-sm);
+      background-size: auto, 220% 220%;
+      animation: ai-border-shift 5s ease infinite;
+      box-shadow: 0 5px 18px rgba(139, 92, 246, .18);
     }
 
     .analyze-btn:hover:not(:disabled) {
-      background: var(--accent-hover);
       transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, .3);
     }
 
     .analyze-btn:active:not(:disabled) {
-      background: var(--accent-active);
       transform: translateY(0);
     }
 
     .analyze-btn:disabled {
       background: var(--bg-soft);
+      border-color: var(--border-soft);
       color: var(--muted-2);
       cursor: not-allowed;
       transform: none;
       box-shadow: none;
+      animation: none;
+    }
+
+    @keyframes ai-border-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .error-box {
@@ -607,6 +693,93 @@
       color: var(--muted);
       line-height: 1.6;
       max-width: 480px;
+    }
+
+    /* Three-step access ladder: no email -> email -> unlimited (soon).
+       Same visual language as .paywall-plans below it. */
+    .access-tiers {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--border-soft);
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .access-tier {
+      cursor: pointer;
+      padding: 16px 18px;
+      background: var(--surface);
+      position: relative;
+      transition: background .15s;
+    }
+
+    .access-tier:hover { background: #fafafa; }
+
+    .access-tier.active {
+      background: var(--accent-tint);
+    }
+
+    .access-tier.soon {
+      opacity: .65;
+    }
+
+    .access-tier.coffee {
+      background: var(--green-bg);
+    }
+
+    .access-tier-current {
+      display: none;
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .access-tier.current .access-tier-current { display: block; }
+
+    .access-tier-step {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .access-tier.active .access-tier-step {
+      color: var(--accent);
+    }
+
+    .access-tier.coffee .access-tier-step {
+      color: var(--green);
+    }
+
+    .access-tier-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .access-tier-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .access-tier-desc a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .access-tier-desc a:hover {
+      color: var(--accent-hover);
     }
 
     .paywall-plans {
@@ -741,10 +914,39 @@
     /* Interim free-access signup — until real Stripe checkout is wired
        up. Deliberately lighter-weight than the paid plan cards above. */
     .pw-free-access {
+      display: none;
       padding: 18px 22px;
       border-top: 1px solid var(--border-soft);
       background: var(--surface);
     }
+
+    .pw-free-access.show { display: block; }
+
+    .ko-fi-highlight {
+      display: inline-block;
+      margin-top: 9px;
+      padding: 5px 9px;
+      border-radius: 7px;
+      background: #fff;
+      color: #a33d31;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .access-support-carousel {
+      border-top: 1px solid rgba(23, 107, 73, .15);
+      margin-top: 11px;
+      padding-top: 9px;
+    }
+
+    .access-support-slide { display: none; }
+    .access-support-slide.active { display: block; }
+    .access-support-slide strong { color: var(--ink); font-size: 12px; }
+    .access-support-slide span { color: var(--muted); display: block; font-size: 11px; line-height: 1.4; margin-top: 2px; }
+    .access-support-dots { display: flex; gap: 4px; margin-top: 7px; }
+    .access-support-dot { width: 5px; height: 5px; border: 0; padding: 0; border-radius: 50%; background: #b9d9c8; cursor: pointer; }
+    .access-support-dot.active { background: var(--green); }
 
     .pw-free-eyebrow {
       font-size: 11px;
@@ -814,6 +1016,87 @@
       margin-top: 8px;
       font-size: 11px;
       color: var(--muted);
+    }
+
+    /* Token reveal — shown after a successful /access call (new or
+       returning signup) so the user can copy it into the Figma plugin. */
+    .pw-token-reveal {
+      display: none;
+      margin: 0 22px 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--green);
+      border-radius: var(--r-sm);
+      background: var(--green-bg);
+    }
+
+    .pw-token-reveal.show {
+      display: block;
+    }
+
+    .pw-token-reveal-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .pw-token-reveal-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pw-token-reveal-row input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 9px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      color: var(--ink);
+      background: var(--surface);
+      outline: none;
+    }
+
+    .pw-token-reveal-row button {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-sm);
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+
+    .pw-token-reveal-row button:hover {
+      background: #0f6631;
+    }
+
+    .pw-token-reveal-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .pw-token-reveal-continue {
+      display: inline-block;
+      margin-top: 10px;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      transition: color .15s;
+    }
+
+    .pw-token-reveal-continue:hover {
+      color: var(--accent-hover);
     }
 
     .paywall-footer {
@@ -1098,6 +1381,104 @@
       line-height: 1.7;
     }
 
+    /* Contextual support carousel for registered users. */
+    .coffee-banner {
+      display: none;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, #fff8f5, #fff0eb);
+      border: 1px solid #f2b8a7;
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(198, 47, 40, .1);
+    }
+
+    .coffee-banner-emoji {
+      color: var(--kofi);
+      font-size: 25px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .support-carousel {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .support-slide {
+      display: none;
+    }
+
+    .support-slide.active {
+      display: block;
+    }
+
+    .support-kicker {
+      color: var(--kofi-hover);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .07em;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+
+    .support-headline {
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .support-copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 2px;
+    }
+
+    .support-controls {
+      align-items: center;
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .support-dot {
+      background: #e9b6aa;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      height: 6px;
+      padding: 0;
+      width: 6px;
+    }
+
+    .support-dot.active {
+      background: var(--kofi);
+      transform: scale(1.25);
+    }
+
+    .coffee-banner-btn {
+      background: var(--kofi);
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 15px;
+      border-radius: 100px;
+      white-space: nowrap;
+      box-shadow: 0 2px 7px rgba(198, 47, 40, .25);
+      transition: background .15s, transform .15s;
+      flex-shrink: 0;
+    }
+
+    .coffee-banner-btn:hover {
+      background: var(--kofi-hover);
+      transform: translateY(-1px);
+    }
+
     .ai-note {
       background: var(--amber-bg);
       border: 1px solid #fed7aa;
@@ -1319,6 +1700,10 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      .access-tiers {
+        grid-template-columns: 1fr;
+      }
+
       .brand-mark {
         width: 32px;
         height: 32px;
@@ -1341,11 +1726,12 @@
         </div>
       </div>
       <div class="hdr-right">
+        <span class="token-ok" id="token-ok">✓ Try</span>
         <div class="token-wrap">
           <input type="password" id="token-input" placeholder="Have a token?" autocomplete="off">
           <button class="token-btn" id="token-btn">Verify</button>
         </div>
-        <span class="token-ok" id="token-ok">✓ Active</span>
+        <button class="token-toggle" id="token-toggle">Have a token?</button>
       </div>
     </header>
 
@@ -1356,19 +1742,19 @@
           <div class="dot" id="dot0"></div>
           <div class="dot" id="dot1"></div>
         </div>
-        <div class="trial-label" id="trial-label"><b>2 free audits</b> — no account needed</div>
+        <div class="trial-label" id="trial-label"><b>2 free audits</b> — no email needed</div>
       </div>
-      <a href="#pricing" class="get-access" id="get-access-link">Get tokens →</a>
+      <a href="#pricing" class="get-access" id="get-access-link">Add email for 5/day →</a>
     </div>
 
     <!-- Subscriber usage strip -->
     <div class="usage-strip" id="usage-strip">
-      <span class="plan-tag" id="plan-tag">FREE</span>
+      <span class="plan-tag" id="plan-tag">ACTIVE</span>
       <div class="usage-track">
         <div class="usage-fill" id="usage-fill"></div>
       </div>
       <span class="usage-label" id="usage-label"></span>
-      <a href="#pricing" class="upgrade-sm" id="upgrade-link">Upgrade</a>
+      <a href="#pricing" class="upgrade-sm" id="upgrade-link"> Need Tokens? →</a>
     </div>
 
     <!-- Upload -->
@@ -1390,13 +1776,13 @@
     <div class="section-lbl">Evaluate Against</div>
     <div class="chips">
       <div class="chip on" data-val="heuristics">Nielsen Heuristics</div>
-      <div class="chip on" data-val="visual_hierarchy">Visual Hierarchy</div>
+      <div class="chip" data-val="visual_hierarchy">Visual Hierarchy</div>
       <div class="chip on" data-val="gestalt">Gestalt</div>
-      <div class="chip on" data-val="typography">Typography</div>
-      <div class="chip on" data-val="color_contrast">Color & Contrast</div>
+      <div class="chip" data-val="typography">Typography</div>
+      <div class="chip" data-val="color_contrast">Color & Contrast</div>
       <div class="chip on" data-val="accessibility">Accessibility</div>
-      <div class="chip on" data-val="cta">CTA & Conversion</div>
-      <div class="chip on" data-val="mobile">Mobile Readiness</div>
+      <div class="chip" data-val="cta">CTA & Conversion</div>
+      <div class="chip" data-val="mobile">Mobile Readiness</div>
     </div>
 
     <button class="analyze-btn" id="analyze-btn" disabled>Analyze Screen</button>
@@ -1405,20 +1791,57 @@
     <!-- Pricing -->
     <div class="paywall" id="pricing">
       <div class="paywall-body">
-        <div class="paywall-eyebrow">Pricing & Tokens</div>
-        <div class="paywall-headline">Get 5 free audits every day,<br><i>paid plans are coming soon.</i></div>
-        <div class="paywall-sub">Just enter your email below for instant access — same token works on web and in
-          Figma.</div>
+        <div class="paywall-eyebrow">How access works</div>
+        <div class="paywall-headline">No account needed to start.<br><i>Add your email for more.</i></div>
+        <div class="paywall-sub">No credit card, ever. Three tiers, no gotchas:</div>
+        <div class="access-support-carousel" aria-live="polite">
+          <div class="access-support-slide active"><strong>Before the review</strong><span>Not sure what to fix first? Start with ranked next steps.</span></div>
+          <div class="access-support-slide"><strong>Before the handoff</strong><span>Get a second pair of eyes on usability and accessibility.</span></div>
+          <div class="access-support-slide"><strong>Keep it going</strong><span>Your support helps keep thoughtful feedback available.</span></div>
+          <div class="access-support-dots"><button class="access-support-dot active" type="button" aria-label="Support message 1"></button><button class="access-support-dot" type="button" aria-label="Support message 2"></button><button class="access-support-dot" type="button" aria-label="Support message 3"></button></div>
+        </div>
       </div>
-      <div class="pw-free-access">
+      <div class="access-tiers">
+        <div class="access-tier current" data-access-tier="try">
+          <span class="access-tier-current">Current</span>
+          <div class="access-tier-step">Try</div>
+          <div class="access-tier-title">2 free audits</div>
+          <div class="access-tier-desc">No signup, no email, no strings.</div>
+        </div>
+        <div class="access-tier" data-access-tier="free">
+          <span class="access-tier-current">Current</span>
+          <div class="access-tier-step">Free</div>
+          <div class="access-tier-title">5 free audits / day</div>
+          <div class="access-tier-desc">Add your email — same token works on the web and in the Figma plugin.</div>
+        </div>
+        <div class="access-tier coffee" data-access-tier="supporter">
+          <span class="access-tier-current">Current</span>
+          <div class="access-tier-step">Support LintAssist</div>
+          <div class="access-tier-title">+50 bonus audits</div>
+          <div class="access-tier-desc">Support on <a href="https://ko-fi.com/appsparrow" target="_blank"
+              rel="noopener">Ko-fi</a> if LintAssist saves you time. We’ll add the bonus audits to the same email.</div>
+          <a class="ko-fi-highlight" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener">Support on Ko-fi →</a>
+        </div>
+      </div>
+      <div class="pw-free-access" id="pw-free-access">
         <div class="pw-free-row">
-          <input type="text" id="access-fname" placeholder="First name">
-          <input type="text" id="access-lname" placeholder="Last name">
-          <input type="email" id="access-email" placeholder="you@example.com">
+          <input type="text" id="access-fname" placeholder="First name" required>
+          <input type="text" id="access-lname" placeholder="Last name" required>
+          <input type="email" id="access-email" placeholder="you@example.com" required>
           <button id="access-btn">Get Free Access</button>
         </div>
         <div class="pw-free-note">No password — enter this same email again later (any device) to get your access back.
         </div>
+      </div>
+      <div class="pw-token-reveal" id="pw-token-reveal">
+        <div class="pw-token-reveal-label" id="pw-token-reveal-label">✓ Your access token</div>
+        <div class="pw-token-reveal-row">
+          <input type="text" id="pw-token-reveal-input" readonly aria-label="Your access token">
+          <button id="pw-token-reveal-copy" type="button">Copy</button>
+        </div>
+        <div class="pw-token-reveal-note">Paste this into the LintAssist Figma plugin to unlock it there too — the same
+          token works on web and in Figma.</div>
+        <button class="pw-token-reveal-continue" id="pw-token-reveal-continue" type="button">Continue →</button>
       </div>
       <!-- Hidden for now, not removed — re-enable by dropping this
            style="display:none" once monthly plans are ready to launch. -->
@@ -1481,6 +1904,34 @@
 
     <!-- Report -->
     <div class="report" id="report">
+      <!-- Only shown to email-registered users (their token, their daily
+           usage) — see renderReport() toggling this via display:flex. -->
+      <div class="coffee-banner" id="coffee-banner">
+        <div class="coffee-banner-emoji">☕</div>
+        <div class="support-carousel" aria-live="polite">
+          <div class="support-slide active">
+            <div class="support-kicker">Before the review</div>
+            <div class="support-headline">Not sure what to fix first?</div>
+            <div class="support-copy">LintAssist turns a screen into ranked, practical next steps.</div>
+          </div>
+          <div class="support-slide">
+            <div class="support-kicker">Before the handoff</div>
+            <div class="support-headline">Want a second pair of eyes?</div>
+            <div class="support-copy">Check usability, structure, and accessibility before you share.</div>
+          </div>
+          <div class="support-slide">
+            <div class="support-kicker">A small thank-you</div>
+            <div class="support-headline">If this helped, support LintAssist.</div>
+            <div class="support-copy">A Ko-fi tip helps keep thoughtful design feedback available.</div>
+          </div>
+          <div class="support-controls" aria-label="Support messages">
+            <button class="support-dot active" type="button" aria-label="Show message 1"></button>
+            <button class="support-dot" type="button" aria-label="Show message 2"></button>
+            <button class="support-dot" type="button" aria-label="Show message 3"></button>
+          </div>
+        </div>
+        <a class="coffee-banner-btn" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener">Support on Ko-fi</a>
+      </div>
       <div class="report-hdr">
         <div>
           <h2>Audit Report</h2>
@@ -1536,7 +1987,10 @@
           buy me a coffee</a>
         <span style="color:var(--border);">·</span>
         <a class="coffee-link" href="/privacy.html">Privacy</a>
+        <span style="color:var(--border);">·</span>
+        <a class="coffee-link" href="/releases.html">What's new</a>
       </p>
+      <p style="margin-top:6px;">LintAssist v1.0.1 · Siva Tayi</p>
     </footer>
   </div>
 
@@ -1554,6 +2008,59 @@
       var statusData = null;
       var b64 = null, mime = 'image/png';
 
+      function setAccessPlan(tier) {
+        document.querySelectorAll('.access-tier').forEach(function (card) {
+          card.classList.toggle('current', card.dataset.accessTier === tier);
+        });
+        document.getElementById('pw-free-access').classList.toggle('show', tier === 'free');
+      }
+
+      function setTierState(tier) {
+        document.querySelectorAll('.tier-pill').forEach(function (pill) {
+          pill.classList.toggle('active', pill.dataset.tier === tier);
+        });
+        var labels = { try: 'Try', free: 'Free', supporter: 'Supporter' };
+        var tierStatus = document.getElementById('token-ok');
+        tierStatus.textContent = '✓ ' + labels[tier];
+        tierStatus.style.display = 'inline-flex';
+        setAccessPlan(tier);
+      }
+
+      function initAccessCarousel() {
+        var root = document.querySelector('.access-support-carousel');
+        if (!root) return;
+        var slides = root.querySelectorAll('.access-support-slide');
+        var dots = root.querySelectorAll('.access-support-dot');
+        var current = 0;
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) { slide.classList.toggle('active', i === current); });
+          dots.forEach(function (dot, i) { dot.classList.toggle('active', i === current); });
+        }
+        var timer = setInterval(function () { show(current + 1); }, 4500);
+        dots.forEach(function (dot, i) { dot.addEventListener('click', function (event) { event.stopPropagation(); clearInterval(timer); show(i); }); });
+      }
+
+      function initSupportCarousel() {
+        var root = document.querySelector('.support-carousel');
+        if (!root) return;
+        var slides = root.querySelectorAll('.support-slide');
+        var dots = root.querySelectorAll('.support-dot');
+        var current = 0;
+        var timer;
+        function show(index) {
+          current = (index + slides.length) % slides.length;
+          slides.forEach(function (slide, i) { slide.classList.toggle('active', i === current); });
+          dots.forEach(function (dot, i) { dot.classList.toggle('active', i === current); });
+        }
+        function start() { timer = setInterval(function () { show(current + 1); }, 5000); }
+        dots.forEach(function (dot, i) { dot.addEventListener('click', function () { clearInterval(timer); show(i); start(); }); });
+        start();
+      }
+
+      initSupportCarousel();
+      initAccessCarousel();
+
       function openPricing(event) {
         if (event) event.preventDefault();
         document.getElementById('pricing').style.display = 'block';
@@ -1561,7 +2068,18 @@
       }
 
       document.getElementById('get-access-link').addEventListener('click', openPricing);
-      document.getElementById('upgrade-link').addEventListener('click', openPricing);
+      document.getElementById('token-toggle').addEventListener('click', function () {
+        var wrap = document.querySelector('.token-wrap');
+        var open = wrap.classList.toggle('open');
+        this.textContent = open ? 'Close' : 'Have a token?';
+        if (open) document.getElementById('token-input').focus();
+      });
+      document.querySelectorAll('.access-tier').forEach(function (card) {
+        card.addEventListener('click', function (event) {
+          if (event.target.closest('a')) return;
+          document.getElementById('pw-free-access').classList.toggle('show', card.dataset.accessTier === 'free');
+        });
+      });
 
       // init
       if (token) { document.getElementById('token-input').value = token; verifyToken(token, true); }
@@ -1587,8 +2105,13 @@
 
       // ── Free-access signup (interim, until Stripe checkout is live) ──
       document.getElementById('access-btn').addEventListener('click', async function () {
+        var firstName = document.getElementById('access-fname').value.trim();
+        var lastName = document.getElementById('access-lname').value.trim();
         var email = document.getElementById('access-email').value.trim();
-        if (!email) { showErr('Enter your email to get free access.'); return; }
+        if (!firstName || !lastName || !email) {
+          showErr('First name, last name, and email are all required for free access.');
+          return;
+        }
         var btn = this; var original = btn.textContent;
         btn.disabled = true; btn.textContent = 'Getting access…';
         try {
@@ -1596,8 +2119,8 @@
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: email,
-              first_name: document.getElementById('access-fname').value.trim(),
-              last_name: document.getElementById('access-lname').value.trim(),
+              first_name: firstName,
+              last_name: lastName,
             }),
           });
           var d = await r.json();
@@ -1607,11 +2130,43 @@
           document.getElementById('token-input').value = token;
           localStorage.setItem('la_token', token);
           verifyToken(token);
+          showTokenReveal(token, d.is_new);
         } catch (e) {
           showErr('Could not get access: ' + e.message);
         } finally {
           btn.disabled = false; btn.textContent = original;
         }
+      });
+
+      // Reveal the token after signup (new or returning-by-email) so the
+      // user can copy it straight into the Figma plugin.
+      function showTokenReveal(t, isNew) {
+        document.getElementById('pw-token-reveal-label').textContent =
+          isNew ? '✓ Your access token' : '✓ Welcome back — here’s your token';
+        var input = document.getElementById('pw-token-reveal-input');
+        input.value = t;
+        document.getElementById('pw-token-reveal').classList.add('show');
+        input.focus();
+        input.select();
+      }
+
+      document.getElementById('pw-token-reveal-copy').addEventListener('click', function () {
+        var input = document.getElementById('pw-token-reveal-input');
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, 99999);
+        try { document.execCommand('copy'); } catch (e) { }
+        var btn = this; var original = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = original; }, 2000);
+      });
+
+      // Dismissing the reveal is what lets verifyToken collapse the pricing
+      // panel (see the guard there) — until then it stays up so the token
+      // doesn't disappear out from under the user before they've copied it.
+      document.getElementById('pw-token-reveal-continue').addEventListener('click', function () {
+        document.getElementById('pw-token-reveal').classList.remove('show');
+        if (statusData) document.getElementById('pricing').style.display = 'none';
       });
 
       // silent=true suppresses the error banner — used for the automatic
@@ -1624,40 +2179,64 @@
           var d = await r.json();
           if (!r.ok) throw new Error(errMsg(d.error) || 'Invalid token');
           statusData = d;
+          setTierState(d.extra_credits > 0 ? 'supporter' : 'free');
           hideErr();
-          document.getElementById('token-ok').style.display = 'block';
           document.getElementById('trial-strip').style.display = 'none';
-          document.getElementById('pricing').style.display = 'none';
+          // Leave #pricing (and the token reveal inside it) up while the
+          // reveal is showing, so a fresh signup doesn't hide the token
+          // before the user has had a chance to copy it — the reveal's
+          // own "Continue" button collapses pricing once dismissed.
+          if (!document.getElementById('pw-token-reveal').classList.contains('show')) {
+            document.getElementById('pricing').style.display = 'none';
+          }
           showUsageStrip(d);
+          document.querySelector('.token-wrap').classList.remove('open');
+          document.getElementById('token-toggle').textContent = 'Have a token?';
           updateBtn();
         } catch (e) {
           statusData = null; token = '';
           localStorage.removeItem('la_token');
-          document.getElementById('token-ok').style.display = 'none';
-          if (!silent) showErr(e.message);
           updateTrialUI(); updateBtn();
+          if (!silent) showErr(e.message);
         }
       }
 
       // ── Trial UI ─────────────────────────────────────────────────
       function updateTrialUI() {
+        setTierState('try');
+        document.getElementById('usage-strip').style.display = 'none';
+        document.getElementById('plan-tag').classList.remove('active');
+        document.getElementById('token-toggle').textContent = 'Have a token?';
         var left = Math.max(0, FREE_LIMIT - freeUsed);
         document.getElementById('dot0').className = 'dot' + (freeUsed > 0 ? ' used' : '');
         document.getElementById('dot1').className = 'dot' + (freeUsed > 1 ? ' used' : '');
         document.getElementById('trial-label').innerHTML = left > 0
-          ? '<b>' + left + ' free audit' + (left !== 1 ? 's' : '') + ' remaining</b> — no account needed'
-          : '<b>Free audits used</b> — subscribe to continue';
+          ? '<b>' + left + ' free audit' + (left !== 1 ? 's' : '') + ' remaining</b> — no email needed'
+          : '<b>Free audits used</b> — add your email for 5 more per day';
         document.getElementById('pricing').style.display = left > 0 ? 'none' : 'block';
       }
 
       function showUsageStrip(d) {
         document.getElementById('usage-strip').style.display = 'flex';
-        document.getElementById('plan-tag').textContent = (d.plan_name || 'Free').toUpperCase();
+        var planTag = document.getElementById('plan-tag');
+        planTag.textContent = 'ACTIVE';
+        planTag.classList.add('active');
+        planTag.title = (d.plan_name || 'Free') + ' access active';
         var pct = d.limit_this_month > 0 ? d.used_this_month / d.limit_this_month : 0;
         var fill = document.getElementById('usage-fill');
         fill.style.width = Math.min(100, Math.round(pct * 100)) + '%';
         fill.className = 'usage-fill' + (pct >= 1 ? ' full' : pct >= 0.8 ? ' warn' : '');
         document.getElementById('usage-label').textContent = d.remaining + ' / ' + d.limit_this_month + ' left';
+
+        var supportLink = document.getElementById('upgrade-link');
+        if (d.extra_credits > 0) {
+          supportLink.style.display = 'none';
+        } else {
+          supportLink.style.display = 'inline-block';
+          supportLink.href = 'https://ko-fi.com/appsparrow';
+          supportLink.target = '_blank';
+          supportLink.textContent = 'Like it? Buy me a coffee →';
+        }
 
         // Show top-up only for paying subscribers running low (>=80%) or out
         // Never show to free/anonymous users
@@ -1802,6 +2381,10 @@
         var el = document.getElementById('report'); el.style.display = 'block';
         document.getElementById('analyze-btn').disabled = false;
         document.getElementById('rts').textContent = new Date().toLocaleString();
+        // Registered (token + verified) users are the ones actually running
+        // through their free daily quota — prompt them every time, not just
+        // via the quiet footer link everyone else sees.
+        document.getElementById('coffee-banner').style.display = (token && statusData) ? 'flex' : 'none';
         var sc = data.score || 0;
         var sn = document.getElementById('score-num');
         sn.textContent = sc; sn.className = 'score-big ' + (sc >= 75 ? 'great' : sc >= 50 ? 'ok' : 'poor');

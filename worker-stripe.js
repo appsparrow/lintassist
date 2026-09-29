@@ -108,6 +108,15 @@ const TOPUP = {
   // $0.50/audit > Starter $0.40 > Pro $0.32 — incentive to stay subscribed
 };
 
+// Ko-fi "buy me a coffee" bonus — any one-time donation grants this many
+// bonus audits, on top of whatever plan they're already on. See the
+// extra_credits depletion logic in /analyze: this is a pool that gets
+// spent down once their period's own base allowance runs out, not a
+// permanent limit increase.
+const KOFI_BONUS = {
+  audits: 50,
+};
+
 // Map Stripe price IDs → plan keys (fill after creating products in Stripe)
 const STRIPE_PRICE_MAP = {
   'price_STARTER_ID': 'starter',  // replace with real Stripe price ID
@@ -379,6 +388,9 @@ async function route(request, env) {
     let email = (body.email || '').trim().toLowerCase();
     const firstName = (body.first_name || '').trim();
     const lastName  = (body.last_name || '').trim();
+    if (!firstName || !lastName) {
+      return err('First name and last name are required');
+    }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return err('A valid email is required');
     }
@@ -467,6 +479,19 @@ async function route(request, env) {
     if (!result.ok) return err(result.error, 502);
 
     await incrementUsage(env, token, periodKey);
+
+    // extra_credits (Ko-fi bonus grants, Stripe top-ups) is a depleting
+    // pool, not a permanent limit bump: once this request went past the
+    // period's own base allowance, draw it down by one so a one-time
+    // grant actually runs out instead of silently re-inflating the limit
+    // every period forever. Anonymous free_ tokens have no subscribers
+    // row, so this is a harmless no-op for them.
+    if (used >= baseLimit && (sub.extra_credits || 0) > 0) {
+      await env.DB.prepare(`
+        UPDATE subscribers SET extra_credits = MAX(0, extra_credits - 1), updated_at = datetime('now')
+        WHERE token = ?
+      `).bind(token).run();
+    }
 
     return new Response(result.body, {
       status: 200,
@@ -624,6 +649,44 @@ async function route(request, env) {
     return json({ ok: true, requests: results });
   }
 
+  // ── ADMIN: GET /admin/timeline — daily requests by category ──
+  // Powers the Reports line chart. Categorizes each request by the
+  // CURRENT state of its subscriber row (no historical snapshot), which
+  // is an approximation once extra_credits depletes over time — good
+  // enough for a low-traffic trend view, not meant to be exact
+  // accounting. 'trial' = no subscribers row (anonymous free_ token).
+  if (method === 'GET' && path === '/admin/timeline') {
+    const denied = requireAdmin(); if (denied) return denied;
+    const days = Math.min(parseInt(url.searchParams.get('days'), 10) || 30, 90);
+    const { results } = await env.DB.prepare(`
+      SELECT
+        date(r.created_at) as day,
+        CASE
+          WHEN s.token IS NULL THEN 'trial'
+          WHEN s.extra_credits > 0 THEN 'coffee'
+          WHEN s.plan IN ('starter','pro') THEN 'paid'
+          ELSE 'free'
+        END as category,
+        COUNT(*) as requests
+      FROM request_log r
+      LEFT JOIN subscribers s ON r.token = s.token
+      WHERE r.created_at >= datetime('now', '-' || ? || ' days')
+      GROUP BY day, category
+      ORDER BY day ASC
+    `).bind(days).all();
+    return json({ ok: true, days: results });
+  }
+
+  // ── ADMIN: GET /admin/kofi-donations — raw donation log ──────
+  if (method === 'GET' && path === '/admin/kofi-donations') {
+    const denied = requireAdmin(); if (denied) return denied;
+    const { results } = await env.DB.prepare(`
+      SELECT email, amount, currency, kofi_transaction_id, created_at
+      FROM kofi_donations ORDER BY created_at DESC LIMIT 500
+    `).all();
+    return json({ ok: true, donations: results });
+  }
+
   // ── POST /webhook/stripe ──────────────────────────────────
   //
   // Events handled:
@@ -716,6 +779,85 @@ async function route(request, env) {
 
     // Unhandled event — still return 200 so Stripe doesn't retry
     return json({ ok: true, skipped: type });
+  }
+
+  // ── POST /webhook/kofi — "buy me a coffee" bonus pack ──────
+  //
+  // Ko-fi sends application/x-www-form-urlencoded with a single `data`
+  // field holding a JSON string (not a JSON body, and no HMAC signature
+  // like Stripe — verification_token, a shared secret from the Ko-fi
+  // dashboard, embedded in that JSON, is the only anti-spoofing check
+  // available). Any one-time donation grants KOFI_BONUS.audits, matched
+  // to an existing subscriber by email, or self-serve-created on the
+  // free plan if this is a new email — same idempotent-by-email shape
+  // as /access, so they can recover the token later the same way.
+  if (method === 'POST' && path === '/webhook/kofi') {
+    if (!env.DB) return json({ ok: true, skipped: 'no db' });
+
+    let payload;
+    try {
+      const form = await request.formData();
+      payload = JSON.parse(form.get('data') || '{}');
+    } catch {
+      return err('Invalid Ko-fi payload', 400);
+    }
+
+    if (!env.KOFI_VERIFICATION_TOKEN || payload.verification_token !== env.KOFI_VERIFICATION_TOKEN) {
+      return err('Invalid verification token', 401);
+    }
+
+    // v1: only one-off donations grant the bonus. Memberships and shop
+    // orders still get paid — they just don't trigger anything here yet.
+    if (payload.type !== 'Donation' || payload.is_subscription_payment) {
+      return json({ ok: true, skipped: 'not a one-time donation' });
+    }
+
+    let email = (payload.email || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return json({ ok: true, skipped: 'no usable email on payload' });
+    }
+    email = normalizeEmail(email);
+
+    // Log the donation (amount + email) so the admin report can show real
+    // totals, and dedupe by kofi_transaction_id — Ko-fi retries a webhook
+    // delivery that doesn't get a 200, and a retry must never grant the
+    // bonus twice.
+    const amount = parseFloat(payload.amount) || 0;
+    const txnId = payload.kofi_transaction_id || null;
+    if (txnId) {
+      const insert = await env.DB.prepare(`
+        INSERT OR IGNORE INTO kofi_donations (email, amount, currency, kofi_transaction_id, created_at)
+        VALUES (?, ?, ?, ?, datetime('now'))
+      `).bind(email, amount, payload.currency || 'USD', txnId).run();
+      if (insert.meta.changes === 0) {
+        return json({ ok: true, skipped: 'duplicate transaction' });
+      }
+    } else {
+      await env.DB.prepare(`
+        INSERT INTO kofi_donations (email, amount, currency, created_at)
+        VALUES (?, ?, ?, datetime('now'))
+      `).bind(email, amount, payload.currency || 'USD').run();
+    }
+
+    const existing = await env.DB.prepare('SELECT token FROM subscribers WHERE email = ?').bind(email).first();
+    if (existing) {
+      await env.DB.prepare(`
+        UPDATE subscribers SET extra_credits = extra_credits + ?, updated_at = datetime('now')
+        WHERE email = ?
+      `).bind(KOFI_BONUS.audits, email).run();
+      return json({ ok: true, action: 'kofi_bonus_added', token: existing.token });
+    }
+
+    // No LintAssist account under this email yet — create one on the free
+    // plan with the bonus pre-loaded. They'll see the token by using the
+    // existing "enter your email to get access back" flow on the site.
+    const token = 'tok_' + crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    await env.DB.prepare(`
+      INSERT INTO subscribers (token, email, plan, extra_credits, active, created_at, updated_at)
+      VALUES (?, ?, 'free', ?, 1, datetime('now'), datetime('now'))
+    `).bind(token, email, KOFI_BONUS.audits).run();
+
+    return json({ ok: true, action: 'kofi_subscriber_created', token });
   }
 
   return err('Not found', 404);

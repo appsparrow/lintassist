@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "figma-plugin/ui.html"
+        ],
+        "createdAt": "2026-09-28T19:32:32.233Z",
+        "reason": "Coral box-shadow on the coffee-banner has a normal downward offset (4px/2px, not zero) on a light pink gradient card (not dark bg) — a deliberate warm shadow matching the card's own coral border/accent, not the flat AI-glow-on-dark-bg pattern this rule targets. Same treatment already shipped on public/index.html's coffee-banner."
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "public/index.html"
+        ],
+        "createdAt": "2026-09-28T22:05:51.611Z",
+        "reason": "Same coral box-shadow as the coffee-banner treatment already ignored on figma-plugin/ui.html: normal downward offset (not zero-offset), on a light pink gradient card (not dark bg) — a deliberate warm shadow matching the card's own coral border, not the flat AI-glow-on-dark-bg pattern this rule targets."
+      }
+    ]
+  }
+}
