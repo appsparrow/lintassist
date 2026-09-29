@@ -24,7 +24,7 @@ Official references:
 
 ## Build a clean upload ZIP
 
-Upload a ZIP with `manifest.json` at its root. Include only the extension's runtime files: `manifest.json`, `service-worker.js`, `sidepanel.html`, `sidepanel.css`, `progress.css`, `steps.css`, `usage.css`, `sidepanel.js`, and `icon-128.png`.
+Upload a ZIP with `manifest.json` at its root. Include only the extension's runtime files: `manifest.json`, `service-worker.js`, `sidepanel.html`, `sidepanel.css`, `progress.css`, `steps.css`, `usage.css`, `analyze.css`, `sidepanel.js`, and `icon-128.png`.
 
 Do not include `.pem`/`.crx` signing files, `.DS_Store`, `__MACOSX/`, unrelated project files, or another nested ZIP. The existing `chrome-extension/LintAssist.zip` contains `__MACOSX/` metadata entries; rebuild a clean archive from the current extension files instead of uploading it as-is. After packaging, inspect the archive and confirm that opening it shows `manifest.json` directly, not a containing folder.
 

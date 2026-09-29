@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!--
+  LintAssist — Privacy Policy
+  Plain page, matches the app's design system.
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — LintAssist</title>
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #f5f5f7;
+      --surface: #ffffff;
+      --border: #d2d2d7;
+      --border-soft: #e8e8ed;
+      --ink: #1d1d1f;
+      --muted: #6e6e73;
+      --muted-2: #86868b;
+      --accent: #0071e3;
+      --r-md: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .updated {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 36px 0 10px;
+    }
+
+    p, li {
+      font-size: 14.5px;
+      color: var(--ink);
+    }
+
+    p {
+      margin-bottom: 12px;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .box {
+      background: var(--bg-soft);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-md);
+      padding: 16px 18px;
+      margin: 20px 0;
+      font-size: 13.5px;
+      color: var(--muted);
+    }
+
+    .box b {
+      color: var(--ink);
+    }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 12px;
+      color: var(--muted-2);
+    }
+
+    footer a {
+      color: var(--muted-2);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="eyebrow">LintAssist</div>
+    <h1>Privacy Policy</h1>
+    <div class="updated">Last updated: September 14, 2026</div>
+
+    <div class="box">
+      <b>Short version:</b> we collect the minimum needed to run the free/paid
+      access system (your email, name, and a token) and to keep the product
+      working. Your screenshots and audit reports are <b>never stored</b> —
+      they're sent for one-time analysis and then gone. See below for the
+      full detail.
+    </div>
+
+    <h2>What we collect</h2>
+    <ul>
+      <li><b>If you get a free or paid token</b> (via the web app or the
+        Figma plugin): your email address, and first/last name if you give
+        it. Used to identify your account, apply your usage limit, and let
+        you recover access on another device by re-entering the same email.</li>
+      <li><b>Your screenshot, when you run an audit</b>: sent to an AI
+        provider (see "Who we share data with" below) for that single
+        request, to generate the report. <b>Not stored</b> by us before,
+        during, or after — it exists only for the duration of that one
+        request.</li>
+      <li><b>Usage metadata</b>: which token made a request, roughly how
+        much it cost us to run (token counts, not content), and a
+        timestamp — used for our own cost tracking and abuse prevention,
+        not shown to other users.</li>
+      <li><b>Payment information</b> (paid plans, when live): handled
+        entirely by Stripe. We never see or store your card details —
+        only your subscription status.</li>
+    </ul>
+
+    <h2>What we don't collect</h2>
+    <ul>
+      <li>We don't store your screenshots or the generated audit report
+        anywhere. Once a request completes, the image is gone. Use "Copy
+        Report" (or the Figma "Place in Figma" action) to keep a copy
+        yourself — we can't retrieve it for you later.</li>
+      <li>No tracking cookies, no analytics pixels, no ad networks.</li>
+      <li>We never ask for or store a password. Access is by a token, or
+        by re-entering the email you signed up with.</li>
+    </ul>
+
+    <h2>Who we share data with</h2>
+    <p>Your screenshot is sent to one of these providers to generate the
+      audit, depending on availability — this is the only sharing that
+      happens with every request:</p>
+    <ul>
+      <li><b>OpenRouter</b> (routing to Qwen or DeepSeek vision models) —
+        our default, lowest-cost path.</li>
+      <li><b>Anthropic</b> (Claude) — used only if the above is
+        unavailable or fails.</li>
+    </ul>
+    <p>Account and usage data lives in <b>Cloudflare</b> (Workers + D1
+      database), who host our backend. Payments, when live, are processed
+      by <b>Stripe</b>. None of these providers use your data for anything
+      beyond fulfilling your request — we don't sell or share data for
+      marketing.</p>
+
+    <h2>How long we keep it</h2>
+    <p>Account records (email, name, token, plan) are kept until you ask
+      us to delete them, or until the account is inactive long enough that
+      we remove it as housekeeping. Screenshots and report content are
+      never kept at all — there's nothing to delete there because nothing
+      was stored.</p>
+
+    <h2>Your choices</h2>
+    <p>Email us (below) to have your account and its data deleted at any
+      time. Since screenshots and reports were never stored, there's
+      nothing further to remove on that front once a request completes.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this changes in a way that matters — a new provider, new data we
+      start collecting — we'll update this page and the "last updated"
+      date above.</p>
+
+    <h2>Contact</h2>
+    <p>Questions or a deletion request: reach out via the support contact
+      listed on the <a href="/#pricing">web app</a> or the Figma Community
+      listing.</p>
+
+    <footer>
+      <a href="/">← Back to LintAssist</a>
+    </footer>
+  </div>
+</body>
+
+</html>

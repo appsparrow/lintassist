@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="progress.css">
   <link rel="stylesheet" href="steps.css">
   <link rel="stylesheet" href="usage.css">
+  <link rel="stylesheet" href="analyze.css">
 </head>
 <body>
   <header class="header">
@@ -20,7 +21,7 @@
       <label for="token">Access token</label>
       <div class="token-row"><input id="token" type="password" placeholder="Paste your LintAssist token"><button id="save-token">Save</button></div>
       <p id="token-feedback" class="token-feedback" role="status" aria-live="polite" hidden></p>
-      <p>Get or recover access at <a href="https://lintassist.com" target="_blank">lintassist.com</a>.</p>
+      <p>Get or recover access at <a href="https://app.lintassist.com" target="_blank">app.lintassist.com</a>.</p>
       <p class="privacy">A screenshot stays temporarily in the panel after capture. It is sent to LintAssist’s backend only when you click Analyze.</p>
     </section>
 
@@ -64,7 +65,7 @@
     </section>
     <section class="card">
       <div class="section-step"><span>3</span><div><div class="eyebrow">STEP 3</div><h2>Analyze</h2></div></div>
-      <button id="analyze" class="primary" hidden>Analyze page</button>
+      <button id="analyze" class="primary analyze-btn" hidden>Analyze page</button>
       <p class="consent">The screenshot is uploaded to LintAssist’s backend for AI analysis when you click Analyze.</p>
     </section>
     <div id="error" class="error" role="alert" hidden></div>

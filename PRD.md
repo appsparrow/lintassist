@@ -14,9 +14,10 @@ Gestalt principles, mobile readiness, etc.) instead of vague "looks nice"
 feedback. Review, learn, fix it yourself. Nothing is stored — it's a mirror,
 not a database.
 
-It ships as two surfaces reading the same backend: a **web app**
-(`lintassist.com`) for anything you can screenshot, and a **Figma
-plugin** for auditing a frame without leaving the canvas.
+It ships as three surfaces reading the same backend: a **web app**
+(`lintassist.com`) for anything you can screenshot, a **Figma plugin** for
+auditing a frame without leaving the canvas, and a **Chrome extension** for
+checking the visible page while browsing.
 
 ## Release history
 
@@ -52,8 +53,9 @@ plugin** for auditing a frame without leaving the canvas.
   to hand a client alongside subjective feedback.
 
 ## 3. Key Features
-- **Two ways in**: upload/drag a screenshot on the web, or select a frame
-  directly in Figma — same audit engine, same report shape, either way.
+- **Three ways in**: upload/drag a screenshot on the web, select a frame
+  directly in Figma, or capture the visible Chrome tab — same audit engine,
+  same token, and same report shape.
 - **AI-Powered Evaluation** across 8 toggleable frameworks: Nielsen's
   Heuristics, Visual Hierarchy & Layout, Gestalt Principles, Typography,
   Color & Contrast (WCAG), Accessibility, CTA & Conversion, Mobile

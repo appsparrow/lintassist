@@ -11,6 +11,7 @@ and secret-handling notes in the existing operational files at the repo root.
 - [Product design](design.md) — personas, use cases, pain points, and the
   experience principles behind the product.
 - [Architecture](architecture.md) — system map and request flows.
+- [Marketing page](../public/marketing.html) — user-first sales and positioning page.
 - [Rules](rules.md) — product and engineering rules that should remain true.
 - [Tasks](tasks.md) — current follow-up work, organized by release.
 - [Memory](memory.md) — durable context for future sessions.
