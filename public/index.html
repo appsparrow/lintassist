@@ -2226,7 +2226,8 @@
         var fill = document.getElementById('usage-fill');
         fill.style.width = Math.min(100, Math.round(pct * 100)) + '%';
         fill.className = 'usage-fill' + (pct >= 1 ? ' full' : pct >= 0.8 ? ' warn' : '');
-        document.getElementById('usage-label').textContent = d.remaining + ' / ' + d.limit_this_month + ' left';
+        var usageScope = d.plan === 'free' || d.extra_credits === 0 ? ' today' : ' left';
+        document.getElementById('usage-label').textContent = d.remaining + ' / ' + d.limit_this_month + usageScope;
 
         var supportLink = document.getElementById('upgrade-link');
         if (d.extra_credits > 0) {
