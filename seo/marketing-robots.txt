@@ -1,0 +1,12 @@
+# Public marketing pages are available to search and answer-engine crawlers.
+User-agent: *
+Allow: /
+
+# ChatGPT Search uses OAI-SearchBot. GPTBot is a separate crawler.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+Sitemap: https://www.lintassist.com/sitemap.xml

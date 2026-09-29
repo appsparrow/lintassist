@@ -41,6 +41,29 @@ flowchart LR
   Worker -->|score · findings · usage| Chrome
 ```
 
+```text
+┌─────────────────┐                     ┌───────────────────────────┐         ┌──────────────────────────┐
+│      User       ├────────────────────►│          Web app          ├────────►│     Cloudflare Pages     │
+│   (Designer)    │                     │     public/index.html     │         │      lintassist.com      │
+└────────┬────────┘                     └───────┬───────────▲───────┘         └──────────────────────────┘
+         │                                      │           │
+         │                        audit request │           │ report or status
+         │                                      ▼           │
+         │                              ┌───────────────────┴───────┐         ┌──────────────────────────┐
+         │                              │     Cloudflare Worker     ├────────►│       AI providers       │
+         │                              │     worker-stripe.js      ├──┐      │ Qwen → DeepSeek → Claude │
+         │                              └───┬───────▲───────────▲───┘  │      └──────────────────────────┘
+         │                                  │       │           │      │
+         │                  report / status │       │ audit     │      │      ┌──────────────────────────┐
+         │                                  │       │ request   │      └─────►│      Cloudflare D1       │
+         │                                  ▼       │           │             │usage + subscribers + logs│
+         │                              ┌───┴───────┴───────┐   │             └──────────────────────────┘
+         └─────────────────────────────►│   Figma plugin    │   │
+                                        │ ui.html + code.js │   │ webhook     ┌──────────────────────────┐
+                                        └───────────────────┘   └─────────────┤      Ko-fi webhook       │
+                                                                              └──────────────────────────┘
+```
+
 ## Why one Worker matters
 
 - **One source of truth**: the same token means the same access level and

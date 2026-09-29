@@ -5,7 +5,7 @@
   "description": "Static site — source lives in public/, copied to dist/ for Cloudflare Pages (project's configured output directory).",
   "scripts": {
     "build": "rm -rf dist && mkdir -p dist && cp -R public/. dist/",
-    "build:marketing": "rm -rf marketing-dist && mkdir -p marketing-dist && cp public/marketing.html marketing-dist/index.html && cp public/logo.png public/privacy.html public/releases.html marketing-dist/",
+    "build:marketing": "rm -rf marketing-dist && mkdir -p marketing-dist && cp public/marketing.html marketing-dist/index.html && cp public/logo.png public/Logo-Figma.png public/Logo-Google_Chrome_Web_Store.svg.webp public/privacy.html public/releases.html marketing-dist/ && cp seo/marketing-robots.txt marketing-dist/robots.txt && cp seo/marketing-sitemap.xml marketing-dist/sitemap.xml",
     "dev": "python3 -m http.server 8080 --directory public",
     "dev:worker": "wrangler dev"
   }

@@ -9,8 +9,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LintAssist — AI UX Analyzer</title>
+  <title>AI Design Analyzer for Screenshots | LintAssist</title>
+  <meta name="description"
+    content="Get an AI-assisted design review of a screenshot. LintAssist highlights usability, visual hierarchy, contrast, and accessibility issues to help designers decide what to improve next.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://lintassist.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LintAssist">
+  <meta property="og:title" content="AI Design Analyzer for Screenshots | LintAssist">
+  <meta property="og:description"
+    content="Get an AI-assisted UX review of a screenshot, with practical feedback on usability, visual hierarchy, contrast, and accessibility.">
+  <meta property="og:url" content="https://lintassist.com/">
+  <meta property="og:image" content="https://lintassist.com/logo.png">
+  <meta property="og:image:alt" content="LintAssist logo">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI UX Design Review Tool for Screenshots | LintAssist">
+  <meta name="twitter:description"
+    content="Get an AI-assisted UX review of a screenshot, with practical feedback on usability, visual hierarchy, contrast, and accessibility.">
   <link rel="icon" type="image/png" href="/logo.png">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "Organization", "@id": "https://lintassist.com/#organization", "name": "LintAssist", "url": "https://lintassist.com/", "logo": "https://lintassist.com/logo.png" },
+        { "@type": "WebSite", "@id": "https://lintassist.com/#website", "url": "https://lintassist.com/", "name": "LintAssist", "publisher": { "@id": "https://lintassist.com/#organization" } },
+        { "@type": "WebApplication", "name": "LintAssist", "url": "https://lintassist.com/", "applicationCategory": "DesignApplication", "operatingSystem": "Any", "description": "An AI-assisted UX review tool that analyzes screenshots for usability, visual hierarchy, contrast, and accessibility concerns.", "publisher": { "@id": "https://lintassist.com/#organization" } }
+      ]
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -146,6 +172,10 @@
       text-transform: uppercase;
     }
 
+    #error-box {
+      margin-top: -16px;
+    }
+
     .hdr-right {
       display: flex;
       align-items: center;
@@ -161,7 +191,9 @@
       transition: border-color .15s, box-shadow .15s;
     }
 
-    .token-wrap.open { display: flex; }
+    .token-wrap.open {
+      display: flex;
+    }
 
     .token-wrap:focus-within {
       border-color: var(--accent);
@@ -214,7 +246,9 @@
       white-space: nowrap;
     }
 
-    .token-toggle:hover { background: var(--bg-soft); }
+    .token-toggle:hover {
+      background: var(--bg-soft);
+    }
 
     .token-ok {
       align-items: center;
@@ -288,12 +322,165 @@
       color: var(--accent-hover);
     }
 
-    .audit-progress { display:flex; align-items:center; gap:8px; margin:0 0 14px; color:var(--muted-2); font-size:11px; }
-    .audit-progress-step { display:flex; align-items:center; gap:5px; white-space:nowrap; }
-    .audit-progress-dot { width:7px; height:7px; border:1px solid var(--border); border-radius:50%; background:var(--surface); }
-    .audit-progress-step.active, .audit-progress-step.done { color:var(--ink); }
-    .audit-progress-step.active .audit-progress-dot, .audit-progress-step.done .audit-progress-dot { background:var(--accent); border-color:var(--accent); }
-    .audit-progress-line { height:1px; flex:1; min-width:12px; background:var(--border-soft); }
+    .audit-progress {
+      margin: 0 0 18px;
+      padding: 20px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .audit-progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .audit-progress-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--muted-2);
+      text-transform: uppercase;
+    }
+
+    .audit-progress-current {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .audit-progress-track {
+      height: 6px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: var(--border-soft);
+    }
+
+    .audit-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width .2s ease;
+    }
+
+    .audit-progress-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .audit-progress-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted-2);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .audit-progress-dot {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      flex-shrink: 0;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .audit-progress-step.active,
+    .audit-progress-step.done {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .audit-progress-step.active .audit-progress-dot,
+    .audit-progress-step.done .audit-progress-dot {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .audit-progress-step.done .audit-progress-dot {
+      background: var(--accent-tint);
+    }
+
+    .audit-step-card {
+      padding: 22px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--r-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .audit-steps {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-upload {
+      order: 1;
+    }
+
+    .step-frameworks {
+      order: 2;
+    }
+
+    .step-analyze {
+      order: 3;
+    }
+
+    .audit-step-heading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .audit-step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--accent-tint);
+      color: var(--accent);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .audit-step-kicker {
+      margin-bottom: 2px;
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .audit-step-title {
+      margin: 0;
+      color: var(--ink);
+      font-size: 18px;
+      letter-spacing: -.02em;
+    }
+
+    .audit-step-help {
+      margin: -7px 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
     /* Usage strip (subscribers) */
     .usage-strip {
@@ -587,8 +774,15 @@
     }
 
     @keyframes ai-border-shift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
     .error-box {
@@ -721,7 +915,9 @@
       transition: background .15s;
     }
 
-    .access-tier:hover { background: #fafafa; }
+    .access-tier:hover {
+      background: #fafafa;
+    }
 
     .access-tier.active {
       background: var(--accent-tint);
@@ -747,7 +943,9 @@
       text-transform: uppercase;
     }
 
-    .access-tier.current .access-tier-current { display: block; }
+    .access-tier.current .access-tier-current {
+      display: block;
+    }
 
     .access-tier-step {
       font-size: 11px;
@@ -927,7 +1125,9 @@
       background: var(--surface);
     }
 
-    .pw-free-access.show { display: block; }
+    .pw-free-access.show {
+      display: block;
+    }
 
     .ko-fi-highlight {
       display: inline-block;
@@ -947,13 +1147,46 @@
       padding-top: 9px;
     }
 
-    .access-support-slide { display: none; }
-    .access-support-slide.active { display: block; }
-    .access-support-slide strong { color: var(--ink); font-size: 12px; }
-    .access-support-slide span { color: var(--muted); display: block; font-size: 11px; line-height: 1.4; margin-top: 2px; }
-    .access-support-dots { display: flex; gap: 4px; margin-top: 7px; }
-    .access-support-dot { width: 5px; height: 5px; border: 0; padding: 0; border-radius: 50%; background: #b9d9c8; cursor: pointer; }
-    .access-support-dot.active { background: var(--green); }
+    .access-support-slide {
+      display: none;
+    }
+
+    .access-support-slide.active {
+      display: block;
+    }
+
+    .access-support-slide strong {
+      color: var(--ink);
+      font-size: 12px;
+    }
+
+    .access-support-slide span {
+      color: var(--muted);
+      display: block;
+      font-size: 11px;
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    .access-support-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: 7px;
+    }
+
+    .access-support-dot {
+      width: 5px;
+      height: 5px;
+      border: 0;
+      padding: 0;
+      border-radius: 50%;
+      background: #b9d9c8;
+      cursor: pointer;
+    }
+
+    .access-support-dot.active {
+      background: var(--green);
+    }
 
     .pw-free-eyebrow {
       font-size: 11px;
@@ -1025,6 +1258,12 @@
       color: var(--muted);
     }
 
+    .pw-free-warning {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--muted-2);
+    }
+
     /* Token reveal — shown after a successful /access call (new or
        returning signup) so the user can copy it into the Figma plugin. */
     .pw-token-reveal {
@@ -1090,20 +1329,22 @@
 
     .pw-token-reveal-continue {
       display: inline-block;
-      margin-top: 10px;
-      background: none;
-      border: none;
-      padding: 0;
+      background: var(--surface);
+      border: 1px solid var(--green);
+      border-radius: var(--r-sm);
+      padding: 9px 14px;
       font-family: inherit;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
-      color: var(--accent);
+      color: var(--green);
       cursor: pointer;
-      transition: color .15s;
+      white-space: nowrap;
+      transition: background .15s, color .15s;
     }
 
     .pw-token-reveal-continue:hover {
-      color: var(--accent-hover);
+      background: var(--green);
+      color: #fff;
     }
 
     .paywall-footer {
@@ -1681,6 +1922,40 @@
       letter-spacing: .01em;
     }
 
+    .platform-note {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      align-items: start;
+      margin: 18px auto 4px;
+      max-width: 420px;
+      font-size: 11px !important;
+      line-height: 1.35;
+    }
+
+    .platform-note-item {
+      display: grid;
+      justify-items: center;
+      gap: 6px;
+      color: var(--muted-2);
+      text-decoration: none;
+    }
+
+    .platform-note-item img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .platform-note-item small {
+      font-size: 10px;
+    }
+
+    .platform-note-copy {
+      grid-column: 1 / -1;
+      color: var(--muted-2);
+    }
+
     /* Barely-visible marker of which AI engine served the last audit
        (Q = Qwen, D = DeepSeek, C = Claude) — a quiet debug/cost signal,
        not meant to be a real UI element. */
@@ -1725,6 +2000,24 @@
         width: 32px;
         height: 32px;
       }
+
+      .audit-progress {
+        padding: 16px;
+      }
+
+      .audit-progress-steps {
+        gap: 6px;
+      }
+
+      .audit-progress-step {
+        align-items: flex-start;
+        font-size: 10px;
+        white-space: normal;
+      }
+
+      .audit-step-card {
+        padding: 18px;
+      }
     }
   </style>
 </head>
@@ -1737,8 +2030,7 @@
         <img src="/logo.png" alt="LintAssist logo" class="brand-mark">
         <div>
           <h1>Lint<i>Assist</i></h1>
-          <div class="brand-sub">AI UX Analyzer </div>
-          <!-- <div class="brand-sub">AI UX Analyzer · Siva Tayi</div> -->
+          <div class="brand-sub">AI Design Analyzer</div>
 
         </div>
       </div>
@@ -1751,6 +2043,8 @@
         <button class="token-toggle" id="token-toggle">Have a token?</button>
       </div>
     </header>
+
+    <div class="error-box" id="error-box"></div>
 
     <!-- Free trial indicator -->
     <div class="trial-strip" id="trial-strip">
@@ -1775,43 +2069,72 @@
     </div>
 
     <div class="audit-progress" id="audit-progress" aria-label="Audit progress">
-      <div class="audit-progress-step active" data-progress-step="1"><span class="audit-progress-dot"></span><span>Upload</span></div>
-      <span class="audit-progress-line"></span>
-      <div class="audit-progress-step" data-progress-step="2"><span class="audit-progress-dot"></span><span>Select criteria</span></div>
-      <span class="audit-progress-line"></span>
-      <div class="audit-progress-step" data-progress-step="3"><span class="audit-progress-dot"></span><span>Analyze</span></div>
+      <div class="audit-progress-head"><span class="audit-progress-title">Audit progress</span><span
+          class="audit-progress-current" id="audit-progress-current">Step 1 of 3</span></div>
+      <div class="audit-progress-track">
+        <div class="audit-progress-fill" id="audit-progress-fill"></div>
+      </div>
+      <div class="audit-progress-steps">
+        <div class="audit-progress-step active" data-progress-step="1"><span
+            class="audit-progress-dot">1</span><span>Upload screenshot</span></div>
+        <div class="audit-progress-step" data-progress-step="2"><span class="audit-progress-dot">2</span><span>Select
+            frameworks</span></div>
+        <div class="audit-progress-step" data-progress-step="3"><span class="audit-progress-dot">3</span><span>Analyze
+            &amp; review</span></div>
+      </div>
     </div>
 
-    <!-- Upload -->
-    <!-- "Paste URL" was removed: it only ever worked for a direct image
-         file link, not a real webpage screenshot (no headless-render
-         backend), which was confusing given the label. -->
-    <div class="drop-zone" id="drop-zone">
-      <input type="file" id="file-input" accept="image/*">
-      <span class="drop-icon">↑</span>
-      <h3>Upload Screenshot</h3>
-      <p>PNG · JPG · WebP<br>drag & drop</p>
-    </div>
+    <div class="audit-steps">
+      <div class="audit-step-card step-frameworks">
+        <div class="audit-step-heading"><span class="audit-step-number">2</span>
+          <div>
+            <div class="audit-step-kicker">Step 2</div>
+            <h2 class="audit-step-title">Select frameworks</h2>
+          </div>
+        </div>
+        <div class="chips">
+          <div class="chip on" data-val="heuristics">Nielsen Heuristics</div>
+          <div class="chip" data-val="visual_hierarchy">Visual Hierarchy</div>
+          <div class="chip on" data-val="gestalt">Gestalt</div>
+          <div class="chip" data-val="typography">Typography</div>
+          <div class="chip" data-val="color_contrast">Color & Contrast</div>
+          <div class="chip on" data-val="accessibility">Accessibility</div>
+          <div class="chip" data-val="cta">CTA & Conversion</div>
+          <div class="chip" data-val="mobile">Mobile Readiness</div>
+        </div>
+      </div>
 
-    <div class="preview-box" id="preview-box">
-      <div class="preview-bar"><span id="preview-lbl">PREVIEW</span><span id="clear-btn">✕ Remove</span></div>
-      <img class="preview-img" id="preview-img" src="" alt="">
-    </div>
+      <div class="audit-step-card step-upload">
+        <div class="audit-step-heading"><span class="audit-step-number">1</span>
+          <div>
+            <div class="audit-step-kicker">Step 1</div>
+            <h2 class="audit-step-title">Upload screenshot</h2>
+          </div>
+        </div>
+        <p class="audit-step-help">Add the screen you want a second opinion on. You can replace it before analyzing.</p>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" accept="image/*">
+          <span class="drop-icon">↑</span>
+          <h3>Upload Screenshot</h3>
+          <p>PNG · JPG · WebP<br>drag & drop</p>
+        </div>
+        <div class="preview-box" id="preview-box">
+          <div class="preview-bar"><span id="preview-lbl">PREVIEW</span><span id="clear-btn">✕ Remove</span></div>
+          <img class="preview-img" id="preview-img" src="" alt="">
+        </div>
+      </div>
 
-    <div class="section-lbl">Evaluate Against</div>
-    <div class="chips">
-      <div class="chip on" data-val="heuristics">Nielsen Heuristics</div>
-      <div class="chip" data-val="visual_hierarchy">Visual Hierarchy</div>
-      <div class="chip on" data-val="gestalt">Gestalt</div>
-      <div class="chip" data-val="typography">Typography</div>
-      <div class="chip" data-val="color_contrast">Color & Contrast</div>
-      <div class="chip on" data-val="accessibility">Accessibility</div>
-      <div class="chip" data-val="cta">CTA & Conversion</div>
-      <div class="chip" data-val="mobile">Mobile Readiness</div>
+      <div class="audit-step-card step-analyze">
+        <div class="audit-step-heading"><span class="audit-step-number">3</span>
+          <div>
+            <div class="audit-step-kicker">Step 3</div>
+            <h2 class="audit-step-title">Analyze and review</h2>
+          </div>
+        </div>
+        <p class="audit-step-help">Get a score, a short explanation, and ranked next steps for the screen.</p>
+        <button class="analyze-btn" id="analyze-btn" disabled>Analyze Design</button>
+      </div>
     </div>
-
-    <button class="analyze-btn" id="analyze-btn" disabled>Analyze Screen</button>
-    <div class="error-box" id="error-box"></div>
 
     <!-- Pricing -->
     <div class="paywall" id="pricing">
@@ -1820,10 +2143,16 @@
         <div class="paywall-headline">No account needed to start.<br><i>Add your email for more.</i></div>
         <div class="paywall-sub">No credit card, ever. Three tiers, no gotchas:</div>
         <div class="access-support-carousel" aria-live="polite">
-          <div class="access-support-slide active"><strong>Before the review</strong><span>Not sure what to fix first? Start with ranked next steps.</span></div>
-          <div class="access-support-slide"><strong>Before the handoff</strong><span>Get a second pair of eyes on usability and accessibility.</span></div>
-          <div class="access-support-slide"><strong>Keep it going</strong><span>Your support helps keep thoughtful feedback available.</span></div>
-          <div class="access-support-dots"><button class="access-support-dot active" type="button" aria-label="Support message 1"></button><button class="access-support-dot" type="button" aria-label="Support message 2"></button><button class="access-support-dot" type="button" aria-label="Support message 3"></button></div>
+          <div class="access-support-slide active"><strong>Before the review</strong><span>Not sure what to fix first?
+              Start with ranked next steps.</span></div>
+          <div class="access-support-slide"><strong>Before the handoff</strong><span>Get a second pair of eyes on
+              usability and accessibility.</span></div>
+          <div class="access-support-slide"><strong>Keep it going</strong><span>Your support helps keep thoughtful
+              feedback available.</span></div>
+          <div class="access-support-dots"><button class="access-support-dot active" type="button"
+              aria-label="Support message 1"></button><button class="access-support-dot" type="button"
+              aria-label="Support message 2"></button><button class="access-support-dot" type="button"
+              aria-label="Support message 3"></button></div>
         </div>
       </div>
       <div class="access-tiers">
@@ -1845,7 +2174,8 @@
           <div class="access-tier-title">+50 bonus audits</div>
           <div class="access-tier-desc">Support on <a href="https://ko-fi.com/appsparrow" target="_blank"
               rel="noopener">Ko-fi</a> if LintAssist saves you time. We’ll add the bonus audits to the same email.</div>
-          <a class="ko-fi-highlight" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener">Support on Ko-fi →</a>
+          <a class="ko-fi-highlight" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener">Support on Ko-fi
+            →</a>
         </div>
       </div>
       <div class="pw-free-access" id="pw-free-access">
@@ -1853,20 +2183,22 @@
           <input type="text" id="access-fname" placeholder="First name" required>
           <input type="text" id="access-lname" placeholder="Last name" required>
           <input type="email" id="access-email" placeholder="you@example.com" required>
-          <button id="access-btn">Get Free Access</button>
+          <button id="access-btn">Get 5 audits per day</button>
         </div>
         <div class="pw-free-note">No password — enter this same email again later (any device) to get your access back.
         </div>
+        <div class="pw-free-warning">Please use a valid email. Suspected invalid emails may be automatically deleted
+          during maintenance without notice, and you may lose access to available tokens.</div>
       </div>
       <div class="pw-token-reveal" id="pw-token-reveal">
         <div class="pw-token-reveal-label" id="pw-token-reveal-label">✓ Your access token</div>
         <div class="pw-token-reveal-row">
           <input type="text" id="pw-token-reveal-input" readonly aria-label="Your access token">
           <button id="pw-token-reveal-copy" type="button">Copy</button>
+          <button class="pw-token-reveal-continue" id="pw-token-reveal-continue" type="button">Continue →</button>
         </div>
         <div class="pw-token-reveal-note">Paste this into the LintAssist Figma plugin to unlock it there too — the same
           token works on web and in Figma.</div>
-        <button class="pw-token-reveal-continue" id="pw-token-reveal-continue" type="button">Continue →</button>
       </div>
       <!-- Hidden for now, not removed — re-enable by dropping this
            style="display:none" once monthly plans are ready to launch. -->
@@ -1933,7 +2265,8 @@
            usage) — see renderReport() toggling this via display:flex. -->
       <div class="coffee-banner" id="coffee-banner">
         <div class="coffee-banner-emoji">☕</div>
-        <a class="coffee-banner-link" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener"><strong>Like it? Buy me a coffee →</strong></a>
+        <a class="coffee-banner-link" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener"><strong>Like
+            it? Buy me a coffee →</strong></a>
       </div>
       <div class="report-hdr">
         <div>
@@ -1984,6 +2317,12 @@
     </div>
 
     <footer>
+      <div class="platform-note" aria-label="LintAssist platforms">
+        <a class="platform-note-item" href="/" aria-label="LintAssist web app"><img src="/logo.png" alt=""><span>Web app</span></a>
+        <a class="platform-note-item" href="https://www.figma.com/community/plugin/1682243093526540677" target="_blank" rel="noopener"><img src="/Logo-Figma.png" alt=""><span>Figma Plugin</span></a>
+        <div class="platform-note-item"><img src="/Logo-Google_Chrome_Web_Store.svg.webp" alt=""><span>Chrome Extension</span><small>Coming soon</small></div>
+        <div class="platform-note-copy">Same token works across platforms</div>
+      </div>
       <p> <span id="engine-tag" title="Model engine used for the last audit"></span></p>
       <p style="margin-top:6px;">
         <a class="coffee-link" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener">☕ If this helped,
@@ -2068,8 +2407,17 @@
 
       function openPricing(event) {
         if (event) event.preventDefault();
+        movePricingToTop();
         document.getElementById('pricing').style.display = 'block';
         document.getElementById('pricing').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function movePricingToTop() {
+        var pricing = document.getElementById('pricing');
+        var trial = document.getElementById('trial-strip');
+        if (pricing && trial && pricing !== trial.previousElementSibling) {
+          trial.parentNode.insertBefore(pricing, trial);
+        }
       }
 
       document.getElementById('get-access-link').addEventListener('click', openPricing);
@@ -2115,6 +2463,10 @@
         var email = document.getElementById('access-email').value.trim();
         if (!firstName || !lastName || !email) {
           showErr('First name, last name, and email are all required for free access.');
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showErr('Enter a valid email address to receive your access token.');
           return;
         }
         var btn = this; var original = btn.textContent;
@@ -2202,7 +2554,11 @@
           statusData = null; token = '';
           localStorage.removeItem('la_token');
           updateTrialUI(); updateBtn();
-          if (!silent) showErr(e.message);
+          if (!silent) {
+            movePricingToTop();
+            document.getElementById('pricing').style.display = 'block';
+            showErr('Invalid token. Get a fresh token below or continue with your free trial.');
+          }
         }
       }
 
@@ -2265,6 +2621,11 @@
       }
 
       function updateAuditProgress(step) {
+        var labels = { 1: 'Step 1 of 3', 2: 'Step 2 of 3', 3: 'Step 3 of 3' };
+        var current = document.getElementById('audit-progress-current');
+        var fill = document.getElementById('audit-progress-fill');
+        if (current) current.textContent = labels[step] || labels[1];
+        if (fill) fill.style.width = ((step - 1) / 2 * 100) + '%';
         document.querySelectorAll('[data-progress-step]').forEach(function (item) {
           var itemStep = Number(item.dataset.progressStep);
           item.classList.toggle('active', itemStep === step);
