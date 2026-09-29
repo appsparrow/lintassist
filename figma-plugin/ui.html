@@ -282,6 +282,13 @@
       color: var(--accent-hover);
     }
 
+    .audit-progress { display:flex; align-items:center; gap:7px; margin:0 13px 11px; color:var(--muted-2); font-size:10px; }
+    .audit-progress-step { display:flex; align-items:center; gap:4px; white-space:nowrap; }
+    .audit-progress-dot { width:6px; height:6px; border:1px solid var(--border); border-radius:50%; background:var(--surface); }
+    .audit-progress-step.active, .audit-progress-step.done { color:var(--ink); }
+    .audit-progress-step.active .audit-progress-dot, .audit-progress-step.done .audit-progress-dot { background:var(--accent); border-color:var(--accent); }
+    .audit-progress-line { height:1px; flex:1; min-width:8px; background:var(--border-soft); }
+
     .usage-strip {
       display: none;
       align-items: center;
@@ -1209,6 +1216,14 @@
         <a class="usage-link" id="usage-link" href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">Like it? Buy me a coffee →</a>
       </div>
 
+    <div class="audit-progress" id="audit-progress" aria-label="Audit progress">
+      <div class="audit-progress-step active" data-progress-step="1"><span class="audit-progress-dot"></span><span>Select frame</span></div>
+      <span class="audit-progress-line"></span>
+      <div class="audit-progress-step" data-progress-step="2"><span class="audit-progress-dot"></span><span>Select criteria</span></div>
+      <span class="audit-progress-line"></span>
+      <div class="audit-progress-step" data-progress-step="3"><span class="audit-progress-dot"></span><span>Analyze</span></div>
+    </div>
+
     <div class="sel-bar">
       <div class="sel-dot" id="sel-dot"></div>
       <div>
@@ -1430,11 +1445,13 @@
         if (msg.type === 'selection-changed') {
           if (msg.name) {
             selectedFrame = { name: msg.name, width: msg.width, height: msg.height };
+            updateAuditProgress(2);
             document.getElementById('sel-dot').classList.add('active');
             document.getElementById('sel-name').textContent = msg.name;
             document.getElementById('sel-meta').textContent = msg.width + '×' + msg.height + 'px · ' + msg.nodeType;
           } else {
             selectedFrame = null;
+            updateAuditProgress(1);
             document.getElementById('sel-dot').classList.remove('active');
             document.getElementById('sel-name').textContent = 'No frame selected';
             document.getElementById('sel-meta').textContent = 'Select a frame in Figma';
@@ -1555,6 +1572,14 @@
         document.getElementById('analyze-btn').disabled = !(selectedFrame && canUse);
       }
 
+      function updateAuditProgress(step) {
+        document.querySelectorAll('[data-progress-step]').forEach(function (item) {
+          var itemStep = Number(item.dataset.progressStep);
+          item.classList.toggle('active', itemStep === step);
+          item.classList.toggle('done', itemStep < step);
+        });
+      }
+
       // ── Chips ─────────────────────────────────────────────────────
       document.querySelectorAll('.chip').forEach(function (c) {
         c.addEventListener('click', function () { c.classList.toggle('on'); });
@@ -1568,6 +1593,7 @@
       document.getElementById('analyze-btn').addEventListener('click', function () {
         if (!getFW().length) { showErr('Select at least one framework.'); return; }
         hideErr();
+        updateAuditProgress(3);
         document.getElementById('paywall').style.display = 'none';
         document.getElementById('report').style.display = 'none';
         showLoad();

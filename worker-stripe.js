@@ -509,18 +509,23 @@ async function route(request, env) {
   // ── ADMIN: GET /admin/subscribers ────────────────────────
   if (method === 'GET' && path === '/admin/subscribers') {
     const denied = requireAdmin(); if (denied) return denied;
-    const { results } = await env.DB.prepare(`
-      SELECT s.*,
-        COALESCE(u.cnt, 0) as used_this_month
-      FROM subscribers s
-      LEFT JOIN (
-        SELECT token, SUM(count) as cnt
-        FROM usage WHERE month_key = ?
-        GROUP BY token
-      ) u ON s.token = u.token
-      ORDER BY s.created_at DESC
-    `).bind(getMonthKey()).all();
-    return json({ ok: true, subscribers: results, total: results.length });
+    const { results } = await env.DB.prepare(
+      'SELECT * FROM subscribers ORDER BY created_at DESC'
+    ).all();
+    const freeLimit = await getFreeLimit(env);
+    const subscribers = await Promise.all(results.map(async (subscriber) => {
+      const plan = PLANS[subscriber.plan] || PLANS.free;
+      const used = await getUsage(env, subscriber.token, getPeriodKey(plan));
+      const baseLimit = subscriber.plan === 'free' ? freeLimit : plan.audits_per_period;
+      return {
+        ...subscriber,
+        used_this_period: used,
+        used_this_month: used,
+        limit_this_period: baseLimit + (subscriber.extra_credits || 0),
+        period: plan.period,
+      };
+    }));
+    return json({ ok: true, subscribers, total: subscribers.length });
   }
 
   // ── ADMIN: POST /admin/subscribers ───────────────────────

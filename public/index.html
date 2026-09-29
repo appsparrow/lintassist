@@ -288,6 +288,13 @@
       color: var(--accent-hover);
     }
 
+    .audit-progress { display:flex; align-items:center; gap:8px; margin:0 0 14px; color:var(--muted-2); font-size:11px; }
+    .audit-progress-step { display:flex; align-items:center; gap:5px; white-space:nowrap; }
+    .audit-progress-dot { width:7px; height:7px; border:1px solid var(--border); border-radius:50%; background:var(--surface); }
+    .audit-progress-step.active, .audit-progress-step.done { color:var(--ink); }
+    .audit-progress-step.active .audit-progress-dot, .audit-progress-step.done .audit-progress-dot { background:var(--accent); border-color:var(--accent); }
+    .audit-progress-line { height:1px; flex:1; min-width:12px; background:var(--border-soft); }
+
     /* Usage strip (subscribers) */
     .usage-strip {
       display: none;
@@ -1767,6 +1774,14 @@
       <a href="#pricing" class="upgrade-sm" id="upgrade-link"> Need Tokens? →</a>
     </div>
 
+    <div class="audit-progress" id="audit-progress" aria-label="Audit progress">
+      <div class="audit-progress-step active" data-progress-step="1"><span class="audit-progress-dot"></span><span>Upload</span></div>
+      <span class="audit-progress-line"></span>
+      <div class="audit-progress-step" data-progress-step="2"><span class="audit-progress-dot"></span><span>Select criteria</span></div>
+      <span class="audit-progress-line"></span>
+      <div class="audit-progress-step" data-progress-step="3"><span class="audit-progress-dot"></span><span>Analyze</span></div>
+    </div>
+
     <!-- Upload -->
     <!-- "Paste URL" was removed: it only ever worked for a direct image
          file link, not a real webpage screenshot (no headless-render
@@ -2247,12 +2262,20 @@
         document.getElementById('analyze-btn').disabled = !(hasImg && canUse);
       }
 
+      function updateAuditProgress(step) {
+        document.querySelectorAll('[data-progress-step]').forEach(function (item) {
+          var itemStep = Number(item.dataset.progressStep);
+          item.classList.toggle('active', itemStep === step);
+          item.classList.toggle('done', itemStep < step);
+        });
+      }
+
       // ── Image upload ─────────────────────────────────────────────
       var fi = document.getElementById('file-input');
       fi.addEventListener('change', function (e) {
         var f = e.target.files[0]; if (!f) return;
         var rd = new FileReader();
-        rd.onload = function (ev) { b64 = ev.target.result.split(',')[1]; mime = f.type || 'image/png'; setPreview(ev.target.result, f.name); };
+        rd.onload = function (ev) { b64 = ev.target.result.split(',')[1]; mime = f.type || 'image/png'; setPreview(ev.target.result, f.name); updateAuditProgress(2); };
         rd.readAsDataURL(f);
       });
       var dz = document.getElementById('drop-zone');
@@ -2271,6 +2294,7 @@
       }
       document.getElementById('clear-btn').addEventListener('click', function () {
         b64 = null;
+        updateAuditProgress(1);
         document.getElementById('preview-box').style.display = 'none';
         document.getElementById('preview-img').src = '';
         fi.value = '';
@@ -2283,6 +2307,7 @@
         if (!b64) { showErr('Upload a screenshot first.'); return; }
         if (!getFW().length) { showErr('Select at least one framework.'); return; }
         hideErr();
+        updateAuditProgress(3);
         document.getElementById('report').style.display = 'none';
         showLoad(); document.getElementById('analyze-btn').disabled = true;
         runAnalysis();

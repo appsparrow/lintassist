@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LintAssist</title>
+  <link rel="stylesheet" href="sidepanel.css">
+  <link rel="stylesheet" href="progress.css">
+  <link rel="stylesheet" href="steps.css">
+  <link rel="stylesheet" href="usage.css">
+</head>
+<body>
+  <header class="header">
+    <img src="icon-128.png" alt="" width="34" height="34">
+    <div><h1>LintAssist</h1><p>AI design feedback</p></div>
+    <button id="settings-toggle" class="icon-button" aria-label="Settings">⚙</button>
+  </header>
+  <main>
+    <section id="settings" class="card settings" hidden>
+      <label for="token">Access token</label>
+      <div class="token-row"><input id="token" type="password" placeholder="Paste your LintAssist token"><button id="save-token">Save</button></div>
+      <p id="token-feedback" class="token-feedback" role="status" aria-live="polite" hidden></p>
+      <p>Get or recover access at <a href="https://lintassist.com" target="_blank">lintassist.com</a>.</p>
+      <p class="privacy">A screenshot stays temporarily in the panel after capture. It is sent to LintAssist’s backend only when you click Analyze.</p>
+    </section>
+
+    <section class="card intro">
+      <span class="eyebrow">CURRENT PAGE</span>
+      <h2>Review this page’s experience</h2>
+      <p>Choose the areas to check. LintAssist analyzes a screenshot of the visible tab.</p>
+    </section>
+    <section class="usage-strip" aria-label="Audit usage">
+      <span id="plan-tag" class="plan-tag">TRY</span>
+      <div class="usage-copy"><b id="usage-value">Checking your balance…</b><small id="bonus-value" hidden></small></div>
+      <a id="coffee-link" href="https://ko-fi.com/appsparrow" target="_blank" rel="noopener noreferrer">Like it? Buy me a coffee →</a>
+    </section>
+    <section class="card progress-card" aria-label="Audit progress">
+      <div class="progress-label"><span class="eyebrow">AUDIT PROGRESS</span><b id="step-label">Step 1 of 3</b></div>
+      <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+      <ol class="steps">
+        <li id="step-criteria" class="step active"><span>1</span>Select frameworks</li>
+        <li id="step-capture" class="step"><span>2</span>Capture screenshot</li>
+        <li id="step-analyze" class="step"><span>3</span>Analyze</li>
+      </ol>
+    </section>
+    <section class="card">
+      <div class="section-step"><span>1</span><div><div class="eyebrow">STEP 1</div><h2>Select frameworks</h2></div></div>
+      <div class="chips">
+        <button class="chip on" data-val="heuristics">Usability</button>
+        <button class="chip on" data-val="visual_hierarchy">Visual hierarchy</button>
+        <button class="chip" data-val="gestalt">Gestalt</button>
+        <button class="chip" data-val="typography">Typography</button>
+        <button class="chip on" data-val="color_contrast">Color & contrast</button>
+        <button class="chip on" data-val="accessibility">Accessibility</button>
+        <button class="chip" data-val="cta">CTA & conversion</button>
+        <button class="chip" data-val="mobile">Mobile readiness</button>
+      </div>
+    </section>
+    <section class="card">
+      <div class="section-step"><span>2</span><div><div class="eyebrow">STEP 2</div><h2>Capture screenshot</h2></div></div>
+      <p class="step-help">Capture the visible part of the current tab. You can replace the screenshot before analyzing.</p>
+      <button id="capture" class="primary">Capture visible page</button>
+      <div id="capture-preview" class="capture-preview" hidden><img id="preview-image" alt="Preview of the page screenshot"><div><b>Page captured</b><p>Your screenshot stays in this panel until you analyze or replace it.</p></div></div>
+    </section>
+    <section class="card">
+      <div class="section-step"><span>3</span><div><div class="eyebrow">STEP 3</div><h2>Analyze</h2></div></div>
+      <button id="analyze" class="primary" hidden>Analyze page</button>
+      <p class="consent">The screenshot is uploaded to LintAssist’s backend for AI analysis when you click Analyze.</p>
+    </section>
+    <div id="error" class="error" role="alert" hidden></div>
+    <div id="loading" class="card loading" hidden><span class="spinner"></span><div><b>Analyzing your page…</b><p>This can take about 20 seconds.</p></div></div>
+    <section id="report" hidden>
+      <div class="card score-card"><div><span class="eyebrow">UX SCORE</span><div class="score"><span id="score">—</span><small>/ 100</small></div></div><div><b id="page-name">Page</b><p id="summary"></p></div></div>
+      <div class="counts"><div><b id="count-critical">0</b><small>Critical</small></div><div><b id="count-warning">0</b><small>Warning</small></div><div><b id="count-minor">0</b><small>Minor</small></div><div><b id="count-pass">0</b><small>Passed</small></div></div>
+      <div class="report-head"><h2>Findings</h2><button id="copy">Copy report</button></div>
+      <div id="findings"></div>
+      <p class="disclaimer">AI-generated feedback can be mistaken. Validate findings with your design and accessibility expertise.</p>
+    </section>
+  </main>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

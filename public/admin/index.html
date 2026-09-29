@@ -185,7 +185,7 @@
               <th>Name</th>
               <th>Plan</th>
               <th>Token</th>
-              <th>Used / Extra</th>
+              <th>Used / Limit</th>
               <th>Requests</th>
               <th>Est. Cost</th>
               <th class="sortable" onclick="sortSubs('created_at')" style="cursor:pointer;">Created <span class="sort-ind" id="sort-ind-created_at"></span></th>
@@ -639,10 +639,11 @@ function renderTable(rows) {
   }
   tbody.innerHTML = rows.map(function(s, i) {
     var name = [s.first_name, s.last_name].filter(Boolean).join(' ') || '<span style="color:var(--muted);">—</span>';
-    var limit = PLANS_CLIENT[s.plan] || 5;
-    var pct = limit > 0 ? Math.round((s.used_this_month || 0) / limit * 100) : null;
-    var usedCell = (s.used_this_month || 0) + (pct !== null ? ' <span style="color:var(--muted);font-size:10px;">(' + pct + '%)</span>' : '') +
-      ' / ' + (s.extra_credits || 0);
+    var limit = s.limit_this_period || (PLANS_CLIENT[s.plan] || 5) + (s.extra_credits || 0);
+    var used = s.used_this_period || 0;
+    var pct = limit > 0 ? Math.round(used / limit * 100) : null;
+    var usedCell = used + (pct !== null ? ' <span style="color:var(--muted);font-size:10px;">(' + pct + '%)</span>' : '') +
+      ' / ' + limit;
     var bonus = (s.extra_credits || 0) > 0 ? '<span class="bonus-tag">☕ +' + s.extra_credits + '</span>' : '';
     var actions =
       '<button class="sec" style="font-size:10px;padding:4px 8px;" onclick="event.stopPropagation();copyToken(\'' + s.token + '\')">Copy Token</button> ' +
