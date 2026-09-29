@@ -764,14 +764,14 @@
     .coffee-banner {
       display: none;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
-      background: linear-gradient(135deg, #fff8f5, #fff0eb);
-      border: 1px solid #f2b8a7;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
       border-radius: var(--r-md);
-      padding: 12px 14px;
+      padding: 8px 10px;
       margin-bottom: 9px;
-      box-shadow: 0 3px 10px rgba(198, 47, 40, .1);
+      box-shadow: none;
     }
 
     .coffee-banner-emoji {
@@ -854,6 +854,16 @@
 
     .coffee-banner-btn:hover {
       background: var(--kofi-hover);
+    }
+
+    .coffee-banner-link {
+      color: var(--kofi-hover);
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .coffee-banner-link strong {
+      font-weight: 600;
     }
 
     .score-row {
@@ -1277,29 +1287,7 @@
            usage) — see renderReport() toggling this via display:flex. -->
       <div class="coffee-banner" id="coffee-banner">
         <div class="coffee-banner-emoji">☕</div>
-        <div class="support-carousel" aria-live="polite">
-          <div class="support-slide active">
-            <div class="support-kicker">Before the review</div>
-            <div class="support-headline">Not sure what to fix first?</div>
-            <div class="support-copy">LintAssist turns a frame into ranked, practical next steps.</div>
-          </div>
-          <div class="support-slide">
-            <div class="support-kicker">Before the handoff</div>
-            <div class="support-headline">Want a second pair of eyes?</div>
-            <div class="support-copy">Check usability, structure, and accessibility before you share.</div>
-          </div>
-          <div class="support-slide">
-            <div class="support-kicker">A small thank-you</div>
-            <div class="support-headline">If this helped, support LintAssist.</div>
-            <div class="support-copy">A Ko-fi tip helps keep thoughtful design feedback available.</div>
-          </div>
-          <div class="support-controls" aria-label="Support messages">
-            <button class="support-dot active" type="button" aria-label="Show message 1"></button>
-            <button class="support-dot" type="button" aria-label="Show message 2"></button>
-            <button class="support-dot" type="button" aria-label="Show message 3"></button>
-          </div>
-        </div>
-        <a class="coffee-banner-btn" href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow">Support on Ko-fi</a>
+        <a class="coffee-banner-link" href="https://ko-fi.com/appsparrow" data-external="https://ko-fi.com/appsparrow"><strong>Like it? Buy me a coffee →</strong></a>
       </div>
       <div class="score-row">
         <div>
@@ -1663,7 +1651,10 @@
           var clean = raw.replace(/```json|```/g, '').trim();
           var parsed;
           try { parsed = JSON.parse(clean); }
-          catch (e) { parsed = JSON.parse(clean.replace(/,\s*\{[^}]*$/, '').replace(/,\s*$/, '') + ']}'); }
+          catch (e) {
+            try { parsed = JSON.parse(clean.replace(/,\s*\{[^}]*$/, '').replace(/,\s*$/, '') + ']}'); }
+            catch (repairError) { throw new Error('The AI response was incomplete. Please try again.'); }
+          }
 
           hideLoad();
           renderReport(parsed, msg.name);
@@ -1689,7 +1680,7 @@
         document.getElementById('analyze-btn').disabled = false;
         // Registered (token + verified) users are the ones actually running
         // through their free daily quota — matches the web app's targeting.
-        document.getElementById('coffee-banner').style.display = (token && statusData) ? 'flex' : 'none';
+        document.getElementById('coffee-banner').style.display = (!statusData || !(statusData.extra_credits > 0)) ? 'flex' : 'none';
         var sc = data.score || 0;
         var sn = document.getElementById('r-score');
         sn.textContent = sc;
