@@ -1,12 +1,27 @@
 {
   "manifest_version": 3,
-  "name": "LintAssist — AI UX Audit",
-  "version": "1.0.0",
+  "name": "LintAssist - AI Design Analyzer",
+  "version": "1.0.1",
   "description": "Audit the visible page for usability, accessibility, and visual design issues.",
-  "permissions": ["activeTab", "storage", "sidePanel"],
-  "host_permissions": ["https://ux-audit-worker.domain-sparrow.workers.dev/*", "https://lintassist.com/*"],
-  "background": { "service_worker": "service-worker.js" },
-  "action": { "default_title": "Open LintAssist" },
-  "side_panel": { "default_path": "sidepanel.html" },
-  "icons": { "128": "icon-128.png" }
+  "permissions": [
+    "activeTab",
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://ux-audit-worker.domain-sparrow.workers.dev/*",
+    "https://lintassist.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Open LintAssist"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "icons": {
+    "128": "icon-128.png"
+  }
 }
