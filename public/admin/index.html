@@ -41,7 +41,7 @@
   table{width:100%;border-collapse:collapse;}
   th{text-align:left;font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--border);}
   th.sortable:hover{color:var(--text);}
-  .sort-ind{color:var(--accent);}
+  .sort-ind,.trial-sort-ind{color:var(--accent);}
   td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:var(--s2);}
@@ -271,10 +271,9 @@
         <div class="note">
           Anonymous trial tokens (2 free audits, no email, no signup) are
           single-use — once spent, that token is dead and there's no account
-          behind it to manage. So instead of a 500-row list of one-time
-          tokens, this is just the aggregate signal that's actually
-          actionable: how much the free trial is costing, and which models
-          are serving it.
+          behind it to manage. The totals below are the actionable signal
+          (how much the free trial is costing, which models serve it); the
+          table lists every trial token for spot-checking.
         </div>
         <div class="stats-row" id="trial-stats-row" style="grid-template-columns:repeat(5,1fr);display:none;">
           <div class="stat"><div class="stat-n" id="trial-tokens">—</div><div class="stat-l">Trial Tokens Seen</div></div>
@@ -288,6 +287,24 @@
           <div><div class="model-stat-n" id="trial-deepseek">—</div><div class="stat-l">DeepSeek</div></div>
           <div><div class="model-stat-n" id="trial-claude">—</div><div class="stat-l">Claude</div></div>
         </div>
+      </div>
+      <div class="card">
+        <h2>All Trial Tokens</h2>
+        <table id="trial-table">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th class="sortable" onclick="sortTrial('requests')" style="cursor:pointer;">Requests <span class="trial-sort-ind" id="trial-sort-ind-requests"></span></th>
+              <th>Qwen / DeepSeek / Claude</th>
+              <th class="sortable" onclick="sortTrial('total_cost')" style="cursor:pointer;">Est. Cost <span class="trial-sort-ind" id="trial-sort-ind-total_cost"></span></th>
+              <th class="sortable" onclick="sortTrial('first_request')" style="cursor:pointer;">First Used <span class="trial-sort-ind" id="trial-sort-ind-first_request"></span></th>
+              <th class="sortable" onclick="sortTrial('last_request')" style="cursor:pointer;">Last Used <span class="trial-sort-ind" id="trial-sort-ind-last_request">▼</span></th>
+            </tr>
+          </thead>
+          <tbody id="trial-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Connect to load trial usage</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -369,7 +386,7 @@ var WORKER = '';
 var SECRET = '';
 var subscribers = [];
 var realRows = [];    // registered subscribers, merged with usage/cost stats
-var trialRows = [];   // anonymous free_ trial tokens, aggregate-only
+var trialRows = [];   // anonymous free_ trial tokens (no subscribers row)
 var subFilter = 'all';
 
 function msg(id, text, type) {
@@ -487,7 +504,7 @@ async function loadSubscribers() {
 // Combines real subscriber rows with per-token usage/cost stats. Any
 // token that has requests logged but no subscribers row (anonymous
 // free_ trial users — they cost real money too) gets a synthetic row,
-// flagged is_virtual, and never shown as an individual row — see
+// flagged is_virtual, and listed only on the Trial Usage tab — see
 // renderTrial().
 function mergeSubsWithStats(subs, stats) {
   var statsByToken = {};
@@ -552,7 +569,7 @@ function renderOverview(allRows, subRows) {
   document.getElementById('model-claude').textContent = claude;
 }
 
-// ── Trial Usage tab — aggregate only, no per-token rows ──────
+// ── Trial Usage tab — aggregate stats + per-token table ──────
 function renderTrial(rows, timelineDays) {
   var requests = rows.reduce(function(s, r) { return s + (r.requests || 0); }, 0);
   var cost = rows.reduce(function(s, r) { return s + (r.total_cost || 0); }, 0);
@@ -580,6 +597,47 @@ function renderTrial(rows, timelineDays) {
   document.getElementById('trial-deepseek').textContent = deepseek;
   document.getElementById('trial-claude').textContent = claude;
   document.getElementById('trial-stats-row').style.display = 'grid';
+  renderTrialTable();
+}
+
+var trialSort = { key: 'last_request', dir: 'desc' }; // most recent first
+
+function sortTrial(key) {
+  if (trialSort.key === key) {
+    trialSort.dir = trialSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    trialSort.key = key;
+    trialSort.dir = 'desc';
+  }
+  document.querySelectorAll('.trial-sort-ind').forEach(function(el) { el.textContent = ''; });
+  document.getElementById('trial-sort-ind-' + key).textContent = trialSort.dir === 'asc' ? '▲' : '▼';
+  renderTrialTable();
+}
+
+function renderTrialTable() {
+  var tbody = document.getElementById('trial-tbody');
+  if (!trialRows.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">No trial usage yet</td></tr>';
+    return;
+  }
+  var key = trialSort.key, dir = trialSort.dir;
+  var rows = trialRows.slice().sort(function(a, b) {
+    var av = a[key] || 0, bv = b[key] || 0;
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  var fmtTime = function(t) { return t ? t.slice(0, 16).replace('T', ' ') : '—'; };
+  tbody.innerHTML = rows.map(function(r) {
+    return '<tr>' +
+      '<td class="token-cell" title="' + r.token + '">' + r.token + '</td>' +
+      '<td>' + (r.requests || 0) + '</td>' +
+      '<td style="color:var(--muted);">' + (r.qwen_count || 0) + ' / ' + (r.deepseek_count || 0) + ' / ' + (r.claude_count || 0) + '</td>' +
+      '<td>' + formatCost(r.total_cost || 0) + '</td>' +
+      '<td style="color:var(--muted);font-size:10px;">' + fmtTime(r.first_request) + '</td>' +
+      '<td style="color:var(--muted);font-size:10px;">' + fmtTime(r.last_request) + '</td>' +
+    '</tr>';
+  }).join('');
 }
 
 // ── Subscribers tab ──────────────────────────────────────────

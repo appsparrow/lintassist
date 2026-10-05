@@ -172,7 +172,10 @@ checking the visible page while browsing.
     with nothing actionable in them. Replaced with an aggregate-only
     view: total trial tokens seen, total requests, requests in the last
     7 days, the most recent trial request's timestamp, total cost, and
-    the model breakdown for trial traffic specifically.
+    the model breakdown for trial traffic specifically. Below the totals,
+    an "All Trial Tokens" table lists every trial token (token, requests,
+    Qwen/DeepSeek/Claude split, est. cost, first/last used), sortable by
+    requests, cost, first used, or last used (default: most recent first).
   - **Reports** — a plain-English summary line (total registered users,
     Ko-fi supporter count, total $ donated across N donations), a
     30-day line chart (Trial / Free / Ko-fi Bonus request volume, one
