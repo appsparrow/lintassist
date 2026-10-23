@@ -79,7 +79,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ── type ── */
 .eyebrow {
   display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: 999px;
-  font: 500 10px/1 'Geist Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase;
+  font: 500 11px/1 'Geist Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase;
   color: var(--muted); box-shadow: 0 0 0 1px var(--hair); background: var(--shell);
 }
 .eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--ember); }
@@ -125,12 +125,12 @@ svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-widt
 .surface { display: flex; align-items: center; gap: 14px; }
 .surface b { font: 400 1.35rem/1.1 'Fraunces', serif; display: block; letter-spacing: -0.02em; }
 .surface small { color: var(--muted); font-size: 12px; }
-.surface .live { margin-left: auto; font: 500 9px/1 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); display: flex; align-items: center; gap: 6px; }
+.surface .live { margin-left: auto; font: 500 11px/1 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); display: flex; align-items: center; gap: 6px; }
 .surface .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--slate); }
 .glyph { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--hair); color: var(--ember); flex: none; }
 .glyph svg.i { width: 20px; height: 20px; }
 .hint { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; }
-kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); color: var(--fg); }
+kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); color: var(--fg); }
 
 /* ── split layout ── */
 .split { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(28px, 6vw, 96px); align-items: center; }
@@ -149,7 +149,7 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   box-shadow: 0 0 0 1px var(--hair); background: var(--shell); font-weight: 500; font-size: 14px; color: var(--muted);
   transition: all 0.6s var(--spring);
 }
-.node span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 10px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); transition: all 0.6s var(--spring); }
+.node span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 11px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); transition: all 0.6s var(--spring); }
 .node:hover { color: var(--fg); }
 .node[aria-selected='true'] { background: var(--fg); color: var(--bg); box-shadow: none; }
 .node[aria-selected='true'] span { background: var(--ember); color: var(--bg); box-shadow: none; }
@@ -174,7 +174,7 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   background: var(--core); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 1px var(--hi); font-weight: 500; font-size: 14px; color: var(--muted);
   transition: all 0.6s var(--spring); transform: translate(-50%, -50%);
 }
-.stage span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 10px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); }
+.stage span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 11px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); }
 .stage[aria-selected='true'] { background: var(--fg); color: var(--bg); transform: translate(-50%, -50%) scale(1.06); }
 .stage[aria-selected='true'] span { background: var(--ember); color: var(--bg); box-shadow: none; }
 .stage:nth-of-type(1) { left: 50%; top: 0; }
@@ -182,7 +182,7 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .stage:nth-of-type(3) { left: 50%; top: 100%; }
 .stage:nth-of-type(4) { left: 0; top: 50%; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { font: 500 10px/1 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); color: var(--muted); }
+.chip { font: 500 11px/1 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); color: var(--muted); }
 .detail { margin-top: 22px; min-height: 120px; }
 .detail .panel h3 { font: 400 1.5rem/1.15 'Fraunces', serif; letter-spacing: -0.02em; margin-bottom: 6px; }
 .detail .panel p { color: var(--muted); font-size: 15px; max-width: 48ch; }
@@ -202,7 +202,7 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .lane { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 18px; align-items: baseline; padding: 12px 20px; border-radius: 16px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); }
 .lane b { font: 400 1.05rem/1.2 'Fraunces', serif; letter-spacing: -0.01em; }
 .lane p { font-size: 13px; line-height: 1.45; color: var(--muted); transition: opacity 0.5s var(--spring), color 0.5s var(--spring); }
-.lane p::before { content: attr(data-k); display: block; font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 3px; }
+.lane p::before { content: attr(data-k); display: block; font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 3px; }
 .lane .a::before { color: var(--slate); }
 .lane .h::before { color: var(--ember); }
 .lanes[data-focus='ai'] .h, .lanes[data-focus='human'] .a { opacity: 0.3; }
@@ -214,12 +214,12 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .hic.on { opacity: 1; }
 .hic:hover { transform: translateY(-3px); }
 .hic .core { padding: 26px; height: 100%; }
-.tag { display: inline-block; font: 500 9px/1 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; margin-bottom: 14px; }
+.tag { display: inline-block; font: 500 11px/1 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; margin-bottom: 14px; }
 .tag.wall { background: rgba(176, 58, 18, 0.12); color: var(--ember); }
 .tag.call { background: rgba(63, 101, 96, 0.14); color: var(--slate); }
 .hic h3 { font: 400 1.55rem/1.1 'Fraunces', serif; letter-spacing: -0.02em; margin-bottom: 14px; }
 .hic dl { display: grid; gap: 10px; }
-.hic dt { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.hic dt { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
 .hic dd { font-size: 14.5px; line-height: 1.45; }
 
 /* ── 06 proof bento ── */
@@ -234,14 +234,14 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .num[contenteditable]:focus { box-shadow: 0 0 0 2px var(--ember); }
 .bento p.cap { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
 .bento p.cap strong { color: var(--fg); font-weight: 500; display: block; font-size: 15px; margin-bottom: 2px; }
-.edit-note { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); }
+.edit-note { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); }
 
 /* ── 07 next ── */
 .pipe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: clamp(20px, 3.5vh, 38px) 0; position: relative; }
 .pipe .step .core { padding: 20px; height: 100%; }
 .pipe .step b { font: 400 1.3rem/1.1 'Fraunces', serif; letter-spacing: -0.02em; display: block; margin: 12px 0 6px; }
 .pipe .step p { font-size: 13px; color: var(--muted); line-height: 1.45; }
-.state { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; }
+.state { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; }
 .state::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .state.live { color: var(--slate); } .state.next { color: var(--ember); }
 .pipe .step.nx .core { background: var(--fg); color: var(--bg); }
@@ -291,7 +291,7 @@ kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .segs button.cur::after { background: var(--ember-d); transform: scaleY(1.8); }
 .count { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.1em; padding: 0 8px; white-space: nowrap; min-width: 62px; text-align: center; }
 .clock { font: 500 11px 'Geist Mono', monospace; padding: 0 10px; min-width: 112px; text-align: center; white-space: nowrap; border-left: 1px solid rgba(244, 238, 227, 0.14); border-right: 1px solid rgba(244, 238, 227, 0.14); margin: 0 2px; }
-.clock small { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-d); }
+.clock small { display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-d); }
 .clock.late small { color: var(--ember-d); }
 .burger { position: relative; }
 .burger i { position: absolute; left: 12px; right: 12px; height: 1.5px; border-radius: 2px; background: currentColor; transition: transform 0.7s var(--spring), top 0.7s var(--spring); }
