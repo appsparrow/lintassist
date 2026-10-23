@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notice. Decide. Ship. — Siva Tayi</title>
+<meta name="description" content="A ten-minute builder log: how one observation became three live products, and the system that made it repeatable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #f4eee3;
+  --cream-2: #ebe3d4;
+  --espresso: #1b1612;
+  --espresso-2: #261f19;
+  --muted-l: #6b6152;
+  --muted-d: #a89d8b;
+  --ember-l: #b03a12;
+  --ember-d: #f0653a;
+  --slate-l: #3f6560;
+  --slate-d: #8fb3ad;
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --z-grain: 5;
+  --z-nav: 20;
+  --z-notes: 25;
+  --z-menu: 30;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: var(--espresso); }
+body {
+  font-family: 'Geist', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ember-d); outline-offset: 3px; border-radius: 6px; }
+
+/* grain: fixed, non-interactive */
+.grain {
+  position: fixed; inset: 0; z-index: var(--z-grain); pointer-events: none; opacity: 0.06; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ── deck + slides ── */
+.deck { position: fixed; inset: 0; }
+.slide {
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  padding: clamp(28px, 6vh, 72px) clamp(20px, 5vw, 88px) 112px;
+  display: flex; align-items: center;
+  opacity: 0; visibility: hidden; transform: translateX(3%) scale(0.99);
+  transition: opacity 0.7s var(--spring), transform 0.9s var(--spring), visibility 0s 0.9s;
+}
+.slide.active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.slide.before { transform: translateX(-3%) scale(0.99); }
+.slide > .wrap { width: 100%; max-width: 1280px; margin: 0 auto; }
+
+.tone-dark {
+  --bg: var(--espresso); --fg: var(--cream); --muted: var(--muted-d); --ember: var(--ember-d); --slate: var(--slate-d);
+  --hair: rgba(244, 238, 227, 0.12); --shell: rgba(244, 238, 227, 0.05); --core: var(--espresso-2); --hi: rgba(255, 255, 255, 0.08);
+  background: radial-gradient(60% 50% at 85% 0%, rgba(240, 101, 58, 0.14), transparent 70%), radial-gradient(50% 45% at 0% 100%, rgba(143, 179, 173, 0.09), transparent 70%), var(--espresso);
+}
+.tone-light {
+  --bg: var(--cream); --fg: var(--espresso); --muted: var(--muted-l); --ember: var(--ember-l); --slate: var(--slate-l);
+  --hair: rgba(27, 22, 18, 0.1); --shell: rgba(27, 22, 18, 0.045); --core: #fbf8f2; --hi: rgba(255, 255, 255, 0.9);
+  background: radial-gradient(55% 45% at 100% 0%, rgba(176, 58, 18, 0.07), transparent 70%), var(--cream);
+}
+.slide { color: var(--fg); }
+
+/* ── reveal choreography ── */
+.rv { opacity: 0; transform: translateY(28px); filter: blur(8px);
+  transition: opacity 0.9s var(--spring), transform 0.9s var(--spring), filter 0.9s var(--spring);
+  transition-delay: 0s; }
+.slide.active .rv { opacity: 1; transform: none; filter: none; transition-delay: calc(var(--i, 0) * 90ms + 160ms); }
+
+/* ── type ── */
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px; border-radius: 999px;
+  font: 500 10px/1 'Geist Mono', monospace; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); box-shadow: 0 0 0 1px var(--hair); background: var(--shell);
+}
+.eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--ember); }
+h1, h2 { font-family: 'Fraunces', serif; font-weight: 400; letter-spacing: -0.035em; font-variation-settings: 'opsz' 144; }
+h1 { font-size: clamp(3rem, 9vw, 8.25rem); line-height: 0.92; }
+h2 { font-size: clamp(2.1rem, 4.6vw, 4.1rem); line-height: 1; }
+h1 em, h2 em { font-style: italic; color: var(--ember); font-weight: 300; }
+.lede { font-size: clamp(1rem, 1.35vw, 1.2rem); color: var(--muted); max-width: 46ch; line-height: 1.6; }
+.lede strong { color: var(--fg); font-weight: 500; }
+.mono { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.stack-y > * + * { margin-top: clamp(14px, 2.4vh, 26px); }
+
+/* ── double bezel ── */
+.bezel { padding: 6px; border-radius: 28px; background: var(--shell); box-shadow: 0 0 0 1px var(--hair); }
+.core {
+  border-radius: calc(28px - 6px); background: var(--core); padding: clamp(18px, 2.2vw, 28px);
+  box-shadow: inset 0 1px 1px var(--hi), 0 24px 48px -28px rgba(27, 22, 18, 0.28);
+}
+
+/* ── button-in-button ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 14px; padding: 8px 8px 8px 24px; border-radius: 999px;
+  background: var(--fg); color: var(--bg); font-weight: 500; font-size: 15px;
+  transition: transform 0.6s var(--spring);
+}
+.btn .ic {
+  width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 16%, transparent);
+  transition: transform 0.6s var(--spring);
+}
+.btn:hover .ic { transform: translate(3px, -1px) scale(1.06); }
+.btn:active { transform: scale(0.98); }
+svg.i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── 00 title ── */
+.title-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(24px, 5vw, 80px); align-items: center; }
+.cascade { position: relative; height: clamp(320px, 52vh, 460px); }
+.cascade .bezel { position: absolute; width: min(100%, 360px); transition: transform 1.1s var(--spring); }
+.cascade .bezel:nth-child(1) { top: 0; left: 6%; transform: rotate(-3deg); }
+.cascade .bezel:nth-child(2) { top: 34%; left: 22%; transform: rotate(2deg); }
+.cascade .bezel:nth-child(3) { top: 66%; left: 2%; transform: rotate(-1.5deg); }
+.cascade .bezel:hover { transform: rotate(0) translateY(-6px) scale(1.02); }
+.surface { display: flex; align-items: center; gap: 14px; }
+.surface b { font: 400 1.35rem/1.1 'Fraunces', serif; display: block; letter-spacing: -0.02em; }
+.surface small { color: var(--muted); font-size: 12px; }
+.surface .live { margin-left: auto; font: 500 9px/1 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); display: flex; align-items: center; gap: 6px; }
+.surface .live::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--slate); }
+.glyph { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--hair); color: var(--ember); flex: none; }
+.glyph svg.i { width: 20px; height: 20px; }
+.hint { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; }
+kbd { font: 500 10px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); color: var(--fg); }
+
+/* ── split layout ── */
+.split { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(28px, 6vw, 96px); align-items: center; }
+
+/* ── 01 observation ── */
+.signals { display: grid; gap: 14px; }
+.signal .core { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; padding: 20px 22px; }
+.signal q { font: 400 1.25rem/1.25 'Fraunces', serif; letter-spacing: -0.02em; quotes: none; display: block; margin-bottom: 6px; }
+.signal p { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+.signal .n { font: 500 11px 'Geist Mono', monospace; color: var(--ember); padding-top: 6px; }
+
+/* ── steppers ── */
+.chain { display: flex; gap: 8px; flex-wrap: wrap; margin: clamp(18px, 3vh, 34px) 0 18px; }
+.node {
+  display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px 10px 12px; border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--hair); background: var(--shell); font-weight: 500; font-size: 14px; color: var(--muted);
+  transition: all 0.6s var(--spring);
+}
+.node span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 10px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); transition: all 0.6s var(--spring); }
+.node:hover { color: var(--fg); }
+.node[aria-selected='true'] { background: var(--fg); color: var(--bg); box-shadow: none; }
+.node[aria-selected='true'] span { background: var(--ember); color: var(--bg); box-shadow: none; }
+.panels { display: grid; }
+.panel { grid-area: 1 / 1; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity 0.6s var(--spring), transform 0.7s var(--spring); }
+.panel.on { opacity: 1; transform: none; pointer-events: auto; }
+.triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.triad .core { padding: 22px; height: 100%; }
+.triad .mono { color: var(--ember); display: block; margin-bottom: 10px; }
+.triad p { font-size: 15px; line-height: 1.5; }
+.triad .core.big p { font: 400 1.3rem/1.25 'Fraunces', serif; letter-spacing: -0.015em; }
+
+/* ── 03 loop ── */
+.loop { position: relative; display: grid; place-items: center; aspect-ratio: 1; width: min(100%, 520px); margin: 0 auto; }
+.loop svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.loop .track { fill: none; stroke: var(--hair); stroke-width: 1; }
+.loop .arc { fill: none; stroke: var(--ember); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 100 700; transition: stroke-dashoffset 1s var(--spring); }
+.loop .centre { text-align: center; z-index: 1; max-width: 46%; }
+.loop .centre b { font: 300 italic clamp(1.4rem, 2.4vw, 2rem)/1.1 'Fraunces', serif; display: block; letter-spacing: -0.02em; }
+.stage {
+  position: absolute; display: flex; align-items: center; gap: 10px; padding: 9px 16px 9px 10px; border-radius: 999px;
+  background: var(--core); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 1px var(--hi); font-weight: 500; font-size: 14px; color: var(--muted);
+  transition: all 0.6s var(--spring); transform: translate(-50%, -50%);
+}
+.stage span { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font: 500 10px 'Geist Mono', monospace; box-shadow: 0 0 0 1px var(--hair); }
+.stage[aria-selected='true'] { background: var(--fg); color: var(--bg); transform: translate(-50%, -50%) scale(1.06); }
+.stage[aria-selected='true'] span { background: var(--ember); color: var(--bg); box-shadow: none; }
+.stage:nth-of-type(1) { left: 50%; top: 0; }
+.stage:nth-of-type(2) { left: 100%; top: 50%; }
+.stage:nth-of-type(3) { left: 50%; top: 100%; }
+.stage:nth-of-type(4) { left: 0; top: 50%; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: 500 10px/1 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); color: var(--muted); }
+.detail { margin-top: 22px; min-height: 120px; }
+.detail .panel h3 { font: 400 1.5rem/1.15 'Fraunces', serif; letter-spacing: -0.02em; margin-bottom: 6px; }
+.detail .panel p { color: var(--muted); font-size: 15px; max-width: 48ch; }
+
+/* ── 04 operating model ── */
+.ratio { margin: clamp(18px, 3vh, 30px) 0 clamp(14px, 2.4vh, 24px); }
+.ratio-bar { display: flex; gap: 6px; height: 56px; }
+.ratio-bar > div { border-radius: 16px; display: flex; align-items: center; padding: 0 20px; font-weight: 500; font-size: 14px; transform-origin: left; transform: scaleX(0); transition: transform 1.3s var(--spring) 0.4s; white-space: nowrap; overflow: hidden; }
+.slide.active .ratio-bar > div { transform: none; }
+.ratio-bar .ai { flex: 75; background: var(--slate); color: var(--bg); }
+.ratio-bar .hu { flex: 25; background: var(--ember); color: var(--bg); transition-delay: 0.7s; }
+.ratio-sub { display: flex; justify-content: space-between; margin-top: 10px; gap: 12px; }
+.seg { display: inline-flex; padding: 4px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); }
+.seg button { padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.5s var(--spring); }
+.seg button[aria-pressed='true'] { background: var(--fg); color: var(--bg); }
+.lanes { display: grid; gap: 6px; margin-top: 16px; }
+.lane { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 18px; align-items: baseline; padding: 12px 20px; border-radius: 16px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); }
+.lane b { font: 400 1.05rem/1.2 'Fraunces', serif; letter-spacing: -0.01em; }
+.lane p { font-size: 13px; line-height: 1.45; color: var(--muted); transition: opacity 0.5s var(--spring), color 0.5s var(--spring); }
+.lane p::before { content: attr(data-k); display: block; font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 3px; }
+.lane .a::before { color: var(--slate); }
+.lane .h::before { color: var(--ember); }
+.lanes[data-focus='ai'] .h, .lanes[data-focus='human'] .a { opacity: 0.3; }
+.lanes[data-focus='ai'] .a, .lanes[data-focus='human'] .h { color: var(--fg); }
+
+/* ── 05 hiccups ── */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: clamp(18px, 3vh, 32px); }
+.hic { cursor: pointer; transition: transform 0.7s var(--spring), opacity 0.7s var(--spring); opacity: 0.72; }
+.hic.on { opacity: 1; }
+.hic:hover { transform: translateY(-3px); }
+.hic .core { padding: 26px; height: 100%; }
+.tag { display: inline-block; font: 500 9px/1 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; margin-bottom: 14px; }
+.tag.wall { background: rgba(176, 58, 18, 0.12); color: var(--ember); }
+.tag.call { background: rgba(63, 101, 96, 0.14); color: var(--slate); }
+.hic h3 { font: 400 1.55rem/1.1 'Fraunces', serif; letter-spacing: -0.02em; margin-bottom: 14px; }
+.hic dl { display: grid; gap: 10px; }
+.hic dt { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.hic dd { font-size: 14.5px; line-height: 1.45; }
+
+/* ── 06 proof bento ── */
+.bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: clamp(18px, 3vh, 34px); }
+.bento .bezel { min-height: 150px; }
+.bento .core { height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+.c1 { grid-column: span 5; } .c2 { grid-column: span 4; } .c3 { grid-column: span 3; }
+.c4 { grid-column: span 3; } .c5 { grid-column: span 4; } .c6 { grid-column: span 5; }
+.num { font: 300 clamp(3rem, 6vw, 5.2rem)/0.9 'Fraunces', serif; letter-spacing: -0.04em; font-variation-settings: 'opsz' 144; }
+.num sup { font-size: 0.4em; color: var(--ember); vertical-align: top; margin-left: 2px; }
+.num[contenteditable] { outline: none; min-width: 1.5ch; cursor: text; border-radius: 8px; }
+.num[contenteditable]:focus { box-shadow: 0 0 0 2px var(--ember); }
+.bento p.cap { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+.bento p.cap strong { color: var(--fg); font-weight: 500; display: block; font-size: 15px; margin-bottom: 2px; }
+.edit-note { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); }
+
+/* ── 07 next ── */
+.pipe { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: clamp(20px, 3.5vh, 38px) 0; position: relative; }
+.pipe .step .core { padding: 20px; height: 100%; }
+.pipe .step b { font: 400 1.3rem/1.1 'Fraunces', serif; letter-spacing: -0.02em; display: block; margin: 12px 0 6px; }
+.pipe .step p { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.state { font: 500 9px 'Geist Mono', monospace; letter-spacing: 0.16em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; }
+.state::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.state.live { color: var(--slate); } .state.next { color: var(--ember); }
+.pipe .step.nx .core { background: var(--fg); color: var(--bg); }
+.pipe .step.nx p { color: color-mix(in srgb, var(--bg) 65%, transparent); }
+.pipe .step.nx .state.next { color: var(--ember-d); }
+.bets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.bets .core { padding: 20px 22px; height: 100%; }
+.bets h4 { font: 500 15px 'Geist'; margin-bottom: 6px; }
+.bets p { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+[contenteditable='true']:focus { outline: 2px solid var(--ember); outline-offset: 4px; border-radius: 6px; }
+
+/* ── 08 playbook ── */
+.acc { display: grid; gap: 6px; }
+.acc-item { border-radius: 20px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); transition: background 0.6s var(--spring); }
+.acc-item.on { background: var(--core); box-shadow: 0 0 0 1px var(--hair), inset 0 1px 1px var(--hi); }
+.acc-head { width: 100%; display: grid; grid-template-columns: 44px 1fr; align-items: center; text-align: left; padding: 14px 20px; }
+.acc-head .k { font: 500 11px 'Geist Mono', monospace; color: var(--ember); }
+.acc-head b { font: 400 1.35rem/1.15 'Fraunces', serif; letter-spacing: -0.02em; }
+.acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.7s var(--spring); }
+.acc-item.on .acc-body { grid-template-rows: 1fr; }
+.acc-body > div { overflow: hidden; }
+.acc-body p { padding: 0 20px 16px 64px; color: var(--muted); font-size: 14.5px; max-width: 58ch; }
+
+/* ── 09 ask ── */
+.ask-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: clamp(22px, 4vh, 44px) 0; }
+.ask-grid .core { padding: 24px; height: 100%; }
+.ask-grid .k { font: 500 11px 'Geist Mono', monospace; color: var(--ember); }
+.ask-grid b { font: 400 1.7rem/1.1 'Fraunces', serif; letter-spacing: -0.025em; display: block; margin: 14px 0 8px; }
+.ask-grid p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* ── nav island ── */
+.island {
+  position: fixed; z-index: var(--z-nav); left: 50%; bottom: 20px; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 24px);
+  display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 999px; color: var(--cream);
+  background: rgba(27, 22, 18, 0.9); backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  box-shadow: 0 0 0 1px rgba(244, 238, 227, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.1), 0 18px 40px -18px rgba(0, 0, 0, 0.5);
+}
+.island button.ib { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; transition: background 0.5s var(--spring), transform 0.5s var(--spring); }
+.island button.ib:hover { background: rgba(244, 238, 227, 0.12); }
+.island button.ib:active { transform: scale(0.94); }
+.island button.ib[aria-pressed='true'] { background: rgba(240, 101, 58, 0.25); color: var(--ember-d); }
+.island button:disabled { opacity: 0.3; pointer-events: none; }
+.segs { display: flex; gap: 4px; padding: 0 8px; }
+.segs button { width: 22px; height: 28px; display: grid; place-items: center; }
+.segs button::after { content: ''; width: 100%; height: 3px; border-radius: 3px; background: rgba(244, 238, 227, 0.22); transition: background 0.5s var(--spring), transform 0.5s var(--spring); }
+.segs button.done::after { background: rgba(244, 238, 227, 0.6); }
+.segs button.cur::after { background: var(--ember-d); transform: scaleY(1.8); }
+.count { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.1em; padding: 0 8px; white-space: nowrap; min-width: 62px; text-align: center; }
+.clock { font: 500 11px 'Geist Mono', monospace; padding: 0 10px; min-width: 112px; text-align: center; white-space: nowrap; border-left: 1px solid rgba(244, 238, 227, 0.14); border-right: 1px solid rgba(244, 238, 227, 0.14); margin: 0 2px; }
+.clock small { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-d); }
+.clock.late small { color: var(--ember-d); }
+.burger { position: relative; }
+.burger i { position: absolute; left: 12px; right: 12px; height: 1.5px; border-radius: 2px; background: currentColor; transition: transform 0.7s var(--spring), top 0.7s var(--spring); }
+.burger i:nth-child(1) { top: 15px; } .burger i:nth-child(2) { top: 24px; }
+.burger[aria-expanded='true'] i:nth-child(1) { top: 19.5px; transform: rotate(45deg); }
+.burger[aria-expanded='true'] i:nth-child(2) { top: 19.5px; transform: rotate(-45deg); }
+
+/* ── menu overlay ── */
+.menu {
+  position: fixed; inset: 0; z-index: var(--z-menu); display: flex; align-items: center; justify-content: center; padding: 24px 24px 100px;
+  background: rgba(20, 16, 12, 0.88); backdrop-filter: blur(36px); -webkit-backdrop-filter: blur(36px);
+  opacity: 0; visibility: hidden; transition: opacity 0.6s var(--spring), visibility 0s 0.6s;
+}
+.menu.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+.menu ol { list-style: none; width: min(760px, 100%); max-height: 100%; overflow-y: auto; }
+.menu li { overflow: hidden; border-bottom: 1px solid rgba(244, 238, 227, 0.1); }
+.menu li button { width: 100%; display: grid; grid-template-columns: 56px 1fr auto; align-items: baseline; text-align: left; padding: 11px 4px; color: var(--cream);
+  transform: translateY(100%); opacity: 0; transition: transform 0.8s var(--spring), opacity 0.8s var(--spring), color 0.4s var(--spring); transition-delay: 0s; }
+.menu.open li button { transform: none; opacity: 1; transition-delay: calc(var(--i) * 45ms + 120ms); }
+.menu li button:hover { color: var(--ember-d); }
+.menu li .n { font: 500 11px 'Geist Mono', monospace; color: var(--muted-d); }
+.menu li .t { font: 400 clamp(1.3rem, 2.8vw, 2rem)/1.1 'Fraunces', serif; letter-spacing: -0.02em; }
+.menu li .m { font: 500 11px 'Geist Mono', monospace; color: var(--muted-d); }
+.menu li.cur .t { color: var(--ember-d); font-style: italic; }
+
+/* ── notes ── */
+.notes {
+  position: fixed; z-index: var(--z-notes); right: 20px; top: 20px; width: min(380px, calc(100vw - 40px)); padding: 6px; border-radius: 28px;
+  background: rgba(27, 22, 18, 0.78); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); color: var(--cream);
+  box-shadow: 0 0 0 1px rgba(244, 238, 227, 0.14), 0 24px 50px -20px rgba(0, 0, 0, 0.6);
+  opacity: 0; transform: translateY(-12px) scale(0.98); visibility: hidden; transition: opacity 0.6s var(--spring), transform 0.7s var(--spring), visibility 0s 0.7s;
+}
+.notes.open { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
+.notes .in { border-radius: 22px; background: rgba(244, 238, 227, 0.05); padding: 18px 20px; box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08); }
+.notes .mono { color: var(--ember-d); }
+.notes ul { margin-top: 10px; padding-left: 16px; font-size: 13.5px; line-height: 1.5; color: #e8dfce; }
+.notes li + li { margin-top: 6px; }
+
+/* ── responsive ── */
+@media (max-width: 900px) {
+  .title-grid, .split { grid-template-columns: 1fr; }
+  .cascade { height: auto; display: grid; gap: 12px; }
+  .cascade .bezel { position: static; width: 100%; transform: none !important; }
+  .triad, .duo, .bets, .ask-grid { grid-template-columns: 1fr; }
+  .pipe { grid-template-columns: 1fr 1fr; }
+  .bento > * { grid-column: span 6 !important; }
+  .lane { grid-template-columns: 1fr; gap: 6px; }
+  .loop { width: min(100%, 400px); }
+  .slide { align-items: flex-start; }
+  .segs { display: none; }
+  .clock small { display: none; }
+  .clock { min-width: 62px; }
+}
+@media (max-width: 520px) {
+  .bento > * { grid-template-columns: 1fr; }
+  .bento > * { grid-column: span 12 !important; }
+  .pipe { grid-template-columns: 1fr; }
+  .stage { font-size: 12px; padding-right: 12px; }
+  .ratio-bar { height: 48px; } .ratio-bar > div { padding: 0 12px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; animation: none !important; }
+  .rv { filter: none; transform: none; }
+}
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .deck { position: static; } .slide { position: relative; opacity: 1; visibility: visible; transform: none; min-height: 100vh; page-break-after: always; }
+  .island, .menu, .notes, .grain { display: none; }
+  .rv { opacity: 1; transform: none; filter: none; }
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="deck" id="deck">
+
+<!-- 00 · TITLE -->
+<section class="slide tone-dark" aria-label="Title">
+  <div class="wrap title-grid">
+    <div class="stack-y">
+      <span class="eyebrow rv" style="--i:0"><i></i>Builder log · Leadership session</span>
+      <h1 class="rv" style="--i:1">Notice.<br><em>Decide.</em><br>Ship.</h1>
+      <p class="lede rv" style="--i:2">How one observation from inside a team became <strong>three live products</strong>, and the system that makes it repeatable.</p>
+      <div class="rv" style="--i:3"><button class="btn" data-next>Begin<span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></div>
+      <div class="hint rv" style="--i:4"><span class="mono"><kbd>←</kbd> <kbd>→</kbd> move</span><span class="mono"><kbd>N</kbd> notes</span><span class="mono"><kbd>T</kbd> timer</span><span class="mono"><kbd>M</kbd> menu</span></div>
+    </div>
+    <div class="cascade rv" style="--i:3" aria-label="The three live surfaces">
+      <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div><div><b>Web app</b><small>app.lintassist.com</small></div><span class="live">Live</span></div></div>
+      <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 4v16M4 12h16"/></svg></div><div><b>Figma plugin</b><small>Published · v1.0.1</small></div><span class="live">Live</span></div></div>
+      <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h7.5M9.4 13.5 5.6 7M14.6 13.5 10.8 20"/></svg></div><div><b>Chrome extension</b><small>Published · v1.0.1</small></div><span class="live">Live</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 · OBSERVATION -->
+<section class="slide tone-light" aria-label="The observation">
+  <div class="wrap split">
+    <div class="stack-y">
+      <span class="eyebrow rv" style="--i:0"><i></i>01 · The observation</span>
+      <h2 class="rv" style="--i:1">Everyone was building. I could see <em>what was missing.</em></h2>
+      <p class="lede rv" style="--i:2">Working inside product teams, the gap was not effort or tooling. It was a fast, structured <strong>second opinion</strong> before a review. Not a verdict. A lens.</p>
+    </div>
+    <div class="signals">
+      <div class="bezel signal rv" style="--i:2"><div class="core"><span class="n">A</span><div><q>“I know something feels off, but I don’t know where to start.”</q><p>A score and ranked findings give a first move.</p></div></div></div>
+      <div class="bezel signal rv" style="--i:3"><div class="core"><span class="n">B</span><div><q>“I need a second pair of eyes before the review.”</q><p>Nielsen, Gestalt and accessibility checks as a baseline.</p></div></div></div>
+      <div class="bezel signal rv" style="--i:4"><div class="core"><span class="n">C</span><div><q>“The feedback lives nowhere near my workflow.”</q><p>So the tool has to meet people where they already work.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · PIVOT CHAIN -->
+<section class="slide tone-dark" aria-label="The pivot chain" data-stepper>
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>02 · The pivot chain</span>
+    <h2 class="rv" style="--i:1" >I never planned a Chrome extension. <em>Each answer opened the next question.</em></h2>
+    <div class="chain rv" style="--i:2" role="tablist" aria-label="Pivots">
+      <button class="node" role="tab" data-step="0"><span>1</span>Web app</button>
+      <button class="node" role="tab" data-step="1"><span>2</span>Figma plugin</button>
+      <button class="node" role="tab" data-step="2"><span>3</span>Shared tokens</button>
+      <button class="node" role="tab" data-step="3"><span>4</span>Three-step flow</button>
+      <button class="node" role="tab" data-step="4"><span>5</span>Chrome extension</button>
+    </div>
+    <div class="panels rv" style="--i:3">
+      <div class="panel" data-for="0"><div class="triad">
+        <div class="bezel"><div class="core"><span class="mono">I saw</span><p>Designers need an honest read on a screen, fast, without a full review.</p></div></div>
+        <div class="bezel"><div class="core"><span class="mono">I decided</span><p>Start with a screenshot-to-audit web app on real frameworks, not vague “looks nice” feedback.</p></div></div>
+        <div class="bezel"><div class="core big"><span class="mono">It unlocked</span><p>Proof the idea worked, and a question: where do designers actually live?</p></div></div>
+      </div></div>
+      <div class="panel" data-for="1"><div class="triad">
+        <div class="bezel"><div class="core"><span class="mono">I saw</span><p>Designers live in Figma. Exporting screenshots is friction.</p></div></div>
+        <div class="bezel"><div class="core"><span class="mono">I decided</span><p>Ship a plugin that audits the selected frame and places the report on the canvas. A sandbox wall forced a backend of our own.</p></div></div>
+        <div class="bezel"><div class="core big"><span class="mono">It unlocked</span><p>A real API and a way to reach the Figma community.</p></div></div>
+      </div></div>
+      <div class="panel" data-for="2"><div class="triad">
+        <div class="bezel"><div class="core"><span class="mono">I saw</span><p>Two surfaces should never mean two accounts or two sets of rules.</p></div></div>
+        <div class="bezel"><div class="core"><span class="mono">I decided</span><p>One token and one backend for every surface, with the same tokens carried across design and code.</p></div></div>
+        <div class="bezel"><div class="core big"><span class="mono">It unlocked</span><p>A new surface became cheap. That is the decision everything after depended on.</p></div></div>
+      </div></div>
+      <div class="panel" data-for="3"><div class="triad">
+        <div class="bezel"><div class="core"><span class="mono">I saw</span><p>A quick check should feel like a glance, not a workflow.</p></div></div>
+        <div class="bezel"><div class="core"><span class="mono">I decided</span><p>Collapse the whole interface into three steps: capture, choose a lens, read the report.</p></div></div>
+        <div class="bezel"><div class="core big"><span class="mono">It unlocked</span><p>A consistent interaction model that carries to any new surface.</p></div></div>
+      </div></div>
+      <div class="panel" data-for="4"><div class="triad">
+        <div class="bezel"><div class="core"><span class="mono">I saw</span><p>Not everything worth auditing lives in Figma. Live pages needed the same lens.</p></div></div>
+        <div class="bezel"><div class="core"><span class="mono">I decided</span><p>A Chrome side panel on the same backend and access model. Built and submitted in one weekend.</p></div></div>
+        <div class="bezel"><div class="core big"><span class="mono">It unlocked</span><p>About 90 minutes from idea to a working package, now published.</p></div></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · QUALITY LOOP -->
+<section class="slide tone-light" aria-label="Quality as a loop" data-stepper>
+  <div class="wrap split">
+    <div class="stack-y">
+      <span class="eyebrow rv" style="--i:0"><i></i>03 · Quality as a loop</span>
+      <h2 class="rv" style="--i:1">I audited <em>my own</em> tool, then made it pass.</h2>
+      <div class="chips rv" style="--i:2"><span class="chip">Nielsen heuristics</span><span class="chip">Gestalt</span><span class="chip">WCAG / ADA</span></div>
+      <div class="detail rv" style="--i:3">
+        <div class="panel" data-for="0"><h3>Build</h3><p>Ship the plugin with the three-step flow and a shared design language.</p></div>
+        <div class="panel" data-for="1"><h3>Audit the product itself</h3><p>Run an accessibility review on the plugin with the same lenses we sell. The product is its own first customer.</p></div>
+        <div class="panel" data-for="2"><h3>Fix what it found</h3><p>Implement the feedback until the plugin is accessible and holds up on heuristics and Gestalt.</p></div>
+        <div class="panel" data-for="3"><h3>Carry it forward</h3><p>Apply the same standard to Chrome before submitting. Quality became a default, not a final check.</p></div>
+      </div>
+    </div>
+    <div class="loop rv" style="--i:2" role="tablist" aria-label="Quality loop stages">
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="48"/><circle class="arc" cx="50" cy="50" r="48" pathLength="800" transform="rotate(-90 50 50)"/></svg>
+      <div class="centre"><b>Audit what<br>you ship.</b></div>
+      <button class="stage" role="tab" data-step="0"><span>1</span>Build</button>
+      <button class="stage" role="tab" data-step="1"><span>2</span>Audit</button>
+      <button class="stage" role="tab" data-step="2"><span>3</span>Fix</button>
+      <button class="stage" role="tab" data-step="3"><span>4</span>Carry</button>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · OPERATING MODEL -->
+<section class="slide tone-dark" aria-label="The operating model">
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>04 · The operating model</span>
+    <h2 class="rv" style="--i:1">AI carries the execution. <em>The judgment stays human.</em></h2>
+    <div class="ratio rv" style="--i:2">
+      <div class="ratio-bar" aria-label="Roughly seventy to eighty percent AI execution, twenty to thirty percent human judgment">
+        <div class="ai">~70–80% AI execution</div><div class="hu">~20–30% human</div>
+      </div>
+      <div class="ratio-sub"><span class="mono">Draft, build, test, document</span><span class="mono" style="color:var(--ember)">Notice, frame, taste, decide, cut</span></div>
+    </div>
+    <div class="seg rv" style="--i:3" role="group" aria-label="Highlight">
+      <button aria-pressed="true" data-focus="both">Both</button><button aria-pressed="false" data-focus="ai">AI carried</button><button aria-pressed="false" data-focus="human">I decided</button>
+    </div>
+    <div class="lanes rv" style="--i:4" id="lanes" data-focus="both">
+      <div class="lane"><b>Product</b><p class="a" data-k="AI carried">Drafted and maintains the PRD, task log and release notes.</p><p class="h" data-k="I decided">The promise: a second opinion, never the final word. What not to build.</p></div>
+      <div class="lane"><b>Design</b><p class="a" data-k="AI carried">Generated layouts, states and report variations.</p><p class="h" data-k="I decided">The shared tokens, the three-step flow, the taste bar.</p></div>
+      <div class="lane"><b>Engineering</b><p class="a" data-k="AI carried">Worker, database migrations, plugin and extension code.</p><p class="h" data-k="I decided">One backend, one token, every surface. The architecture.</p></div>
+      <div class="lane"><b>Quality</b><p class="a" data-k="AI carried">Ran accessibility, heuristic and Gestalt audits.</p><p class="h" data-k="I decided">Which findings matter, and the standard to hold.</p></div>
+      <div class="lane"><b>Go-to-market</b><p class="a" data-k="AI carried">Drafted listings, SEO, release and journey pages.</p><p class="h" data-k="I decided">Positioning, tone, channels, what we say and don’t.</p></div>
+      <div class="lane"><b>Operations</b><p class="a" data-k="AI carried">Built the admin: usage, subscribers, reports.</p><p class="h" data-k="I decided">What to measure, the limits, and how support works.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · HICCUPS -->
+<section class="slide tone-light" aria-label="Hiccups and judgment" data-stepper>
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>05 · Hiccups</span>
+    <h2 class="rv" style="--i:1">Two moments that <em>shaped</em> the product.</h2>
+    <div class="duo rv" style="--i:2">
+      <article class="bezel hic" data-step="0" tabindex="0" role="button" aria-pressed="false"><div class="core">
+        <span class="tag wall">The wall</span>
+        <h3>Figma’s sandbox blocked every call.</h3>
+        <dl><dt>What happened</dt><dd>The plugin couldn’t reach the AI provider. Origin was null and the request was refused.</dd>
+        <dt>What I did</dt><dd>Put a small proxy at the edge, then made it the single backend for every surface.</dd>
+        <dt>What it became</dt><dd>The reason a third surface took a weekend, not a quarter.</dd></dl>
+      </div></article>
+      <article class="bezel hic" data-step="1" tabindex="0" role="button" aria-pressed="false"><div class="core">
+        <span class="tag call">The call</span>
+        <h3>I held back payments that weren’t ready.</h3>
+        <dl><dt>What happened</dt><dd>Paid plans were coded, but prices, links and webhooks weren’t live and tested.</dd>
+        <dt>What I did</dt><dd>Hid them and shipped optional Ko-fi support, with bonus audits granted automatically.</dd>
+        <dt>What it became</dt><dd>A trust-first free tier and an honest signal of who values it.</dd></dl>
+      </div></article>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · PROOF -->
+<section class="slide tone-dark" aria-label="Proof">
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>06 · What exists today</span>
+    <h2 class="rv" style="--i:1">Not a mock-up. <em>A running system.</em></h2>
+    <div class="bento">
+      <div class="bezel c1 rv" style="--i:2"><div class="core"><div class="num" data-count="3">0</div><p class="cap"><strong>Live surfaces</strong>Web app, Figma plugin, Chrome extension.</p></div></div>
+      <div class="bezel c2 rv" style="--i:3"><div class="core"><div class="num">1<sup>×</sup></div><p class="cap"><strong>Backend, one token</strong>Same access model on every surface.</p></div></div>
+      <div class="bezel c3 rv" style="--i:4"><div class="core"><div class="num" data-count="8">0</div><p class="cap"><strong>Audit lenses</strong>Three on by default.</p></div></div>
+      <div class="bezel c4 rv" style="--i:4"><div class="core"><div class="num">~90<sup>min</sup></div><p class="cap"><strong>Idea to working extension</strong>On the existing backend.</p></div></div>
+      <div class="bezel c5 rv" style="--i:5"><div class="core"><div class="num" id="edit1" contenteditable="true" spellcheck="false" aria-label="Installs, editable" data-key="installs">—</div><p class="cap"><strong>Installs</strong><span class="edit-note">Click to add your number</span></p></div></div>
+      <div class="bezel c6 rv" style="--i:6"><div class="core"><div class="num" id="edit2" contenteditable="true" spellcheck="false" aria-label="Audits run, editable" data-key="audits">—</div><p class="cap"><strong>Audits run</strong><span class="edit-note">Click to add your number</span></p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · WHAT'S NEXT -->
+<section class="slide tone-light" aria-label="What's next">
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>07 · What’s next</span>
+    <h2 class="rv" style="--i:1">It knows what’s wrong with a screen. <em>Next, it shows the better one.</em></h2>
+    <div class="pipe rv" style="--i:2">
+      <div class="bezel step"><div class="core"><span class="state live">Live</span><b>Diagnose</b><p>Score and rank issues against real frameworks.</p></div></div>
+      <div class="bezel step"><div class="core"><span class="state live">Live</span><b>Explain</b><p>Every finding carries an observation and a next step.</p></div></div>
+      <div class="bezel step nx"><div class="core"><span class="state next">Next</span><b>Redesign</b><p>Generate an alternate version that fixes what was found.</p></div></div>
+      <div class="bezel step nx"><div class="core"><span class="state next">Next</span><b>Compare</b><p>Put before and after side by side and re-audit the result.</p></div></div>
+    </div>
+    <div class="bets rv" style="--i:3">
+      <div class="bezel"><div class="core"><h4 contenteditable="true" spellcheck="false">Design-system-aware audits</h4><p contenteditable="true" spellcheck="false">Check screens against a team’s own tokens and components, not generic rules.</p></div></div>
+      <div class="bezel"><div class="core"><h4 contenteditable="true" spellcheck="false">Learning loop</h4><p contenteditable="true" spellcheck="false">Trial to signup to repeat use, so each release is steered by what people do.</p></div></div>
+      <div class="bezel"><div class="core"><h4 contenteditable="true" spellcheck="false">Team workflows</h4><p contenteditable="true" spellcheck="false">Shared lenses and review history for a design org, not just individuals.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 · PLAYBOOK -->
+<section class="slide tone-dark" aria-label="The playbook" data-stepper>
+  <div class="wrap split">
+    <div class="stack-y">
+      <span class="eyebrow rv" style="--i:0"><i></i>08 · The playbook</span>
+      <h2 class="rv" style="--i:1">It isn’t one product. It’s <em>a method</em> other teams can run.</h2>
+      <p class="lede rv" style="--i:2">The same six moves, applied to any use case a team already feels.</p>
+    </div>
+    <div class="acc rv" style="--i:2">
+      <div class="acc-item" data-step="0"><button class="acc-head" aria-expanded="false"><span class="k">01</span><b>Notice the gap from inside real work</b></button><div class="acc-body"><div><p>The best ideas sit in the complaints teams have stopped hearing. Listen for them.</p></div></div></div>
+      <div class="acc-item" data-step="1"><button class="acc-head" aria-expanded="false"><span class="k">02</span><b>Frame the use case before the tool</b></button><div class="acc-body"><div><p>Who needs what, when, and why now. The technology is chosen last.</p></div></div></div>
+      <div class="acc-item" data-step="2"><button class="acc-head" aria-expanded="false"><span class="k">03</span><b>Build one backend, many surfaces</b></button><div class="acc-body"><div><p>One access model and one source of truth make every new channel cheap.</p></div></div></div>
+      <div class="acc-item" data-step="3"><button class="acc-head" aria-expanded="false"><span class="k">04</span><b>Audit your own work</b></button><div class="acc-body"><div><p>Use real frameworks on the product itself, then fold the findings back in.</p></div></div></div>
+      <div class="acc-item" data-step="4"><button class="acc-head" aria-expanded="false"><span class="k">05</span><b>Document as you go</b></button><div class="acc-body"><div><p>PRD, tasks, release notes and the story are part of the build, not an afterthought.</p></div></div></div>
+      <div class="acc-item" data-step="5"><button class="acc-head" aria-expanded="false"><span class="k">06</span><b>Keep the human layer</b></button><div class="acc-body"><div><p>Taste, trust and the decision to cut. AI does the lifting; people own the call.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · ASK -->
+<section class="slide tone-light" aria-label="What I want to do next">
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>09 · Where I add the most</span>
+    <h2 class="rv" style="--i:1">I want to do this <em>for the organisation,</em> not just for one product.</h2>
+    <div class="ask-grid">
+      <div class="bezel rv" style="--i:2"><div class="core"><span class="k">01</span><b>Conceptualise</b><p>Turn what teams need into products worth building, and shape the roadmap behind them.</p></div></div>
+      <div class="bezel rv" style="--i:3"><div class="core"><span class="k">02</span><b>Enable</b><p>Make the playbook and the human-in-the-loop model something every team can pick up.</p></div></div>
+      <div class="bezel rv" style="--i:4"><div class="core"><span class="k">03</span><b>Represent</b><p>Present the vision, teach the method and carry the story to leadership and beyond.</p></div></div>
+    </div>
+    <div class="rv" style="--i:5">
+      <button class="btn" data-restart>Back to the start<span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg></span></button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- notes -->
+<aside class="notes" id="notes" aria-live="polite" aria-label="Speaker notes"><div class="in"><span class="mono" id="notes-h"></span><ul id="notes-l"></ul></div></aside>
+
+<!-- menu -->
+<nav class="menu" id="menu" aria-label="Slides"><ol id="menu-l"></ol></nav>
+
+<!-- nav island -->
+<div class="island" role="toolbar" aria-label="Presentation controls">
+  <button class="ib" id="prev" aria-label="Previous"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <div class="segs" id="segs"></div>
+  <div class="count" id="count">01 / 10</div>
+  <button class="ib" id="next" aria-label="Next"><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="clock" id="clock"><span id="clock-t">0:00</span><small id="clock-s">press T</small></div>
+  <button class="ib" id="timer" aria-label="Start or pause timer" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 9v4l2.5 2M10 3h4"/></svg></button>
+  <button class="ib" id="notes-b" aria-label="Toggle speaker notes" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4z"/><path d="M9 9h6M9 12h4"/></svg></button>
+  <button class="ib burger" id="burger" aria-label="Slide menu" aria-expanded="false"><i></i><i></i></button>
+</div>
+
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const N = slides.length;
+  // target start (seconds), title for menu, speaker notes
+  const meta = [
+    { t: 0,   title: 'Notice. Decide. Ship.', notes: ['Open with the claim: I am a builder and conceptualiser, not only a designer.', 'Three live surfaces, one idea. The next nine minutes are how I think, not how I code.'] },
+    { t: 40,  title: 'The observation', notes: ['I was working inside teams. People were building fast.', 'What was missing was a quick, structured second opinion. Not a verdict, a lens.', 'This is the skill: seeing the gap others walk past.'] },
+    { t: 100, title: 'The pivot chain', notes: ['Press → to step through each pivot. Each is: I saw, I decided, it unlocked.', 'Stress that I never planned a Chrome extension. The shared token is the decision that made it cheap.', 'Weekend build and submission; ~90 minutes to a working package.'] },
+    { t: 195, title: 'Quality as a loop', notes: ['I ran an accessibility audit on the plugin itself and implemented what it found.', 'Heuristics, Gestalt and ADA/WCAG, then carried the same standard to Chrome.', 'The point: quality is built into the process, not checked at the end.'] },
+    { t: 270, title: 'The operating model', notes: ['This is the leadership slide. Roughly 70–80% of execution is AI; 20–30% is human judgment.', 'Use the toggle to show the two layers. Click through the lanes: product, design, engineering, quality, go-to-market, operations.', 'The human layer is where the product is actually decided.'] },
+    { t: 345, title: 'Hiccups', notes: ['Two stories, not a list. The sandbox wall became the architecture.', 'Holding back payments shows judgment: trust before revenue.', 'Press → to switch between the two.'] },
+    { t: 405, title: 'What exists today', notes: ['Not a mock-up. A running system.', 'Click the two empty tiles to add real installs and audits before you present. They save in this browser.'] },
+    { t: 450, title: 'What’s next', notes: ['It can already diagnose. The next step is proposing the alternate version.', 'The three bets below are editable. Click to rewrite them in your own words.'] },
+    { t: 520, title: 'The playbook', notes: ['Six moves any team can run. Press → to open each.', 'This is where the director-level argument lives: repeatable, teachable, scalable.'] },
+    { t: 570, title: 'Where I add the most', notes: ['Conceptualise, enable, represent.', 'Do not say “promote me”. Describe the role: owning AI-enabled product conception across the org, teaching it, and presenting it.', 'Close on the human-in-the-loop line.'] }
+  ];
+
+  let idx = 0, step = 0;
+  const steppers = slides.map(s => s.hasAttribute('data-stepper') ? (s.querySelectorAll('[data-step]').length ? Math.max(...[...s.querySelectorAll('[data-step]')].map(e => +e.dataset.step)) + 1 : 0) : 0);
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + pad(s % 60); };
+
+  // segmented progress + menu
+  const segs = $('segs'), menuL = $('menu-l');
+  slides.forEach((_, i) => {
+    const b = document.createElement('button'); b.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ': ' + meta[i].title); b.onclick = () => go(i, 0); segs.appendChild(b);
+    const li = document.createElement('li'); li.style.setProperty('--i', i);
+    li.innerHTML = '<button><span class="n">' + pad(i) + '</span><span class="t">' + meta[i].title + '</span><span class="m">' + fmt(meta[i].t) + '</span></button>';
+    li.firstChild.onclick = () => { go(i, 0); toggleMenu(false); };
+    menuL.appendChild(li);
+  });
+
+  function applyStep(si) {
+    const s = slides[si];
+    if (!steppers[si]) return;
+    s.querySelectorAll('[data-step]').forEach(el => {
+      const on = +el.dataset.step === step;
+      if (el.matches('[role=tab]')) el.setAttribute('aria-selected', on);
+      if (el.matches('.hic')) { el.classList.toggle('on', on); el.setAttribute('aria-pressed', on); }
+      if (el.matches('.acc-item')) { el.classList.toggle('on', on); el.querySelector('.acc-head').setAttribute('aria-expanded', on); }
+    });
+    s.querySelectorAll('[data-for]').forEach(el => el.classList.toggle('on', +el.dataset.for === step));
+    const arc = s.querySelector('.arc'); if (arc) arc.style.strokeDashoffset = -(step * 200 - 50 + 0);
+  }
+
+  function render() {
+    slides.forEach((s, i) => {
+      s.classList.toggle('active', i === idx);
+      s.classList.toggle('before', i < idx);
+      s.toggleAttribute('inert', i !== idx);
+      s.setAttribute('aria-hidden', i !== idx);
+    });
+    [...segs.children].forEach((b, i) => { b.classList.toggle('cur', i === idx); b.classList.toggle('done', i < idx); });
+    [...menuL.children].forEach((li, i) => li.classList.toggle('cur', i === idx));
+    $('count').textContent = pad(idx + 1) + ' / ' + pad(N);
+    $('prev').disabled = idx === 0 && step === 0;
+    $('next').disabled = idx === N - 1 && step >= Math.max(0, steppers[idx] - 1);
+    $('notes-h').textContent = pad(idx + 1) + ' · ' + meta[idx].title + ' · target ' + fmt(meta[idx].t);
+    $('notes-l').innerHTML = meta[idx].notes.map(n => '<li>' + n + '</li>').join('');
+    applyStep(idx);
+    slides[idx].scrollTop = 0;
+    if (idx === 6) countUp(slides[6]);
+    try { history.replaceState(null, '', '#' + (idx + 1)); } catch (e) {}
+    clockTick();
+  }
+
+  function go(i, s) { idx = Math.min(N - 1, Math.max(0, i)); step = s || 0; render(); }
+  function next() {
+    if (steppers[idx] && step < steppers[idx] - 1) { step++; render(); return; }
+    if (idx < N - 1) go(idx + 1, 0);
+  }
+  function prev() {
+    if (steppers[idx] && step > 0) { step--; render(); return; }
+    if (idx > 0) go(idx - 1, steppers[idx - 1] ? steppers[idx - 1] - 1 : 0);
+  }
+
+  // clicks on steppable items
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-step]');
+    if (el && slides[idx].contains(el)) { step = +el.dataset.step; render(); }
+    if (e.target.closest('[data-next]')) next();
+    if (e.target.closest('[data-restart]')) go(0, 0);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.target.isContentEditable) { if (e.key === 'Escape') e.target.blur(); return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'Escape') { toggleMenu(false); return; }
+    if (k === 'ArrowRight' || k === 'PageDown' || (k === ' ' && !e.target.closest('button'))) { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); prev(); }
+    else if (k === 'Home') go(0, 0);
+    else if (k === 'End') go(N - 1, 0);
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 't' || k === 'T') toggleTimer();
+    else if (k === 'm' || k === 'M') toggleMenu();
+    else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+  });
+  $('next').onclick = next; $('prev').onclick = prev;
+
+  // swipe
+  let sx = null;
+  const deck = $('deck');
+  deck.addEventListener('pointerdown', e => { if (e.pointerType === 'touch') sx = e.clientX; });
+  deck.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 60) dx < 0 ? next() : prev(); });
+
+  // operating-model focus toggle
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    $('lanes').dataset.focus = b.dataset.focus;
+  }));
+
+  // notes + menu
+  function toggleNotes(force) { const o = force ?? !$('notes').classList.contains('open'); $('notes').classList.toggle('open', o); $('notes-b').setAttribute('aria-pressed', o); }
+  function toggleMenu(force) { const o = force ?? !$('menu').classList.contains('open'); $('menu').classList.toggle('open', o); $('burger').setAttribute('aria-expanded', o); }
+  $('notes-b').onclick = () => toggleNotes(); $('burger').onclick = () => toggleMenu();
+  $('menu').addEventListener('click', e => { if (e.target === $('menu')) toggleMenu(false); });
+
+  // pace timer
+  let elapsed = 0, running = false, last = 0, raf = null;
+  function clockTick() {
+    $('clock-t').textContent = fmt(elapsed);
+    const el = $('clock'), s = $('clock-s');
+    if (!running && elapsed === 0) { s.textContent = 'press T'; el.classList.remove('late'); return; }
+    const d = elapsed - meta[idx].t;
+    el.classList.toggle('late', d > 20);
+    s.textContent = (running ? '' : 'paused · ') + (d > 20 ? '+' + fmt(d) + ' behind' : d < -20 ? fmt(-d) + ' ahead' : 'on pace');
+  }
+  function loop(now) { if (!running) return; elapsed += (now - last) / 1000; last = now; clockTick(); raf = requestAnimationFrame(loop); }
+  function toggleTimer() { running = !running; $('timer').setAttribute('aria-pressed', running); if (running) { last = performance.now(); raf = requestAnimationFrame(loop); } else clockTick(); }
+  $('timer').onclick = toggleTimer;
+  $('clock').addEventListener('dblclick', () => { elapsed = 0; clockTick(); });
+
+  // count-up
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function countUp(slide) {
+    slide.querySelectorAll('[data-count]').forEach(el => {
+      const to = +el.dataset.count; if (reduce) { el.textContent = to; return; }
+      const t0 = performance.now() + 500, dur = 1100;
+      const f = now => { const p = Math.min(1, Math.max(0, (now - t0) / dur)); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(f); };
+      requestAnimationFrame(f);
+    });
+  }
+
+  // persist editable tiles
+  const store = { get(k) { try { return localStorage.getItem('np:' + k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem('np:' + k, v); } catch (e) {} } };
+  document.querySelectorAll('[contenteditable]').forEach((el, i) => {
+    const key = el.dataset.key || 'ed' + i;
+    const saved = store.get(key); if (saved) el.textContent = saved;
+    el.addEventListener('input', () => store.set(key, el.textContent));
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); el.blur(); } });
+  });
+
+  // start (supports #n deep link)
+  const h = parseInt(location.hash.slice(1), 10);
+  go(h >= 1 && h <= N ? h - 1 : 0, 0);
+})();
+</script>
+</body>
+</html>
