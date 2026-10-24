@@ -184,7 +184,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .stage:nth-of-type(4) { left: 0; top: 50%; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { font: 500 11px/1 'Geist Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 12px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); color: var(--muted); }
-.detail { margin-top: 22px; min-height: 120px; }
+.detail { margin-top: 22px; min-height: 120px; display: grid; }
 .detail .panel h3 { font: 400 1.5rem/1.15 'Fraunces', serif; letter-spacing: -0.02em; margin-bottom: 6px; }
 .detail .panel p { color: var(--muted); font-size: 15px; max-width: 48ch; }
 
@@ -332,7 +332,9 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .notes li + li { margin-top: 6px; }
 
 /* ── responsive ── */
+.m-only { display: none; }
 @media (max-width: 900px) {
+  .d-only { display: none; } .m-only { display: inline; }
   .title-grid, .split { grid-template-columns: 1fr; }
   .cascade { height: auto; display: grid; gap: 12px; }
   .cascade .bezel { position: static; width: 100%; transform: none !important; }
@@ -340,7 +342,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   .pipe { grid-template-columns: 1fr 1fr; }
   .bento > * { grid-column: span 6 !important; }
   .lane { grid-template-columns: 1fr; gap: 6px; }
-  .loop { width: min(100%, 400px); }
+  .loop { width: min(calc(100% - 130px), 270px); margin: 22px auto 40px; }
   .slide { align-items: flex-start; }
   .segs { display: none; }
   .clock small { display: none; }
@@ -408,7 +410,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 <section class="slide tone-dark" aria-label="The pivot chain" data-stepper>
   <div class="wrap">
     <span class="eyebrow rv" style="--i:0"><i></i>02 · The pivot chain</span>
-    <h2 class="rv" style="--i:1" >I never planned a Chrome extension. <em>Each answer opened the next question.</em></h2>
+    <h2 class="rv" style="--i:1"><span class="d-only">I never planned a Chrome extension. <em>Each answer opened the next question.</em></span><span class="m-only">Multi-channel delivery: <em>web, Figma and Chrome.</em></span></h2>
     <div class="chain rv" style="--i:2" role="tablist" aria-label="Pivots">
       <button class="node" role="tab" data-step="0"><span>1</span>Web app</button>
       <button class="node" role="tab" data-step="1"><span>2</span>Figma plugin</button>
