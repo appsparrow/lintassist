@@ -24,7 +24,6 @@
   --spring: cubic-bezier(0.32, 0.72, 0, 1);
   --z-grain: 5;
   --z-nav: 20;
-  --z-notes: 25;
   --z-menu: 30;
 }
 
@@ -292,9 +291,6 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .segs button.done::after { background: rgba(244, 238, 227, 0.6); }
 .segs button.cur::after { background: var(--ember-d); transform: scaleY(1.8); }
 .count { font: 500 11px 'Geist Mono', monospace; letter-spacing: 0.1em; padding: 0 8px; white-space: nowrap; min-width: 62px; text-align: center; }
-.clock { font: 500 11px 'Geist Mono', monospace; padding: 0 10px; min-width: 112px; text-align: center; white-space: nowrap; border-left: 1px solid rgba(244, 238, 227, 0.14); border-right: 1px solid rgba(244, 238, 227, 0.14); margin: 0 2px; }
-.clock small { display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-d); }
-.clock.late small { color: var(--ember-d); }
 .burger { position: relative; }
 .burger i { position: absolute; left: 12px; right: 12px; height: 1.5px; border-radius: 2px; background: currentColor; transition: transform 0.7s var(--spring), top 0.7s var(--spring); }
 .burger i:nth-child(1) { top: 15px; } .burger i:nth-child(2) { top: 24px; }
@@ -319,23 +315,10 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .menu li .m { font: 500 11px 'Geist Mono', monospace; color: var(--muted-d); }
 .menu li.cur .t { color: var(--ember-d); font-style: italic; }
 
-/* ── notes ── */
-.notes {
-  position: fixed; z-index: var(--z-notes); right: 20px; top: 20px; width: min(380px, calc(100vw - 40px)); padding: 6px; border-radius: 28px;
-  background: rgba(27, 22, 18, 0.78); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); color: var(--cream);
-  box-shadow: 0 0 0 1px rgba(244, 238, 227, 0.14), 0 24px 50px -20px rgba(0, 0, 0, 0.6);
-  opacity: 0; transform: translateY(-12px) scale(0.98); visibility: hidden; transition: opacity 0.6s var(--spring), transform 0.7s var(--spring), visibility 0s 0.7s;
-}
-.notes.open { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
-.notes .in { border-radius: 22px; background: rgba(244, 238, 227, 0.05); padding: 18px 20px; box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08); }
-.notes .mono { color: var(--ember-d); }
-.notes ul { margin-top: 10px; padding-left: 16px; font-size: 13.5px; line-height: 1.5; color: #e8dfce; }
-.notes li + li { margin-top: 6px; }
-
 /* ── responsive ── */
 @media (max-width: 900px) {
-  /* phones: no timer or notes; nav tucks away until the slide is scrolled to its end */
-  #timer, #notes-b, #clock, .notes, .hint { display: none !important; }
+  /* phones: nav tucks away until the slide is scrolled to its end */
+  .hint { display: none !important; }
   .island.away { opacity: 0; transform: translate(-50%, 28px); pointer-events: none; }
   .title-grid, .split { grid-template-columns: 1fr; }
   .cascade { height: auto; display: grid; gap: 12px; }
@@ -347,8 +330,6 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   .loop { width: min(calc(100% - 130px), 270px); margin: 22px auto 40px; }
   .slide { align-items: flex-start; }
   .segs { display: none; }
-  .clock small { display: none; }
-  .clock { min-width: 62px; }
 }
 @media (max-width: 520px) {
   .bento > * { grid-template-columns: 1fr; }
@@ -364,7 +345,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 @media print {
   html, body { overflow: visible; height: auto; }
   .deck { position: static; } .slide { position: relative; opacity: 1; visibility: visible; transform: none; min-height: 100vh; page-break-after: always; }
-  .island, .menu, .notes, .grain { display: none; }
+  .island, .menu, .grain { display: none; }
   .rv { opacity: 1; transform: none; filter: none; }
 }
 </style>
@@ -382,7 +363,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
       <h1 class="rv" style="--i:1">Notice.<br><em>Decide.</em><br>Ship.</h1>
       <p class="lede rv" style="--i:2">How one observation from inside a team became <strong>three live products</strong>, and the system that makes it repeatable.</p>
       <div class="rv" style="--i:3"><button class="btn" data-next>Begin<span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></button></div>
-      <div class="hint rv" style="--i:4"><span class="mono"><kbd>←</kbd> <kbd>→</kbd> move</span><span class="mono"><kbd>N</kbd> notes</span><span class="mono"><kbd>T</kbd> timer</span><span class="mono"><kbd>M</kbd> menu</span></div>
+      <div class="hint rv" style="--i:4"><span class="mono"><kbd>←</kbd> <kbd>→</kbd> move</span><span class="mono"><kbd>M</kbd> menu</span></div>
     </div>
     <div class="cascade rv" style="--i:3" aria-label="The three live surfaces">
       <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div><div><b>Web app</b><small>app.lintassist.com</small></div><span class="live">Live</span></div></div>
@@ -596,9 +577,6 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 
 </main>
 
-<!-- notes -->
-<aside class="notes" id="notes" aria-live="polite" aria-label="Speaker notes"><div class="in"><span class="mono" id="notes-h"></span><ul id="notes-l"></ul></div></aside>
-
 <!-- menu -->
 <nav class="menu" id="menu" aria-label="Slides"><ol id="menu-l"></ol></nav>
 
@@ -608,9 +586,6 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   <div class="segs" id="segs"></div>
   <div class="count" id="count">01 / 10</div>
   <button class="ib" id="next" aria-label="Next"><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
-  <div class="clock" id="clock"><span id="clock-t">0:00</span><small id="clock-s">press T</small></div>
-  <button class="ib" id="timer" aria-label="Start or pause timer" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 9v4l2.5 2M10 3h4"/></svg></button>
-  <button class="ib" id="notes-b" aria-label="Toggle speaker notes" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M5 5h14v10H9l-4 4z"/><path d="M9 9h6M9 12h4"/></svg></button>
   <button class="ib burger" id="burger" aria-label="Slide menu" aria-expanded="false"><i></i><i></i></button>
 </div>
 
@@ -618,32 +593,31 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 (() => {
   const slides = [...document.querySelectorAll('.slide')];
   const N = slides.length;
-  // target start (seconds), title for menu, speaker notes
+  // slide titles for the menu
   const meta = [
-    { t: 0,   title: 'Notice. Decide. Ship.', notes: ['Open with the claim: I am a builder and conceptualiser, not only a designer.', 'Three live surfaces, one idea. The next nine minutes are how I think, not how I code.'] },
-    { t: 40,  title: 'The observation', notes: ['I was working inside teams. People were building fast.', 'What was missing was a quick, structured second opinion. Not a verdict, a lens.', 'This is the skill: seeing the gap others walk past.'] },
-    { t: 100, title: 'The pivot chain', notes: ['Press → to step through each pivot. Each is: I saw, I decided, it unlocked.', 'Stress that I never planned a Chrome extension; each answer opened the next question. The shared token is the decision that made it cheap.', 'Weekend build and submission; ~90 minutes to a working package.'] },
-    { t: 195, title: 'Quality as a loop', notes: ['I ran a design review on the plugin itself and implemented what it found.', 'Heuristics, Gestalt and accessibility, then carried the same standard to Chrome.', 'The point: quality is built into the process, not checked at the end.'] },
-    { t: 270, title: 'The operating model', notes: ['This is the leadership slide. Roughly 70–80% of execution is AI; 20–30% is human judgment.', 'Use the toggle to show the two layers. Click through the lanes: product, design, engineering, quality, go-to-market, operations.', 'The human layer is where the product is actually decided.'] },
-    { t: 345, title: 'Hiccups', notes: ['Two stories, not a list. The sandbox wall became the architecture.', 'Holding back payments shows judgment: trust before revenue.', 'Press → to switch between the two.'] },
-    { t: 405, title: 'What exists today', notes: ['Not a mock-up. A running system.', 'We do not track installs or audits run yet, so this slide sticks to what the product guarantees. Funnel tracking is on the roadmap.'] },
-    { t: 450, title: 'What’s next', notes: ['It can already diagnose. The next step is proposing the alternate version.', 'The three bets below are editable. Click to rewrite them in your own words.'] },
-    { t: 520, title: 'The playbook', notes: ['Six moves any team can run. Press → to open each.', 'This is the method behind the product: repeatable, teachable, scalable.'] },
-    { t: 570, title: 'The point of view', notes: ['Close with conviction, not a request. LintAssist is one proof of the method.', 'Anyone can build a product; design in the loop and a human-centred process are what make it good.', 'ALDC is the methodology you are building and practising. Say it plainly and let the work carry it.'] }
+    { title: 'Notice. Decide. Ship.' },
+    { title: 'The observation' },
+    { title: 'The pivot chain' },
+    { title: 'Quality as a loop' },
+    { title: 'The operating model' },
+    { title: 'Hiccups' },
+    { title: 'What exists today' },
+    { title: 'What’s next' },
+    { title: 'The playbook' },
+    { title: 'The point of view' }
   ];
 
   let idx = 0, step = 0;
   const steppers = slides.map(s => s.hasAttribute('data-stepper') ? (s.querySelectorAll('[data-step]').length ? Math.max(...[...s.querySelectorAll('[data-step]')].map(e => +e.dataset.step)) + 1 : 0) : 0);
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2, '0');
-  const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + pad(s % 60); };
 
   // segmented progress + menu
   const segs = $('segs'), menuL = $('menu-l');
   slides.forEach((_, i) => {
     const b = document.createElement('button'); b.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ': ' + meta[i].title); b.onclick = () => go(i, 0); segs.appendChild(b);
     const li = document.createElement('li'); li.style.setProperty('--i', i);
-    li.innerHTML = '<button><span class="n">' + pad(i) + '</span><span class="t">' + meta[i].title + '</span><span class="m">' + fmt(meta[i].t) + '</span></button>';
+    li.innerHTML = '<button><span class="n">' + pad(i) + '</span><span class="t">' + meta[i].title + '</span><span class="m"></span></button>';
     li.firstChild.onclick = () => { go(i, 0); toggleMenu(false); };
     menuL.appendChild(li);
   });
@@ -673,14 +647,11 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
     $('count').textContent = pad(idx + 1) + ' / ' + pad(N);
     $('prev').disabled = idx === 0 && step === 0;
     $('next').disabled = idx === N - 1 && step >= Math.max(0, steppers[idx] - 1);
-    $('notes-h').textContent = pad(idx + 1) + ' · ' + meta[idx].title + ' · target ' + fmt(meta[idx].t);
-    $('notes-l').innerHTML = meta[idx].notes.map(n => '<li>' + n + '</li>').join('');
     applyStep(idx);
     slides[idx].scrollTop = 0;
     updateNav();
     if (idx === 6) countUp(slides[6]);
     try { history.replaceState(null, '', '#' + (idx + 1)); } catch (e) {}
-    clockTick();
   }
 
   // phones: show the nav only when the slide is at its end (or doesn't scroll)
@@ -719,8 +690,6 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
     else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); prev(); }
     else if (k === 'Home') go(0, 0);
     else if (k === 'End') go(N - 1, 0);
-    else if (k === 'n' || k === 'N') toggleNotes();
-    else if (k === 't' || k === 'T') toggleTimer();
     else if (k === 'm' || k === 'M') toggleMenu();
     else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
   });
@@ -738,26 +707,10 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
     $('lanes').dataset.focus = b.dataset.focus;
   }));
 
-  // notes + menu
-  function toggleNotes(force) { const o = force ?? !$('notes').classList.contains('open'); $('notes').classList.toggle('open', o); $('notes-b').setAttribute('aria-pressed', o); }
+  // menu
   function toggleMenu(force) { const o = force ?? !$('menu').classList.contains('open'); $('menu').classList.toggle('open', o); $('burger').setAttribute('aria-expanded', o); }
-  $('notes-b').onclick = () => toggleNotes(); $('burger').onclick = () => toggleMenu();
+  $('burger').onclick = () => toggleMenu();
   $('menu').addEventListener('click', e => { if (e.target === $('menu')) toggleMenu(false); });
-
-  // pace timer
-  let elapsed = 0, running = false, last = 0, raf = null;
-  function clockTick() {
-    $('clock-t').textContent = fmt(elapsed);
-    const el = $('clock'), s = $('clock-s');
-    if (!running && elapsed === 0) { s.textContent = 'press T'; el.classList.remove('late'); return; }
-    const d = elapsed - meta[idx].t;
-    el.classList.toggle('late', d > 20);
-    s.textContent = (running ? '' : 'paused · ') + (d > 20 ? '+' + fmt(d) + ' behind' : d < -20 ? fmt(-d) + ' ahead' : 'on pace');
-  }
-  function loop(now) { if (!running) return; elapsed += (now - last) / 1000; last = now; clockTick(); raf = requestAnimationFrame(loop); }
-  function toggleTimer() { running = !running; $('timer').setAttribute('aria-pressed', running); if (running) { last = performance.now(); raf = requestAnimationFrame(loop); } else clockTick(); }
-  $('timer').onclick = toggleTimer;
-  $('clock').addEventListener('dblclick', () => { elapsed = 0; clockTick(); });
 
   // count-up
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
