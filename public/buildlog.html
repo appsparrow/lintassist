@@ -332,9 +332,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 .notes li + li { margin-top: 6px; }
 
 /* ── responsive ── */
-.m-only { display: none; }
 @media (max-width: 900px) {
-  .d-only { display: none; } .m-only { display: inline; }
   .title-grid, .split { grid-template-columns: 1fr; }
   .cascade { height: auto; display: grid; gap: 12px; }
   .cascade .bezel { position: static; width: 100%; transform: none !important; }
@@ -410,7 +408,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 <section class="slide tone-dark" aria-label="The pivot chain" data-stepper>
   <div class="wrap">
     <span class="eyebrow rv" style="--i:0"><i></i>02 · The pivot chain</span>
-    <h2 class="rv" style="--i:1"><span class="d-only">I never planned a Chrome extension. <em>Each answer opened the next question.</em></span><span class="m-only">Multi-channel delivery: <em>web, Figma and Chrome.</em></span></h2>
+    <h2 class="rv" style="--i:1">Multi-channel delivery: <em>web, Figma and Chrome.</em></h2>
     <div class="chain rv" style="--i:2" role="tablist" aria-label="Pivots">
       <button class="node" role="tab" data-step="0"><span>1</span>Web app</button>
       <button class="node" role="tab" data-step="1"><span>2</span>Figma plugin</button>
@@ -620,7 +618,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   const meta = [
     { t: 0,   title: 'Notice. Decide. Ship.', notes: ['Open with the claim: I am a builder and conceptualiser, not only a designer.', 'Three live surfaces, one idea. The next nine minutes are how I think, not how I code.'] },
     { t: 40,  title: 'The observation', notes: ['I was working inside teams. People were building fast.', 'What was missing was a quick, structured second opinion. Not a verdict, a lens.', 'This is the skill: seeing the gap others walk past.'] },
-    { t: 100, title: 'The pivot chain', notes: ['Press → to step through each pivot. Each is: I saw, I decided, it unlocked.', 'Stress that I never planned a Chrome extension. The shared token is the decision that made it cheap.', 'Weekend build and submission; ~90 minutes to a working package.'] },
+    { t: 100, title: 'The pivot chain', notes: ['Press → to step through each pivot. Each is: I saw, I decided, it unlocked.', 'Stress that I never planned a Chrome extension; each answer opened the next question. The shared token is the decision that made it cheap.', 'Weekend build and submission; ~90 minutes to a working package.'] },
     { t: 195, title: 'Quality as a loop', notes: ['I ran a design review on the plugin itself and implemented what it found.', 'Heuristics, Gestalt and accessibility, then carried the same standard to Chrome.', 'The point: quality is built into the process, not checked at the end.'] },
     { t: 270, title: 'The operating model', notes: ['This is the leadership slide. Roughly 70–80% of execution is AI; 20–30% is human judgment.', 'Use the toggle to show the two layers. Click through the lanes: product, design, engineering, quality, go-to-market, operations.', 'The human layer is where the product is actually decided.'] },
     { t: 345, title: 'Hiccups', notes: ['Two stories, not a list. The sandbox wall became the architecture.', 'Holding back payments shows judgment: trust before revenue.', 'Press → to switch between the two.'] },
