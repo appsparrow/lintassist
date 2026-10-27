@@ -4,3 +4,4 @@ dist/
 node_modules/
 .dev.vars
 .impeccable/hook.cache.json
+media-src/

@@ -189,11 +189,11 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 
 /* ── 04 operating model ── */
 .ratio { margin: clamp(18px, 3vh, 30px) 0 clamp(14px, 2.4vh, 24px); }
-.ratio-bar { display: flex; gap: 6px; height: 56px; }
-.ratio-bar > div { border-radius: 16px; display: flex; align-items: center; padding: 0 20px; font-weight: 500; font-size: 14px; transform-origin: left; transform: scaleX(0); transition: transform 1.3s var(--spring) 0.4s; white-space: nowrap; overflow: hidden; }
-.slide.active .ratio-bar > div { transform: none; }
+.ratio-bar { display: flex; gap: 6px; height: 56px; clip-path: inset(0 100% 0 0 round 16px); transition: clip-path 1.6s var(--spring) .4s; }
+.slide.active .ratio-bar { clip-path: inset(0 0 0 0 round 16px); }
+.ratio-bar > div { border-radius: 16px; display: flex; align-items: center; padding: 0 20px; font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; }
 .ratio-bar .ai { flex: 75; background: var(--slate); color: var(--bg); }
-.ratio-bar .hu { flex: 25; background: var(--ember); color: var(--bg); transition-delay: 0.7s; }
+.ratio-bar .hu { flex: 25; background: var(--ember); color: var(--bg); }
 .ratio-sub { display: flex; justify-content: space-between; margin-top: 10px; gap: 12px; }
 .seg { display: inline-flex; padding: 4px; border-radius: 999px; box-shadow: 0 0 0 1px var(--hair); background: var(--shell); }
 .seg button { padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); transition: all 0.5s var(--spring); }
@@ -348,6 +348,16 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   .island, .menu, .grain { display: none; }
   .rv { opacity: 1; transform: none; filter: none; }
 }
+.film-split { grid-template-columns: 1fr minmax(0, 330px); }
+.film { justify-self: end; width: 100%; margin: 0; }
+.film .core { padding: 0; overflow: hidden; border-radius: 22px; background: #000; line-height: 0; }
+.film video { width: 100%; aspect-ratio: 9 / 16; max-height: 72vh; object-fit: cover; display: block; }
+@media (max-width: 900px) { .film-split { grid-template-columns: 1fr; } .film { justify-self: center; max-width: 300px; } }
+.close { display: grid; gap: 0; max-width: 980px; }
+.close .eyebrow { justify-self: start; }
+.close h2 { margin-bottom: 22px; }
+.close .btn { justify-self: start; }
+.close .lede { margin-bottom: 34px; }
 </style>
 </head>
 <body>
@@ -370,6 +380,20 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
       <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 4v16M4 12h16"/></svg></div><div><b>Figma plugin</b><small>Published · v1.0.1</small></div><span class="live">Live</span></div></div>
       <div class="bezel"><div class="core surface"><div class="glyph"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 9h7.5M9.4 13.5 5.6 7M14.6 13.5 10.8 20"/></svg></div><div><b>Chrome extension</b><small>Published · v1.0.1</small></div><span class="live">Live</span></div></div>
     </div>
+  </div>
+</section>
+
+<!-- 00b · THE CLAIM -->
+<section class="slide tone-dark" aria-label="The claim">
+  <div class="wrap">
+    <span class="eyebrow rv" style="--i:0"><i></i>The claim</span>
+    <h2 class="rv" style="--i:1">Anyone can build a product now. <em>The thinking still decides the outcome.</em></h2>
+    <div class="ask-grid">
+      <div class="bezel rv" style="--i:2"><div class="core"><span class="k">01</span><b>Design in the loop</b><p>AI carries the execution. Design judgment shapes every decision, from how the problem is framed to what gets cut.</p></div></div>
+      <div class="bezel rv" style="--i:3"><div class="core"><span class="k">02</span><b>Human-centred by method</b><p>Start from what people actually need, and check every surface, flow and message against it.</p></div></div>
+      <div class="bezel rv" style="--i:4"><div class="core"><span class="k">03</span><b>ALDC, in practice</b><p>The methodology I’m building and consulting on: a repeatable path from a real use case to a shipped product.</p></div></div>
+    </div>
+    <p class="lede rv" style="--i:5">That is what I want to evidence here. <strong>The next few minutes are the proof, not the pitch.</strong></p>
   </div>
 </section>
 
@@ -521,6 +545,24 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   </div>
 </section>
 
+<!-- 06b · FILM -->
+<section class="slide tone-light" aria-label="The 30-second version">
+  <div class="wrap split film-split">
+    <div class="stack-y">
+      <span class="eyebrow rv" style="--i:0"><i></i>The 30-second version</span>
+      <h2 class="rv" style="--i:1">Seen from the <em>designer’s side.</em></h2>
+      <p class="lede rv" style="--i:2">One designer, the same review comments every week, and one more look before the review. The product is the quiet part of the story.</p>
+    </div>
+    <figure class="film rv" style="--i:2">
+      <div class="bezel"><div class="core">
+        <video controls playsinline preload="none" poster="/lintassist-maya-poster.jpg" aria-label="30-second film: a designer checks her work before the review">
+          <source src="/lintassist-maya.mp4" type="video/mp4">
+        </video>
+      </div></div>
+    </figure>
+  </div>
+</section>
+
 <!-- 07 · WHAT'S NEXT -->
 <section class="slide tone-light" aria-label="What's next">
   <div class="wrap">
@@ -559,17 +601,13 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   </div>
 </section>
 
-<!-- 09 · POINT OF VIEW -->
+<!-- 09 · CLOSE -->
 <section class="slide tone-light" aria-label="The point of view">
-  <div class="wrap">
-    <span class="eyebrow rv" style="--i:0"><i></i>09 · The point of view</span>
-    <h2 class="rv" style="--i:1">Anyone can build a product now. <em>The thinking still decides the outcome.</em></h2>
-    <div class="ask-grid">
-      <div class="bezel rv" style="--i:2"><div class="core"><span class="k">01</span><b>Design in the loop</b><p>AI carries the execution. Design judgment shapes every decision, from how the problem is framed to what gets cut.</p></div></div>
-      <div class="bezel rv" style="--i:3"><div class="core"><span class="k">02</span><b>Human-centred by method</b><p>Start from what people actually need, and check every surface, flow and message against it.</p></div></div>
-      <div class="bezel rv" style="--i:4"><div class="core"><span class="k">03</span><b>ALDC, in practice</b><p>The methodology I’m building and consulting on: a repeatable path from a real use case to a shipped product.</p></div></div>
-    </div>
-    <div class="rv" style="--i:5">
+  <div class="wrap close">
+    <span class="eyebrow rv" style="--i:0"><i></i>09 · What this showed</span>
+    <h2 class="rv" style="--i:1">AI carried the build. <em>The thinking decided what was worth building.</em></h2>
+    <p class="lede rv" style="--i:2">A real use case, design judgment in every loop, and people at the centre of each decision. That is the method, and it is repeatable.</p>
+    <div class="rv" style="--i:3">
       <button class="btn" data-restart>Back to the start<span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg></span></button>
     </div>
   </div>
@@ -584,7 +622,7 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
 <div class="island" role="toolbar" aria-label="Presentation controls">
   <button class="ib" id="prev" aria-label="Previous"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
   <div class="segs" id="segs"></div>
-  <div class="count" id="count">01 / 10</div>
+  <div class="count" id="count">01 / 12</div>
   <button class="ib" id="next" aria-label="Next"><svg class="i" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
   <button class="ib burger" id="burger" aria-label="Slide menu" aria-expanded="false"><i></i><i></i></button>
 </div>
@@ -596,15 +634,17 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
   // slide titles for the menu
   const meta = [
     { title: 'Notice. Decide. Ship.' },
+    { title: 'The claim' },
     { title: 'The observation' },
     { title: 'The pivot chain' },
     { title: 'Quality as a loop' },
     { title: 'The operating model' },
     { title: 'Hiccups' },
     { title: 'What exists today' },
+    { title: 'The 30-second version' },
     { title: 'What’s next' },
     { title: 'The playbook' },
-    { title: 'The point of view' }
+    { title: 'What this showed' }
   ];
 
   let idx = 0, step = 0;
@@ -650,7 +690,8 @@ kbd { font: 500 11px 'Geist Mono', monospace; padding: 3px 7px; border-radius: 6
     applyStep(idx);
     slides[idx].scrollTop = 0;
     updateNav();
-    if (idx === 6) countUp(slides[6]);
+    if (slides[idx].querySelector('[data-count]')) countUp(slides[idx]);
+    slides.forEach((x, i) => { if (i !== idx) x.querySelectorAll('video').forEach(v => v.pause()); });
     try { history.replaceState(null, '', '#' + (idx + 1)); } catch (e) {}
   }
 

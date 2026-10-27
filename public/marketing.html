@@ -237,6 +237,13 @@
     .cta h2 { max-width: 14ch; font-size: clamp(2.6rem, 7vw, 6rem); line-height: .98; }
     .cta p { margin: 24px 0 36px; color: var(--muted); max-width: 44ch; font-size: 1.1rem; }
     .cta .btn { justify-self: start; }
+    .cta .wrap { grid-template-columns: minmax(0, 1.2fr) minmax(0, 340px); column-gap: clamp(32px, 6vw, 96px); align-items: center; }
+    .cta .copy { display: grid; }
+    .cta .film { justify-self: end; width: 100%; }
+    .cta .film .core { padding: 0; overflow: hidden; border-radius: 22px; background: #000; line-height: 0; position: relative; }
+    .cta .film video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+    .cta .film figcaption { margin-top: 14px; color: var(--muted); font-size: .85rem; line-height: 1.4; }
+    @media (max-width: 900px) { .cta .wrap { grid-template-columns: 1fr; row-gap: 48px; } .cta .film { justify-self: center; max-width: 320px; } }
 
     .footer { background: var(--espresso); color: var(--muted-d); padding: 28px 0 36px; font-size: 13.5px; }
     .footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
@@ -428,10 +435,20 @@
 
     <section class="cta dark">
       <div class="wrap">
-        <div class="eyebrow rv">Before the next review</div>
-        <h2 class="rv" style="--i:1">Give your design one more <em>thoughtful look.</em></h2>
-        <p class="rv" style="--i:2">Start with two free audits. No signup, no credit card, and no need to leave the tool you already use.</p>
-        <a class="btn rv" style="--i:3" href="https://app.lintassist.com/">Try LintAssist free <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" /></svg></span></a>
+        <div class="copy">
+          <div class="eyebrow rv">Before the next review</div>
+          <h2 class="rv" style="--i:1">Give your design one more <em>thoughtful look.</em></h2>
+          <p class="rv" style="--i:2">Start with two free audits. No signup, no credit card, and no need to leave the tool you already use.</p>
+          <a class="btn rv" style="--i:3" href="https://app.lintassist.com/">Try LintAssist free <span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9" /></svg></span></a>
+        </div>
+        <figure class="film rv" style="--i:2">
+          <div class="bezel"><div class="core">
+            <video controls playsinline preload="none" poster="/lintassist-maya-poster.jpg" aria-label="30-second film: a designer checks her work before the review">
+              <source src="/lintassist-maya.mp4" type="video/mp4">
+            </video>
+          </div></div>
+          <figcaption>30 seconds: one designer, one more look before the review.</figcaption>
+        </figure>
       </div>
     </section>
   </main>
